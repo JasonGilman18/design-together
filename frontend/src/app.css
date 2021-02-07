@@ -1,0 +1,30 @@
+body
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+.grid-container
+{
+    display: grid;
+    grid-template-columns: 15vw 85vw;
+    grid-template-rows: 3vh 97vh;
+}
+
+.controlbar-container
+{
+    grid-area: 1/1/2/3;
+    background-color: green;
+}
+
+.toolbar-container
+{
+    grid-area: 2/1/3/2;
+    background-color: green;
+}
+
+.design-container
+{
+    position: relative;
+    grid-area: 2/2/3/3;
+}
