@@ -2,16 +2,20 @@ package api;
 
 public class Rectangle {
     
+    private static int key = 0;
     private int shapeKey;
     private double positionX;
     private double positionY;
 
     public Rectangle(){}
 
-    public Rectangle(int shapeKey, double positionX, double positionY)
+    public Rectangle(double positionX, double positionY)
     {
+        this.shapeKey = key;
         this.positionX = positionX;
         this.positionY = positionY;
+
+        key++;
     }
 
     public int getShapeKey(){return shapeKey;}

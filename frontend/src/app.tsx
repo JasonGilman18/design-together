@@ -8,7 +8,6 @@ import './app.css';
 function App(props: any)
 {
     const [shapes, setShapes] = useState<Array<JSX.Element>>([]);
-    const [shape_key, setShapeKey] = useState<number>(0);
     
     const socket = new SockJS('http://localhost:8080/design-together');
     const stompClient = Stomp.over(socket);
@@ -18,39 +17,35 @@ function App(props: any)
 
         stompClient.connect(headers, () => {
 
-            stompClient.subscribe('/add/rectangle', (message) => recieveRectangleFromServer(message.body), headers);
+            stompClient.subscribe('/add/drag', (message) => {recieveMovementFromServer(message.body);}, headers);
+            stompClient.subscribe('/add/rectangle', (message) => {recieveRectangleFromServer(message.body);}, headers);
+            
         });
 
     }, []);
 
-    function addRectangleToClient(rectangle: JSX.Element)
-    {
-        setShapeKey(shape_key+1);
-        setShapes([...shapes, rectangle]);
-    }
-
     function sendRectangleToServer()
     {
-        //construct new shape
-        const new_shape =  <Draggable onDrag={(e) => drag(e)} bounds={"parent"} key={shape_key}><div style={{backgroundColor: "black", height: "50px", width: "100px"}}></div></Draggable>;
-        
-        //add shape to DOM
-        addRectangleToClient(new_shape);
-
-        //send shape to server
-        stompClient.send("/app/add/rectangle", headers, JSON.stringify({shapeKey: new_shape.key, positionX: new_shape.props.defaultPosition.x, positionY: new_shape.props.defaultPosition.y}));
+        stompClient.send("/app/add/rectangle", headers, JSON.stringify({positionX: 0, positionY: 0}));
     }
 
     function recieveRectangleFromServer(newRectangle: string)
     {
         const newRectangleObject = JSON.parse(newRectangle);
-        const sendToDOM = <Draggable onDrag={(e) => drag(e)} bounds={"parent"} key={shape_key}><div style={{backgroundColor: "black", height: "50px", width: "100px"}}></div></Draggable>;
-        addRectangleToClient(sendToDOM);
+        const rectangle = <Draggable onDrag={(e) => sendMovementToServer(e, newRectangleObject.shapeKey)} bounds={"parent"} key={newRectangleObject.shapeKey}><div style={{backgroundColor: "black", height: "50px", width: "100px"}}></div></Draggable>;
+        //const rectangle = <Rectangle shapeKey={newRectangleObject.shapeKey} func_sendMovementToServer={sendMovementToServer}></Rectangle>;
+        setShapes(shapes => [...shapes, rectangle]);
     }
 
-    function drag(e: DraggableEvent)
+    function sendMovementToServer(e: DraggableEvent, shapeKey: number)
     {
-        //console.log(e);
+        const event = e as React.MouseEvent;
+        stompClient.send("/app/add/drag", headers, JSON.stringify({shapeKey: shapeKey, movementX: event.movementX, movementY: event.movementY}));
+    }
+
+    function recieveMovementFromServer(newMovement: string)
+    {
+
     }
 
     return (
@@ -74,4 +69,4 @@ function App(props: any)
     );
 }
 
-export default App
+export default App;

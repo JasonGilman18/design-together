@@ -22,7 +22,6 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     {
         //responses sent back to destinations prefixed with "/movement"
         //a prefix for the responses. client subscribes to 
-        registry.enableSimpleBroker("/movement");
         registry.enableSimpleBroker("/add");
 
         //prefix for the request routes
