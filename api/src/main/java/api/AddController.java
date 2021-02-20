@@ -16,8 +16,8 @@ public class AddController {
         return newRectangle;
     }
 
-    @MessageMapping("/add/drag")
-    @SendTo("/add/drag")
+    @MessageMapping("/movement/drag")
+    @SendTo("/movement/drag")
     public Movement movement(Movement movement) throws Exception
     {
         Movement newMovement = new Movement(movement.getShapeKey(), movement.getMovementX(), movement.getMovementY());

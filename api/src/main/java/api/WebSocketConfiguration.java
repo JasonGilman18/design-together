@@ -14,7 +14,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void registerStompEndpoints(StompEndpointRegistry stompEndpointRegistry)
     {
         //Register a STOMP over WebSocket endpoint at the given mapping path like http://localhost:8080/design-together
-        stompEndpointRegistry.addEndpoint("/design-together").setAllowedOrigins("http://localhost:3000").withSockJS();
+        stompEndpointRegistry.addEndpoint("/design-together").setAllowedOrigins("*");
     }
 
     @Override
@@ -22,7 +22,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     {
         //responses sent back to destinations prefixed with "/movement"
         //a prefix for the responses. client subscribes to 
-        registry.enableSimpleBroker("/add");
+        registry.enableSimpleBroker("/add", "/movement");
 
         //prefix for the request routes
         registry.setApplicationDestinationPrefixes("/app");
