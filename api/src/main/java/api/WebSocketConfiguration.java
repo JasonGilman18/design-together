@@ -22,7 +22,7 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     {
         //responses sent back to destinations prefixed with "/movement"
         //a prefix for the responses. client subscribes to 
-        registry.enableSimpleBroker("/add", "/movement");
+        registry.enableSimpleBroker("/add", "/movement", "/resize");
 
         //prefix for the request routes
         registry.setApplicationDestinationPrefixes("/app");

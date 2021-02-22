@@ -3,12 +3,12 @@ package api;
 public class Movement {
 
     private int shapeKey;
-    private int movementX;
-    private int movementY;
+    private double movementX;
+    private double movementY;
 
     public Movement(){}
 
-    public Movement(int shapeKey, int movementX, int movementY)
+    public Movement(int shapeKey, double movementX, double movementY)
     {
         this.shapeKey = shapeKey;
         this.movementX = movementX;
@@ -17,7 +17,7 @@ public class Movement {
 
     public int getShapeKey(){ return shapeKey; }
 
-    public int getMovementX(){ return movementX; }
+    public double getMovementX(){ return movementX; }
 
-    public int getMovementY(){ return movementY; }
+    public double getMovementY(){ return movementY; }
 }

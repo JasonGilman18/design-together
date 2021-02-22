@@ -1,8 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
-import {Client} from '@stomp/stompjs';
+import {Position, ResizableDelta, Rnd} from 'react-rnd';
+import { Direction } from '../classes/direction'
 import Shape from '../classes/shape';
+import {ServerService} from '../classes/serverService';
 import './app.css';
+
+
+/*
+* when saving rectangles on the server, need to have movements and resizes
+* occur on a rectangle object. need to fetch the rectanlge by shapeId
+* from the database
+*/
 
 
 function App(props: any)
@@ -12,116 +21,102 @@ function App(props: any)
     * shapeData - the object that controls position of the elements in DOM
     * stompClient - the reference to the WebSocket connection
     */
+    
+    const designContainer = useRef<HTMLDivElement>(document.createElement("div"));
+    const designGrid = useRef<HTMLDivElement>(document.createElement("div"));
+    const [grid, setGrid] = useState<Array<JSX.Element>>([]);
+    const [showGrid, setShowGrid] = useState<boolean>(false);
+
+
     const [shapes, setShapes] = useState<Map<number, Shape>>(new Map());
-    const stompClient = useRef(new Client());
+    const server = useRef<ServerService>(new ServerService());
 
 
-    /*
-    * setup connection to server through websocket
-    * subscribe to events that are sent from server
-    */
     useEffect(() => {
-
-        stompClient.current = new Client();
-        stompClient.current.configure({
-            brokerURL: 'ws://localhost:8080/design-together',
-            onConnect: () => {
-                console.log("connected");
-                stompClient.current.subscribe("/add/rectangle", (message) => recieveRectangleFromServer(message.body));
-                stompClient.current.subscribe("/movement/drag", (message) => recieveMovementFromServer(message.body));
-            }
-        });
-        stompClient.current.activate();
+        const subscriptions = ["/add/rectangle", "/movement", "/resize"];
+        server.current = new ServerService("ws://localhost:8080/design-together", subscriptions, setShapes);
     }, []);
 
-
-    /*
-    * after user requests to add a rectangle, send to server to confirm
-    */
-    function sendRectangleToServer()
-    {
-        stompClient.current.publish({destination: '/app/add/rectangle', body: JSON.stringify({positionX: 0, positionY: 0})});
-    }
-
-
-    /*
-    * after server confirms, actually add the rectangle to the client
-    * only the rectangles attributes are tracked in state, the actual DOM is created in render
-    */
-    function recieveRectangleFromServer(newRectangle: string)
-    {
-        const newRectangleObject = JSON.parse(newRectangle);
-        var shapeKey = newRectangleObject.shapeKey;
-        var positionX = newRectangleObject.positionX;
-        var positionY = newRectangleObject.positionY;
-
-        const rectangle = new Shape(shapeKey, positionX, positionY);
-        setShapes(prevShapes => new Map(prevShapes.set(shapeKey, rectangle)));
-    }
-
     
-    /*
-    * send the drag to the server
-    * based on the number of pixels moved in the x and y directions
-    */
-    function sendMovementToServer(e: DraggableEvent, data: DraggableData, shapeKey: number)
-    {
-        stompClient.current.publish({destination: "/app/movement/drag", body: JSON.stringify({shapeKey: shapeKey, movementX: data.deltaX, movementY: data.deltaY})});
-    }
+    useEffect(() => {
 
+        const GRID_SIZE = 10;
+        const num_cols = Math.floor(designContainer.current.offsetWidth / GRID_SIZE);
+        const num_rows = Math.floor(designContainer.current.offsetHeight / GRID_SIZE);
 
-    /*
-    * display the movement after the server confirms it
-    * all clients shapes are only moved after the server confirms
-    */
-    function recieveMovementFromServer(newMovement: string)
-    {
-        const newMovementObject = JSON.parse(newMovement);
-        var shapeKey = newMovementObject.shapeKey;
-        var movementX = newMovementObject.movementX;
-        var movementY = newMovementObject.movementY;
+        designContainer.current.style.width = (num_cols * GRID_SIZE) + "px";
+        designContainer.current.style.height = (num_rows * GRID_SIZE) + "px";
+        designGrid.current.style.gridTemplateColumns = "repeat("+ num_cols +", 10px)";
+        designGrid.current.style.gridTemplateRows = "repeat("+ num_rows +", 10px)";
 
-        setShapes(prevShapes => {
-
-            var shapeMoved = prevShapes.get(shapeKey);
-            if(shapeMoved != undefined)
+        var tempGrid = [];
+        for(let r=0;r<num_rows;r++)
+        {
+            for(let c=0;c<num_cols;c++)
             {
-                shapeMoved.positionX += movementX;
-                shapeMoved.positionY += movementY;
-                return new Map(prevShapes.set(shapeKey, shapeMoved));
+                var style: React.CSSProperties = {};
+                if(c == num_cols-1 && r != num_rows-1)
+                    style.borderBottom = "1px solid black";
+                else if(r == num_rows-1 && c != num_cols-1)
+                    style.borderRight = "1px solid black";
+                else if(r != num_rows-1 && c != num_cols-1)
+                {
+                    style.borderBottom = "1px solid black";
+                    style.borderRight = "1px solid black";
+                }
+
+                const cell = <div key={r + ":" + c} className="cell" style={style}></div>;
+                tempGrid.push(cell);
             }
-            else
-                return prevShapes;
-        });
-    }
+        }
+
+        setGrid(tempGrid);
+
+    }, []);
 
 
     return (
 
         <div className="grid-container">
             
-            <div className="controlbar-container">
+            <div className="toolbar-container">
                 <h2>Control Bar</h2>
             </div>
 
-            <div className="toolbar-container">
+            <div className="edit-container">
                 <h2>Tool Bar</h2>
-                <button onClick={() => sendRectangleToServer()}>Rectangle</button>
+                <button onClick={() => server.current?.send('/app/add/rectangle', {positionX: 0, positionY: 0, height: 50, width: 100})}>
+                    Add Rectangle
+                </button>
+                <button onClick={() => setShowGrid(prevShowGrid => !prevShowGrid)}>Toggle Grid</button>
             </div>
 
-            <div className="design-container" onDragOver={(e) => e.preventDefault()}>
-                {
-                    [...shapes.values()].map((shape) => (
-                        <Draggable 
-                            key={shape.shapeKey} 
-                            onDrag={(e: DraggableEvent, data: DraggableData) => sendMovementToServer(e, data, shape.shapeKey)} 
-                            bounds="parent"
-                            position={{x: shape.positionX, y: shape.positionY}}
-                        >
-                            <div style={{height: "50px", width: "100px", backgroundColor: "black"}}></div>
-                        </Draggable>
-                    ))
-                }
+            <div ref={designContainer} className="design-container">
+                <div ref={designGrid} className="design-grid">
+                    {showGrid?grid:null}
+                    {
+                        [...shapes.values()].map((shape) => (
+                            <Rnd
+                                onDrag={(e: DraggableEvent, data:DraggableData) => 
+                                    server.current?.send('/app/movement', {shapeKey: shape.shapeKey, movementX: data.deltaX, 
+                                        movementY: data.deltaY})
+                                }
+                                position={{x: shape.positionX, y: shape.positionY}}
+                                dragGrid={[10, 10]}
+                                onResize={(e: MouseEvent | TouchEvent, dir: Direction, elementRef: HTMLElement, delta: ResizableDelta, 
+                                    position: Position) => server.current?.send('/app/resize', {shapeKey: shape.shapeKey, 
+                                        height: elementRef.offsetHeight, width: elementRef.offsetWidth, positionX: position.x, 
+                                        positionY: position.y})
+                                }
+                                size={{height: shape.height, width: shape.width}}
+                                resizeGrid={[10, 10]}
+                                bounds="parent"
+                            >
+                                <div style={{height: "100%", width: "100%", backgroundColor: "black"}}></div>
+                            </Rnd>
+                        ))
+                    }
+                </div>
             </div>
 
         </div>

@@ -12,15 +12,26 @@ public class AddController {
     @SendTo("/add/rectangle")
     public Rectangle rectangle(Rectangle rectangle) throws Exception
     {
-        Rectangle newRectangle = new Rectangle(rectangle.getPositionX(), rectangle.getPositionY());
+        Rectangle newRectangle = new Rectangle(rectangle.getPositionX(), rectangle.getPositionY(), rectangle.getHeight(), rectangle.getWidth());
         return newRectangle;
     }
 
-    @MessageMapping("/movement/drag")
-    @SendTo("/movement/drag")
+    @MessageMapping("/movement")
+    @SendTo("/movement")
     public Movement movement(Movement movement) throws Exception
     {
         Movement newMovement = new Movement(movement.getShapeKey(), movement.getMovementX(), movement.getMovementY());
+        
+        System.out.println(newMovement.getShapeKey() + " " + newMovement.getMovementX() + " " + newMovement.getMovementY());
+
         return newMovement;
+    }
+
+    @MessageMapping("/resize")
+    @SendTo("/resize")
+    public Resize resize(Resize resize) throws Exception
+    {
+        Resize newResize = new Resize(resize.getShapeKey(), resize.getHeight(), resize.getWidth(), resize.getPositionX(), resize.getPositionY());
+        return newResize;
     }
 }
