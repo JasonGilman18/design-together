@@ -1,0 +1,10 @@
+.design-grid
+{
+    display: grid;
+}
+
+.cell
+{
+    height: 9px;
+    width: 9px;
+}

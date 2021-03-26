@@ -1,0 +1,47 @@
+:root
+{
+    --darkest_background_color: #3B3C36;
+    --dark_background_color: #8C8E81;
+    --light_background_color: #F5F5F5;
+}
+
+body
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+.grid-container
+{
+    display: grid;
+    grid-template-columns: 20vw 80vw;
+    grid-template-rows: 5vh 95vh;
+
+    background-color: var(--darkest_background_color);
+}
+
+.toolbar-container
+{
+    grid-area: 1/1/2/3;
+    
+    background-color: var(--dark_background_color);
+}
+
+.edit-container
+{
+    grid-area: 2/1/3/2;
+    margin: 1.5vw;
+    
+    background-color: var(--dark_background_color);
+}
+
+.design-container
+{
+    grid-area: 2/2/3/3;
+    margin: 1.5vw;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    
+    background-color: var(--light_background_color);
+}
