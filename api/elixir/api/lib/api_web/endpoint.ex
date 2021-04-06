@@ -6,15 +6,14 @@ defmodule ApiWeb.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_api_key",
-    signing_salt: "IurYrSWj"
+    key: "design_together_session",
+    signing_salt: "yLqjE62D",
+    encryption_salt: "qIosR92U"
   ]
 
   socket "/socket", ApiWeb.UserSocket,
     websocket: true,
     longpoll: false
-
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -32,10 +31,6 @@ defmodule ApiWeb.Endpoint do
     plug Phoenix.CodeReloader
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :api
   end
-
-  plug Phoenix.LiveDashboard.RequestLogger,
-    param_key: "request_logger",
-    cookie_key: "request_logger"
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]

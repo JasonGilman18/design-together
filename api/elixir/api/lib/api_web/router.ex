@@ -3,20 +3,14 @@ defmodule ApiWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   scope "/api", ApiWeb do
     pipe_through :api
-    resources "/businesses", BusinessController, except: [:new, :edit]
-  end
 
-  pipeline :browser do
-    plug(:accepts, ["html"])
+    post "/login", AuthController, :login
+    get "/logout", AuthController, :logout
+    get "/authenticated", AuthController, :check_authenticated
   end
-
-  scope "/", ApiWeb do
-    pipe_through :browser
-    get "/", DefaultController, :index
-  end
-
 end

@@ -9,11 +9,3 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-alias Api.Repo
-alias Api.Directory.Business
-
-Repo.insert!(%Business{name: "Company 1", description: "Short description...", tag: "Software"})
-
-Repo.insert! (%Business{name: "Company 2", description: "Short Description...", tag: "Marketing"})
-
-Repo.insert! (%Business{name: "Company 3", description: "Short Description...", tag: "Accounting"})
