@@ -44,10 +44,10 @@ export function getDocuments(ok_fn: React.Dispatch<React.SetStateAction<string[]
     });
 }
 
-export function postDocument(doc_name: string, ok_fn: (ok_fn: React.Dispatch<React.SetStateAction<string[]>>) => void): void {
+export function postDocument(doc_name: string, ok_fn: React.Dispatch<React.SetStateAction<string[]>>): void {
     postAPI<null>("/dashboard/new", {name: doc_name}).then(res => {
         if(res.status === "ok") {
-
+            getDocuments(ok_fn);
         }
     })
 }
