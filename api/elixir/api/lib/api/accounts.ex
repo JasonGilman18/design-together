@@ -5,25 +5,26 @@ defmodule Api.Accounts do
 
   import Ecto.Query, warn: false
   alias Api.Repo
-
   alias Api.Accounts.User
 
 
   def login_user(token_id) do
     google_res = authenticate_user_with_google(token_id)
     case Map.fetch(google_res, "email_verified") do
-
       {:ok, verified} ->
         if verified == "true" do
           user_email = Map.get(google_res, "email")
           query = from u in User, where: u.email == ^user_email
           case Repo.exists?(query) do
-
             true ->
               user = Repo.get_by(User, email: user_email)
               session_token = Ecto.UUID.generate()
-              {:ok, user.id, session_token}
+              session_expire = DateTime.utc_now()
+              case update_user(user, %{session_token: session_token, session_expire: session_expire}) do
 
+                {:ok, updated_user} -> {:ok, user.id, updated_user.session_token}
+                {:error, _changeset} -> :error
+              end
             false ->
               user = %{
                 email: user_email,
@@ -33,11 +34,15 @@ defmodule Api.Accounts do
               case create_user(user) do
                 {:ok, new_user} ->
                   session_token = Ecto.UUID.generate()
-                  {:ok, new_user.id, session_token}
+                  session_expire = DateTime.utc_now()
+                  case update_user(new_user, %{session_token: session_token, session_expire: session_expire}) do
+
+                    {:ok, updated_user} -> {:ok, updated_user.id, updated_user.session_token}
+                    {:error, _changeset} -> :error
+                  end
                 {:error, _errors} ->
                   :error
               end
-
           end
         else
           :error
@@ -46,7 +51,7 @@ defmodule Api.Accounts do
     end
   end
 
-  def authenticate_user_with_google(token_id) do
+  defp authenticate_user_with_google(token_id) do
     authenticate_url = "https://oauth2.googleapis.com/tokeninfo?id_token=#{token_id}"
     task1 = Task.async(fn ->
       case HTTPoison.get(authenticate_url) do
@@ -60,7 +65,30 @@ defmodule Api.Accounts do
     Task.await(task1)
   end
 
+  def logout_user(current_user) do
+    case update_user(current_user, %{session_token: nil, session_expire: nil}) do
+      {:ok, _updated_user} -> :ok
+      {:error, _changeset} -> :error
+    end
+  end
 
+  def get_error_resp(status_code, message, data) do
+    %{
+      status: "error",
+      status_code: status_code,
+      message: message,
+      data: data
+    }
+  end
+
+  def get_ok_resp(message, data) do
+    %{
+      status: "ok",
+      status_code: 200,
+      message: message,
+      data: data
+    }
+  end
 
 
   @doc """

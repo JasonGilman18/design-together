@@ -1,6 +1,7 @@
 defmodule Api.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Api.Dashboard.{Member, Document}
 
   schema "users" do
     field :email, :string
@@ -8,6 +9,8 @@ defmodule Api.Accounts.User do
     field :last_name, :string
     field :session_expire, :utc_datetime
     field :session_token, Ecto.UUID
+    many_to_many :documents, Document, join_through: "members"
+    has_many :members, Member
 
     timestamps()
   end

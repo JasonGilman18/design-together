@@ -1,4 +1,4 @@
-class Shape
+export default class Shape
 {
     shapeKey: number;
     positionX: number;
@@ -15,5 +15,3 @@ class Shape
         this.width = width;
     }
 }
-
-export default Shape;
