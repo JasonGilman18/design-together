@@ -1,12 +1,12 @@
 //packages ==================================================
 import React, { useEffect, useState } from 'react';
 import {Link} from 'react-router-dom';
-import {getDocuments, logout, postDocument} from '../services/http_api_service';
+import {reqAuthToken, getDocuments, logout, postDocument} from '../services/http_api_service';
 
 
 export default function DashboardPage(props: any) {
 
-    const [documents, setDocuments] = useState<Array<string>>([]);
+    const [documents, setDocuments] = useState<Array<{doc_id: number, doc_name: string}>>([]);
     const [userInput, setUserInput] = useState<string>("");
 
     useEffect(() => {
@@ -26,8 +26,8 @@ export default function DashboardPage(props: any) {
             <input type="text" onChange={(e) => setUserInput(e.target.value)} value={userInput}/>
             <button onClick={(e) => logout(props.setAuthenticatedStatus)}>logout</button>
             {
-                documents.map((name) => (
-                    <Link to="/design" onClick={(e) => props.setOpenDesignName(name)}>{name}</Link>
+                documents.map((doc) => (
+                    <Link to="/design" onClick={(e) => reqAuthToken(doc.doc_id, props.setAuthToken)}>{doc.doc_name}</Link>
                 ))
             }
         </>

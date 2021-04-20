@@ -42,10 +42,4 @@ defmodule ApiWeb.AccountsController do
     )))
   end
 
-  def get_auth_token(conn, _params) do
-    current_user = conn.assigns.current_user
-
-
-  end
-
 end

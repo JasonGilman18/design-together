@@ -38,16 +38,22 @@ export function login(token_id: string, ok_fn: (authenticated: boolean) => void)
     });
 }
 
-export function getDocuments(ok_fn: React.Dispatch<React.SetStateAction<string[]>>): void {
-    getAPI<{documents: Array<string>}>("/dashboard/get").then(res => {
+export function getDocuments(ok_fn: React.Dispatch<React.SetStateAction<{doc_id: number, doc_name: string}[]>>): void {
+    getAPI<{documents: Array<{doc_id: number, doc_name: string}>}>("/dashboard/get").then(res => {
         ok_fn(res.data.documents);
     });
 }
 
-export function postDocument(doc_name: string, ok_fn: React.Dispatch<React.SetStateAction<string[]>>): void {
+export function postDocument(doc_name: string, ok_fn: React.Dispatch<React.SetStateAction<{doc_id: number, doc_name: string}[]>>): void {
     postAPI<null>("/dashboard/new", {name: doc_name}).then(res => {
         if(res.status === "ok") {
             getDocuments(ok_fn);
         }
-    })
+    });
+}
+
+export function reqAuthToken(doc_id: number, ok_fn: React.Dispatch<React.SetStateAction<string>>): void {
+    postAPI<{authToken: string}>('/token', {doc_id: doc_id}).then(res => {
+        ok_fn(res.data.authToken);
+    });
 }

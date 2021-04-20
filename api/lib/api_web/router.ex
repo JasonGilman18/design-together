@@ -25,7 +25,7 @@ defmodule ApiWeb.Router do
 
     get "/logout", AccountsController, :logout
     get "/authenticated", AccountsController, :check_authenticated
-    get "/token", AccountsController, :get_auth_token
+    post "/token", DashboardController, :req_auth_token
   end
 
   scope "/api/dashboard", ApiWeb do
@@ -34,7 +34,6 @@ defmodule ApiWeb.Router do
 
     post "/new", DashboardController, :new_document
     get "/get", DashboardController, :get_documents
-    get "/:name", DashboardController, :get_name
   end
 
 end
