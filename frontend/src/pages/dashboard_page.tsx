@@ -13,18 +13,10 @@ export default function DashboardPage(props: any) {
         getDocuments(setDocuments);
     }, []);
 
-    /*
-    async function getDocuments() {
-        const response = await fetch("http://localhost:3000/api/dashboard/get", {method: "GET"}).then(res => res.json());
-        setDocuments(response.documents);
-    }
-    */
-
     function createDocument(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         const doc_name = userInput;
         setUserInput("");
         postDocument(doc_name, setDocuments);
-        //const backend_response = await fetch("http://localhost:3000/api/dashboard/new", {method: "POST", body: JSON.stringify({name: doc_name}), headers: {"Content-Type": "application/json"}});
     }
 
     return (
