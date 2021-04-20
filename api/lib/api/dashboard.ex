@@ -29,13 +29,15 @@ defmodule Api.Dashboard do
     end
   end
 
-  def get_doc_names(user) do
-    (from d in Ecto.assoc(user, :documents), select: d.name) |> Repo.all
+  def get_docs(user) do
+    (from d in Ecto.assoc(user, :documents), select: %{doc_id: d.id, doc_name: d.name}) |> Repo.all
   end
 
-  def get_doc_name(user, doc_name) do
-    #if user has a doc with the name, send back doc info
-    #doc_query = from m in assoc(^user, :documents),
+  def generate_auth_token(user, doc_id) do
+    case (from m in Ecto.assoc(user, :members), where: m.document_id==^doc_id) |> Repo.all do
+      [member] -> {:ok, Phoenix.Token.sign(ApiWeb.Endpoint, "auth_token", member)}
+      [] -> :error
+    end
   end
 
 

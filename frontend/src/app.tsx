@@ -17,37 +17,28 @@ import DesignPage from './pages/design_page';
 
 
 type AppProps = {};
-type AppStates = {authenticated: boolean, openDesignName: string};
+type AppStates = {authenticated: boolean, authToken: string};
 export default class App extends React.Component<AppProps, AppStates> {
 
     constructor(props: any) {
         super(props);
 
-        this.state = {authenticated: false, openDesignName: ""};
+        this.state = {authenticated: false, authToken: ""};
 
         this.setAuthenticatedStatus = this.setAuthenticatedStatus.bind(this);
-        //this.logout = this.logout.bind(this);
-        this.setOpenDesignName = this.setOpenDesignName.bind(this);
+        this.setAuthToken = this.setAuthToken.bind(this);
     }
 
     componentDidMount() {
-        //const authorized_response: Object = await fetch("http://localhost:3000/api/authenticated").then(res => res.json());
         getAuthenticated(this.setAuthenticatedStatus);
     }
-
-    /*
-    logout() {
-        //const backend_response = await fetch("http://localhost:3000/api/logout", {method: "GET"});
-        //getLogout(this.setAuthenticatedStatus);
-    }
-    */
 
     setAuthenticatedStatus(authenticated: boolean) {
         this.setState({authenticated: authenticated});
     }
 
-    setOpenDesignName(openDesignName: string) {
-        this.setState({openDesignName: openDesignName});
+    setAuthToken(authToken: string) {
+        this.setState({authToken: authToken});
     }
 
     render() {
@@ -70,7 +61,7 @@ export default class App extends React.Component<AppProps, AppStates> {
                                 ? <Redirect to="/"/>
                                 : <DashboardPage
                                     setAuthenticatedStatus={this.setAuthenticatedStatus}
-                                    setOpenDesignName={this.setOpenDesignName}
+                                    setAuthToken={this.setAuthToken}
                                   />
                         }
                     </Route>
@@ -80,7 +71,7 @@ export default class App extends React.Component<AppProps, AppStates> {
                                 ? <Redirect to="/"/>
                                 : <DesignPage
                                     setAuthenticatedStatus={this.setAuthenticatedStatus}
-                                    openDesignName={this.state.openDesignName}
+                                    authToken={this.state.authToken}
                                   />
                         }
                     </Route>
