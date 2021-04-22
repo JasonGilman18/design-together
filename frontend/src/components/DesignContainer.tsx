@@ -32,7 +32,7 @@ export default function DesignContainer(props: DesignContainerProps) {
             shapes={shapes}
             addRectangle={addRectangle}
             logout={logout}
-            setAuthenticatedStatus={props.setAuthenticatedStatus}
+            setAuthenticated={props.setAuthenticated}
             authToken={props.authToken}
         />
     )
@@ -41,5 +41,5 @@ export default function DesignContainer(props: DesignContainerProps) {
 interface DesignContainerProps {
     location: any,
     authToken: string,
-    setAuthenticatedStatus: (authenticated: boolean) => void
+    setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }
