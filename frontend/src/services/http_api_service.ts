@@ -20,19 +20,19 @@ function postAPI<Type>(route: string, body: any): Promise<ApiResponse<Type>> {
     });
 }
 
-export function getAuthenticated(ok_fn: (authenticated: boolean) => void): void {
+export function getAuthenticated(ok_fn: React.Dispatch<React.SetStateAction<boolean>>): void {
     getAPI<{authenticated: boolean}>("/authenticated").then(res => {
         ok_fn(res.data.authenticated);
     });
 }
 
-export function logout(ok_fn: (authenticated: boolean) => void): void {
+export function logout(ok_fn: React.Dispatch<React.SetStateAction<boolean>>): void {
     getAPI<{authenticated: boolean}>("/logout").then(res => {
         ok_fn(res.data.authenticated);
     });
 }
 
-export function login(token_id: string, ok_fn: (authenticated: boolean) => void): void {
+export function login(token_id: string, ok_fn: React.Dispatch<React.SetStateAction<boolean>>): void {
     postAPI<{authenticated: boolean}>("/login", {token_id: token_id}).then(res => {
         ok_fn(res.data.authenticated);
     });
@@ -52,7 +52,7 @@ export function postDocument(doc_name: string, ok_fn: React.Dispatch<React.SetSt
     });
 }
 
-export function reqAuthToken(doc_id: number, ok_fn: (authToken: string) => void): void {
+export function reqAuthToken(doc_id: number, ok_fn: React.Dispatch<React.SetStateAction<string>>): void {
     postAPI<{authToken: string}>('/token', {doc_id: doc_id}).then(res => {
         ok_fn(res.data.authToken);
     });

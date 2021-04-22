@@ -11,7 +11,7 @@ export const DesignPage = (props: DesignPageProps) => (
         :
             <>
                 <h1>Design Page</h1>
-                <button onClick={(e) => props.logout(props.setAuthenticatedStatus)}>logout</button>
+                <button onClick={(e) => props.logout(props.setAuthenticated)}>logout</button>
                 <button onClick={(e) => props.addRectangle()}>Add Rectangle</button>
     
                 <div style={{height: "500px", width: "500px"}}>
@@ -35,8 +35,8 @@ export const DesignPage = (props: DesignPageProps) => (
 interface DesignPageProps {
     loading: boolean,
     shapes: Array<Shape>,
-    logout: (ok_fn: (authenticated: boolean) => void) => void,
+    logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
     addRectangle: () => void,
-    setAuthenticatedStatus: (authenticated: boolean) => void,
+    setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     authToken: string
 }

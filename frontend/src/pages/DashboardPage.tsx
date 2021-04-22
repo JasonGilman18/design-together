@@ -28,11 +28,11 @@ export const DashboardPage = (props: DashboardPageProps) => (
 interface DashboardPageProps {
     documents: Array<{doc_id: number, doc_name: string}>,
     userInput: string,
-    logout: (ok_fn: (authenticated: boolean) => void) => void,
+    logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
     setUserInput: React.Dispatch<React.SetStateAction<string>>,
     setDocuments: React.Dispatch<React.SetStateAction<{doc_id: number, doc_name: string}[]>>,
     createDocument: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
-    setAuthenticatedStatus: (authenticated: boolean) => void,
-    setAuthToken: (authToken: string) => void,
-    reqAuthToken: (doc_id: number, ok_fn: (authToken: string) => void) => void
+    setAuthenticatedStatus: React.Dispatch<React.SetStateAction<boolean>>,
+    setAuthToken: React.Dispatch<React.SetStateAction<string>>,
+    reqAuthToken: (doc_id: number, ok_fn: React.Dispatch<React.SetStateAction<string>>) => void
 }
