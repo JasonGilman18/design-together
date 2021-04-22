@@ -1,23 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import { Socket } from 'phoenix';
+import React, { useEffect, useRef, useState } from 'react';
 import { DraggableEvent } from 'react-draggable';
 import {Position, ResizableDelta, Rnd} from 'react-rnd';
 import Shape from "../classes/shape";
+//import { connectToWebsocket } from '../services/ws_api_service';
 
 export default function DesignPage(props: any) {
 
     const [loading, setLoading] = useState<boolean>(true);
-    const [name, setName] = useState<string>("");
+    const socket = useRef<Socket>(new Socket(""));
     const [shapes, setShapes] = useState<Array<Shape>>([]);
 
     useEffect(() => {
         if(props.authToken !== "") {
             setLoading(false);
-            console.log(props.authToken);
+            //call  connect to socket, sending the token
+            //connectToWebsocketAndChannels(props.authToken, socket)
         }
         else {
             setLoading(true);
         }
     }, [props.authToken]);
+
+    useEffect(() => {
+        console.log(props.location);
+    }, []);
 
     function addRectangle() {
         const newShape = new Shape(1, 0, 0, 50, 100);
@@ -36,7 +43,6 @@ export default function DesignPage(props: any) {
             <>
                 <h1>Design Page</h1>
                 <h3>{props.openDesignName}</h3>
-                <h3>{name}</h3>
                 <button onClick={(e) => props.logout()}>logout</button>
                 <button onClick={(e) => addRectangle()}>Add Rectangle</button>
     

@@ -11,7 +11,7 @@ defmodule ApiWeb.Endpoint do
     encryption_salt: "qIosR92U"
   ]
 
-  socket "/socket", ApiWeb.UserSocket,
+  socket "/socket", ApiWeb.DesignSocket,
     websocket: true,
     longpoll: false
 

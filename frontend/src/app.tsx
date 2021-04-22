@@ -12,8 +12,10 @@ import {getAuthenticated} from './services/http_api_service';
 
 //pages =====================================================
 import LoginPage from './pages/login_page';
-import DashboardPage from './pages/dashboard_page';
-import DesignPage from './pages/design_page';
+
+//components ================================================
+import DashboardContainer from './components/DashboardContainer';
+import DesignContainer from './components/DesignContainer';
 
 
 type AppProps = {};
@@ -46,35 +48,30 @@ export default class App extends React.Component<AppProps, AppStates> {
         return (
             <Router>
                 <Switch>
-                    <Route exact path="/">
-                        {
-                            this.state.authenticated
-                                ? <Redirect to="/dashboard"/>
-                                : <LoginPage
-                                    setAuthenticatedStatus={this.setAuthenticatedStatus}
-                                  />
-                        }
-                    </Route>
-                    <Route path="/dashboard">
-                        {
-                            !this.state.authenticated
-                                ? <Redirect to="/"/>
-                                : <DashboardPage
-                                    setAuthenticatedStatus={this.setAuthenticatedStatus}
-                                    setAuthToken={this.setAuthToken}
-                                  />
-                        }
-                    </Route>
-                    <Route path="/design">
-                        {
-                            !this.state.authenticated
-                                ? <Redirect to="/"/>
-                                : <DesignPage
-                                    setAuthenticatedStatus={this.setAuthenticatedStatus}
-                                    authToken={this.state.authToken}
-                                  />
-                        }
-                    </Route>
+                    <Route exact path="/" children={() => (
+                        this.state.authenticated
+                            ? <Redirect to="/dashboard"/>
+                            : <LoginPage
+                                setAuthenticatedStatus={this.setAuthenticatedStatus}
+                            />
+                    )}/>
+                    <Route path="/dashboard" children={({location}) => (
+                        !this.state.authenticated
+                            ? <Redirect to="/"/>
+                            : <DashboardContainer
+                                setAuthenticatedStatus={this.setAuthenticatedStatus}
+                                setAuthToken={this.setAuthToken}
+                            />
+                    )}/>
+                    <Route path="/design" children={({location}) => (
+                        !this.state.authenticated
+                            ? <Redirect to="/"/>
+                            : <DesignContainer 
+                                location={location}
+                                setAuthenticatedStatus={this.setAuthenticatedStatus}
+                                authToken={this.state.authToken}
+                            />
+                    )}/>
                     <Redirect from="*" to="/"/>
                 </Switch>
             </Router>

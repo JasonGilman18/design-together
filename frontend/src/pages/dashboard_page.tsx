@@ -27,7 +27,17 @@ export default function DashboardPage(props: any) {
             <button onClick={(e) => logout(props.setAuthenticatedStatus)}>logout</button>
             {
                 documents.map((doc) => (
-                    <Link to="/design" onClick={(e) => reqAuthToken(doc.doc_id, props.setAuthToken)}>{doc.doc_name}</Link>
+                    <Link 
+                        to={{
+                            pathname: "/design",
+                            state: {
+                                doc_id: doc.doc_id
+                            }
+                        }} 
+                        onClick={(e) => reqAuthToken(doc.doc_id, props.setAuthToken)}
+                    >
+                        {doc.doc_name}
+                    </Link>
                 ))
             }
         </>
