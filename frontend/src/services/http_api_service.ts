@@ -52,7 +52,7 @@ export function postDocument(doc_name: string, ok_fn: React.Dispatch<React.SetSt
     });
 }
 
-export function reqAuthToken(doc_id: number, ok_fn: React.Dispatch<React.SetStateAction<string>>): void {
+export function reqAuthToken(doc_id: number, ok_fn: (authToken: string) => void): void {
     postAPI<{authToken: string}>('/token', {doc_id: doc_id}).then(res => {
         ok_fn(res.data.authToken);
     });

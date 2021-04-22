@@ -6,13 +6,10 @@ import {
     Route,
     Redirect
 } from 'react-router-dom';
-
 //services ==================================================
 import {getAuthenticated} from './services/http_api_service';
-
 //pages =====================================================
 import LoginPage from './pages/login_page';
-
 //components ================================================
 import DashboardContainer from './components/DashboardContainer';
 import DesignContainer from './components/DesignContainer';
