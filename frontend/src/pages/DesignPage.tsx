@@ -1,3 +1,5 @@
+import { Channel } from 'phoenix';
+import React from 'react';
 import {Position, ResizableDelta, Rnd} from 'react-rnd';
 import Shape from '../classes/shape';
 
@@ -12,7 +14,7 @@ export const DesignPage = (props: DesignPageProps) => (
             <>
                 <h1>Design Page</h1>
                 <button onClick={(e) => props.logout(props.setAuthenticated)}>logout</button>
-                <button onClick={(e) => props.addRectangle()}>Add Rectangle</button>
+                <button onClick={(e) => props.sendRectangle(props.channel)}>Add Rectangle</button>
     
                 <div style={{height: "500px", width: "500px"}}>
                     {
@@ -33,10 +35,11 @@ export const DesignPage = (props: DesignPageProps) => (
 );
 
 interface DesignPageProps {
+    channel: Channel | undefined,
     loading: boolean,
     shapes: Array<Shape>,
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
-    addRectangle: () => void,
+    sendRectangle: (channel: Channel | undefined) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     authToken: string
 }
