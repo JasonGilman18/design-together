@@ -1,36 +1,38 @@
-import { Socket } from "phoenix";
+import { Channel, Socket } from "phoenix";
 import { useEffect, useRef, useState } from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
 import { logout } from "../services/http_api_service";
+import { connectToDocument, subscribeToRectanlge, sendRectangle } from "../services/ws_api_service";
 
 export default function DesignContainer(props: DesignContainerProps) {
 
+    const [channel, setChannel] = useState<Channel>();
     const [loading, setLoading] = useState<boolean>(true);
-    const socket = useRef<Socket>(new Socket(""));
     const [shapes, setShapes] = useState<Array<Shape>>([]);
 
     useEffect(() => {
         if(props.authToken !== "") {
             setLoading(false);
-            //call  connect to socket, sending the token
-            //connectToWebsocketAndChannels(props.authToken, socket)
+            connectToDocument(props.authToken, props.location.state.doc_id, setChannel);
         }
         else {
             setLoading(true);
         }
     }, [props.authToken]);
 
-    function addRectangle() {
-        const newShape = new Shape(1, 0, 0, 50, 100);
-        setShapes([...shapes, newShape]);
-    }
+    useEffect(() => {
+        if(channel !== undefined) {
+            subscribeToRectanlge(channel, setShapes);
+        }
+    }, [channel]);
 
     return (
         <DesignPage
             loading={loading}
             shapes={shapes}
-            addRectangle={addRectangle}
+            channel={channel}
+            sendRectangle={sendRectangle}
             logout={logout}
             setAuthenticated={props.setAuthenticated}
             authToken={props.authToken}
