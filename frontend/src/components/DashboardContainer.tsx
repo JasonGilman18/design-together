@@ -30,13 +30,11 @@ export default function DashboardContainer(props: DashboardContainerProps) {
             setDocuments={setDocuments}
             createDocument={createDocument}
             setAuthenticatedStatus={props.setAuthenticated}
-            setAuthToken={props.setAuthToken}
             reqAuthToken={reqAuthToken}
         />
     );   
 }
 
 interface DashboardContainerProps {
-    setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
-    setAuthToken: React.Dispatch<React.SetStateAction<string>>
+    setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }

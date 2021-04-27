@@ -15,8 +15,7 @@ export const DashboardPage = (props: DashboardPageProps) => (
                         state: {
                             doc_id: doc.doc_id
                         }
-                    }} 
-                    onClick={(e) => props.reqAuthToken(doc.doc_id, props.setAuthToken)}
+                    }}
                 >
                     {doc.doc_name}
                 </Link>
@@ -33,6 +32,5 @@ interface DashboardPageProps {
     setDocuments: React.Dispatch<React.SetStateAction<{doc_id: number, doc_name: string}[]>>,
     createDocument: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
     setAuthenticatedStatus: React.Dispatch<React.SetStateAction<boolean>>,
-    setAuthToken: React.Dispatch<React.SetStateAction<string>>,
     reqAuthToken: (doc_id: number, ok_fn: React.Dispatch<React.SetStateAction<string>>) => void
 }

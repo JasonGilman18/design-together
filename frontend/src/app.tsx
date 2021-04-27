@@ -16,7 +16,6 @@ import DesignContainer from './components/DesignContainer';
 export default function App() {
 
     const [authenticated, setAuthenticated] = useState<boolean>(false);
-    const [authToken, setAuthToken] = useState<string>("");
 
     useEffect(() => {
         getAuthenticated(setAuthenticated);
@@ -37,7 +36,6 @@ export default function App() {
                         ? <Redirect to="/"/>
                         : <DashboardContainer
                             setAuthenticated={setAuthenticated}
-                            setAuthToken={setAuthToken}
                         />
                 )}/>
                 <Route path="/design" children={({location}) => (
@@ -46,7 +44,6 @@ export default function App() {
                         : <DesignContainer 
                             location={location}
                             setAuthenticated={setAuthenticated}
-                            authToken={authToken}
                         />
                 )}/>
                 <Redirect from="*" to="/"/>
