@@ -17,9 +17,11 @@ defmodule ApiWeb.DesignSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(_params, socket, _connect_info) do
-    IO.puts("socket connected to")
-    {:ok, socket}
+  def connect(%{"authToken" => authToken}, socket, _connect_info) do
+    case Phoenix.Token.verify(socket, "auth_token", authToken) do
+      {:ok, member} ->  {:ok, assign(socket, :current_member, member)}
+      {:error, _reason} -> :error
+    end
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

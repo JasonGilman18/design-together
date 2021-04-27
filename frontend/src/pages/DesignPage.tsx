@@ -1,6 +1,7 @@
 import { Channel } from 'phoenix';
 import React from 'react';
 import {Position, ResizableDelta, Rnd} from 'react-rnd';
+import { Link } from 'react-router-dom';
 import Shape from '../classes/shape';
 
 export const DesignPage = (props: DesignPageProps) => (
@@ -15,7 +16,15 @@ export const DesignPage = (props: DesignPageProps) => (
                 <h1>Design Page</h1>
                 <button onClick={(e) => props.logout(props.setAuthenticated)}>logout</button>
                 <button onClick={(e) => props.sendRectangle(props.channel)}>Add Rectangle</button>
-    
+                <Link 
+                    to={{
+                        pathname: "/dashboard"
+                    }} 
+                    //onClick={(e) => props.resetDesign}
+                >
+                    Dashboard
+                </Link>
+
                 <div style={{height: "500px", width: "500px"}}>
                     {
                         props.shapes.map((shape) => (
@@ -40,6 +49,5 @@ interface DesignPageProps {
     shapes: Array<Shape>,
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
     sendRectangle: (channel: Channel | undefined) => void,
-    setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
-    authToken: string
+    setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }
