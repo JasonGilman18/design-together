@@ -15,7 +15,7 @@ export const DesignPage = (props: DesignPageProps) => (
             <>
                 <h1>Design Page</h1>
                 <button onClick={(e) => props.logout(props.setAuthenticated)}>logout</button>
-                <button onClick={(e) => props.sendRectangle(props.channel)}>Add Rectangle</button>
+                <button onClick={(e) => props.sendShape(props.channel, props.docId, 50, 100, 0, 0)}>Add Rectangle</button>
                 <Link 
                     to={{
                         pathname: "/dashboard"
@@ -25,15 +25,16 @@ export const DesignPage = (props: DesignPageProps) => (
                     Dashboard
                 </Link>
 
-                <div style={{height: "500px", width: "500px"}}>
+                <div style={{height: "500px", width: "500px", backgroundColor: "green"}}>
                     {
                         props.shapes.map((shape) => (
                             <Rnd
+                                key={shape.id}
                                 dragGrid={[10,10]}
                                 resizeGrid={[10,10]}
                                 bounds="parent"
                                 size={{height: shape.height, width: shape.width}}
-                                //position={{x: shape.positionX, y: shape.positionY}}
+                                position={{x: shape.position_x, y: shape.position_y}}
                             >
                                 <div style={{height: "100%", width: "100%", backgroundColor: "black"}}/>
                             </Rnd>
@@ -47,7 +48,8 @@ interface DesignPageProps {
     channel: Channel | undefined,
     loading: boolean,
     shapes: Array<Shape>,
+    docId: number,
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
-    sendRectangle: (channel: Channel | undefined) => void,
+    sendShape: (channel: Channel | undefined, documentId: number, height: number, width: number, xPosition: number, yPosition: number) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }

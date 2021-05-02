@@ -1,9 +1,9 @@
-import { Channel, Socket } from "phoenix";
-import { useEffect, useRef, useState } from "react";
+import { Channel } from "phoenix";
+import { useEffect, useState } from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
 import { logout, reqAuthToken } from "../services/http_api_service";
-import { connectToDocument, subscribeToShape, sendRectangle } from "../services/ws_api_service";
+import { connectToDocument, subscribeToShape, sendShape } from "../services/ws_api_service";
 
 export default function DesignContainer(props: DesignContainerProps) {
 
@@ -37,7 +37,8 @@ export default function DesignContainer(props: DesignContainerProps) {
             loading={loading}
             shapes={shapes}
             channel={channel}
-            sendRectangle={sendRectangle}
+            docId={props.location.state.doc_id}
+            sendShape={sendShape}
             logout={logout}
             setAuthenticated={props.setAuthenticated}
         />

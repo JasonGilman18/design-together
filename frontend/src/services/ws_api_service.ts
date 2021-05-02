@@ -11,8 +11,8 @@ export function connectToDocument(authToken: string, doc_id: number, ok_fn: Reac
 }
 
 export function subscribeToShape(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
-    channel?.on("new_rectangle", () => {
-        ok_fn(prevShapes => [...prevShapes, new Shape(1, 0, 0, 50, 100)]);
+    channel?.on("new_shape", (newShape: any) => {
+        ok_fn(prevShapes => [...prevShapes, newShape]);
     });
 
     channel?.on("shape_resize", () => {
@@ -24,6 +24,6 @@ export function subscribeToShape(channel: Channel | undefined, ok_fn: React.Disp
     });
 }
 
-export function sendRectangle(channel: Channel | undefined) {
-    channel?.push("new_rectangle", {}, 10000)
+export function sendShape(channel: Channel | undefined, documentId: number, height: number, width: number, xPosition: number, yPosition: number) {
+    channel?.push("new_shape", {document_id: documentId, height: height, width: width, x_position: xPosition, y_position: yPosition}, 10000);
 }
