@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
 import { logout, reqAuthToken } from "../services/http_api_service";
-import { connectToDocument, subscribeToRectanlge, sendRectangle } from "../services/ws_api_service";
+import { connectToDocument, subscribeToShape, sendRectangle } from "../services/ws_api_service";
 
 export default function DesignContainer(props: DesignContainerProps) {
 
@@ -28,7 +28,7 @@ export default function DesignContainer(props: DesignContainerProps) {
 
     useEffect(() => {
         if(channel !== undefined) {
-            subscribeToRectanlge(channel, setShapes);
+            subscribeToShape(channel, setShapes);
         }
     }, [channel]);
 

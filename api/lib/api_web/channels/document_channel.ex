@@ -15,4 +15,14 @@ defmodule ApiWeb.DocumentChannel do
     {:noreply, socket}
   end
 
+  def handle_in("shape_movement", %{xMovement: xMovement, yMovement: yMovement}, socket) do
+    broadcast!(socket, "shape_movement", %{xMovement: xMovement, yMovement: yMovement})
+    {:noreply, socket}
+  end
+
+  def handle_in("shape_resize", %{height: height, width: width}, socket) do
+    broadcast!(socket, "shape_resize", %{height: height, width: width})
+    {:noreply, socket}
+  end
+
 end

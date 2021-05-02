@@ -10,9 +10,17 @@ export function connectToDocument(authToken: string, doc_id: number, ok_fn: Reac
     ok_fn(new_channel);
 }
 
-export function subscribeToRectanlge(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
+export function subscribeToShape(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
     channel?.on("new_rectangle", () => {
         ok_fn(prevShapes => [...prevShapes, new Shape(1, 0, 0, 50, 100)]);
+    });
+
+    channel?.on("shape_resize", () => {
+
+    });
+
+    channel?.on("shape_movement", () => {
+        
     });
 }
 
