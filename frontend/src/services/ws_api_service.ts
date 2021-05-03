@@ -11,7 +11,7 @@ export function connectToDocument(authToken: string, doc_id: number, ok_fn: Reac
 }
 
 export function subscribeToShape(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
-    channel?.on("new_shape", (newShape: any) => {
+    channel?.on("new_shape", (newShape: Shape) => {
         ok_fn(prevShapes => [...prevShapes, newShape]);
     });
 
