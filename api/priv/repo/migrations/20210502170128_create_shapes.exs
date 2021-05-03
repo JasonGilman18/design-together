@@ -5,8 +5,8 @@ defmodule Api.Repo.Migrations.CreateShapes do
     create table(:shapes) do
       add :height, :integer
       add :width, :integer
-      add :x_position, :integer
-      add :y_position, :integer
+      add :position_x, :integer
+      add :position_y, :integer
       add :document_id, references(:documents, on_delete: :nothing)
 
       timestamps()

@@ -1,5 +1,4 @@
-export default class Shape
-{
+export default class Shape {
     id: number;
     document_id: number;
     position_x: number;
@@ -20,8 +19,8 @@ export default class Shape
         return {
             topLeft: {x: this.position_x, y: this.position_y},
             topRight: {x: this.position_x + this.width, y: this.position_y},
-            bottomLeft: {x: this.position_x + this.height, y: this.position_y},
-            bottomRight: {x: this.position_x + this.height, y: this.position_y + this.width}
+            bottomLeft: {x: this.position_x, y: this.position_y + this.height},
+            bottomRight: {x: this.position_x + this.width, y: this.position_y + this.height}
         }
     }
 

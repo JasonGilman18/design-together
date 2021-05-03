@@ -27,13 +27,8 @@ export const DesignPage = (props: DesignPageProps) => (
                 <canvas 
                     ref={props.canvas}
                     style={{backgroundColor: "green"}}
-                    onMouseDown={(e) => props.selectShape(e, props.shapes)}
+                    onMouseDown={(e) => props.selectShape(e, props.setShapes)}
                 >
-                    {
-                        props.shapes.map((shape) => {
-                            props.drawRectangle(props.canvas, shape);
-                        })
-                    }
                 </canvas>
             </>
 );
@@ -44,9 +39,9 @@ interface DesignPageProps {
     shapes: Array<Shape>,
     docId: number,
     canvas: React.MutableRefObject<HTMLCanvasElement>,
-    drawRectangle: (canvas: React.MutableRefObject<HTMLCanvasElement>, shape: Shape) => void,
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
     sendShape: (channel: Channel | undefined, documentId: number, height: number, width: number, xPosition: number, yPosition: number) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
-    selectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, shapes: Shape[]) => void
+    selectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void,
+    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
 }

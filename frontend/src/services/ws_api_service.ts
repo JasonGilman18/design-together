@@ -12,7 +12,8 @@ export function connectToDocument(authToken: string, doc_id: number, ok_fn: Reac
 
 export function subscribeToShape(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
     channel?.on("new_shape", (newShape: Shape) => {
-        ok_fn(prevShapes => [...prevShapes, newShape]);
+        const shape = new Shape(newShape.id, newShape.document_id, newShape.position_x, newShape.position_y, newShape.height, newShape.width);
+        ok_fn(prevShapes => [...prevShapes, shape]);
     });
 
     channel?.on("shape_resize", () => {
@@ -24,6 +25,6 @@ export function subscribeToShape(channel: Channel | undefined, ok_fn: React.Disp
     });
 }
 
-export function sendShape(channel: Channel | undefined, documentId: number, height: number, width: number, xPosition: number, yPosition: number) {
-    channel?.push("new_shape", {document_id: documentId, height: height, width: width, x_position: xPosition, y_position: yPosition}, 10000);
+export function sendShape(channel: Channel | undefined, documentId: number, height: number, width: number, position_x: number, position_y: number) {
+    channel?.push("new_shape", {document_id: documentId, height: height, width: width, position_x: position_x, position_y: position_y}, 10000);
 }

@@ -39,6 +39,13 @@ export default function DesignContainer(props: DesignContainerProps) {
         }
     }, [channel]);
 
+    useEffect(() => {
+        canvas.current.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
+        shapes.forEach((shape) => {
+            drawRectangle(canvas, shape);
+        });
+    }, [shapes]);
+
     return (
         <DesignPage
             loading={loading}
@@ -46,7 +53,7 @@ export default function DesignContainer(props: DesignContainerProps) {
             channel={channel}
             canvas={canvas}
             docId={props.location.state.doc_id}
-            drawRectangle={drawRectangle}
+            setShapes={setShapes}
             sendShape={sendShape}
             logout={logout}
             setAuthenticated={props.setAuthenticated}

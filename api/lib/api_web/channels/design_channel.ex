@@ -20,8 +20,8 @@ defmodule ApiWeb.DesignChannel do
           document_id: shape.document_id,
           height: shape.height,
           width: shape.width,
-          x_position: shape.x_position,
-          y_position: shape.y_position})
+          position_x: shape.position_x,
+          position_y: shape.position_y})
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
     end
