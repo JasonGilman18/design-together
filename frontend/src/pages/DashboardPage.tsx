@@ -9,7 +9,8 @@ export const DashboardPage = (props: DashboardPageProps) => (
         <button onClick={(e) => props.logout(props.setAuthenticatedStatus)}>logout</button>
         {
             props.documents.map((doc: {doc_id: number, doc_name: string}) => (
-                <Link 
+                <Link
+                    key={doc.doc_id}
                     to={{
                         pathname: "/design",
                         state: {

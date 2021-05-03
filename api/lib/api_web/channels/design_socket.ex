@@ -2,7 +2,7 @@ defmodule ApiWeb.DesignSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "document:*", ApiWeb.DocumentChannel
+  channel "document:*", ApiWeb.DesignChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
