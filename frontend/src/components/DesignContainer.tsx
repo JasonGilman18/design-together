@@ -4,7 +4,7 @@ import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
 import {deselectShape, drawRectangle, moveShape, selectShape} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
-import { connectToDocument, subscribeToShape, sendShape } from "../services/ws_api_service";
+import { connectToDocument, subscribeToShape, sendShape, updateShape } from "../services/ws_api_service";
 
 export default function DesignContainer(props: DesignContainerProps) {
 
@@ -63,6 +63,7 @@ export default function DesignContainer(props: DesignContainerProps) {
             moveShape={moveShape}
             setMouseDown={setMouseDown}
             deselectShape={deselectShape}
+            updateShape={updateShape}
         />
     );
 }

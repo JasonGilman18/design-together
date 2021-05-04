@@ -27,14 +27,25 @@ defmodule ApiWeb.DesignChannel do
     end
   end
 
-  def handle_in("shape_movement", %{xMovement: xMovement, yMovement: yMovement}, socket) do
-    broadcast!(socket, "shape_movement", %{xMovement: xMovement, yMovement: yMovement})
-    {:noreply, socket}
-  end
-
-  def handle_in("shape_resize", %{height: height, width: width}, socket) do
-    broadcast!(socket, "shape_resize", %{height: height, width: width})
-    {:noreply, socket}
+  def handle_in("update_shape", shape, socket) do
+    updateShape = Design.get_shape!(shape["id"])
+    case Design.update_shape(updateShape, %{
+      height: shape["height"],
+      width: shape["width"],
+      position_x: shape["position_x"],
+      position_y: shape["position_y"]})
+    do
+      {:ok, shape} ->
+        broadcast!(socket, "update_shape", %{
+          id: shape.id,
+          document_id: shape.document_id,
+          height: shape.height,
+          width: shape.width,
+          position_x: shape.position_x,
+          position_y: shape.position_y})
+        {:noreply, socket}
+      {:error, _errors} -> {:noreply, socket}
+    end
   end
 
 end

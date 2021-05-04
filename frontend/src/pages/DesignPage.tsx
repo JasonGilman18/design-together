@@ -32,7 +32,7 @@ export const DesignPage = (props: DesignPageProps) => (
                     }}
                     onMouseMove={(e) => {
                         if(props.mouseDown)
-                            props.moveShape(e, props.setShapes);
+                            props.moveShape(e, props.shapes, props.updateShape, props.channel);
                     }}
                     onMouseUp={(e) => {
                         props.deselectShape(e, props.setShapes);
@@ -55,7 +55,8 @@ interface DesignPageProps {
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     selectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void,
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
-    moveShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void,
+    moveShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, shapes: Shape[], updateShape: (channel: Channel | undefined, shape: Shape) => void, channel: Channel | undefined) => void,
     setMouseDown: React.Dispatch<React.SetStateAction<boolean>>,
-    deselectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void
+    deselectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void,
+    updateShape: (channel: Channel | undefined, shape: Shape) => void
 }
