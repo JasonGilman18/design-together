@@ -2,7 +2,7 @@ import { Channel } from "phoenix";
 import React from "react";
 import Shape from "../classes/shape";
 
-export function drawRectangle(canvas: React.MutableRefObject<HTMLCanvasElement>, shape: Shape) {
+export function newShape(canvas: React.MutableRefObject<HTMLCanvasElement>, shape: Shape) {
     const context = canvas.current.getContext("2d");
     if(context !== null) {
         context.beginPath();

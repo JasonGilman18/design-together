@@ -1,10 +1,17 @@
-import { Channel } from "phoenix";
-import { useEffect, useRef, useState } from "react";
+import {Channel} from "phoenix";
+import {useEffect, useRef, useState} from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
-import {deselectShape, drawRectangle, moveShape, selectShape} from '../services/design_service';
+import {deselectShape, 
+    newShape, 
+    moveShape, 
+    selectShape} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
-import { connectToDocument, subscribeToShape, sendShape, updateShape } from "../services/ws_api_service";
+import {connectToDocumentChannel, 
+    newShapeToChannel, 
+    newShapeFromChannel, 
+    updateShapeToChannel, 
+    updateShapeFromChannel} from "../services/ws_api_service";
 
 export default function DesignContainer(props: DesignContainerProps) {
 
@@ -22,7 +29,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     useEffect(() => {
         if(authToken !== "" && channel === undefined) {
             setLoading(false);
-            connectToDocument(authToken, props.location.state.doc_id, setChannel);
+            connectToDocumentChannel(authToken, props.location.state.doc_id, setChannel);
         }
         else {
             setLoading(true);
@@ -36,14 +43,15 @@ export default function DesignContainer(props: DesignContainerProps) {
 
     useEffect(() => {
         if(channel !== undefined) {
-            subscribeToShape(channel, setShapes);
+            newShapeFromChannel(channel, setShapes);
+            updateShapeFromChannel(channel, setShapes);
         }
     }, [channel]);
 
     useEffect(() => {
         canvas.current.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
         shapes.forEach((shape) => {
-            drawRectangle(canvas, shape);
+            newShape(canvas, shape);
         });
     }, [shapes]);
 
@@ -55,15 +63,18 @@ export default function DesignContainer(props: DesignContainerProps) {
             canvas={canvas}
             mouseDown={mouseDown}
             docId={props.location.state.doc_id}
+
             setShapes={setShapes}
-            sendShape={sendShape}
             logout={logout}
             setAuthenticated={props.setAuthenticated}
+
             selectShape={selectShape}
             moveShape={moveShape}
             setMouseDown={setMouseDown}
             deselectShape={deselectShape}
-            updateShape={updateShape}
+
+            updateShapeToChannel={updateShapeToChannel}
+            newShapeToChannel={newShapeToChannel}
         />
     );
 }

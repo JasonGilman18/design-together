@@ -2,7 +2,7 @@ import {Channel, Socket} from 'phoenix';
 import React from 'react';
 import Shape from '../classes/shape';
 
-export function connectToDocument(authToken: string, doc_id: number, ok_fn: React.Dispatch<React.SetStateAction<Channel | undefined>>) {
+export function connectToDocumentChannel(authToken: string, doc_id: number, ok_fn: React.Dispatch<React.SetStateAction<Channel | undefined>>) {
     var socket = new Socket('ws://localhost:4000/socket', {params: {authToken: authToken}});
     socket.connect();
     var new_channel = socket.channel('document:'+doc_id, {authToken: authToken});
@@ -10,12 +10,18 @@ export function connectToDocument(authToken: string, doc_id: number, ok_fn: Reac
     ok_fn(new_channel);
 }
 
-export function subscribeToShape(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
+export function newShapeFromChannel(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
     channel?.on("new_shape", (responseShape: Shape) => {
         const newShape = new Shape(responseShape.id, responseShape.document_id, responseShape.position_x, responseShape.position_y, responseShape.height, responseShape.width);
         ok_fn(prevShapes => [...prevShapes, newShape]);
     });
+}
 
+export function newShapeToChannel(channel: Channel | undefined, documentId: number, height: number, width: number, position_x: number, position_y: number) {
+    channel?.push("new_shape", {document_id: documentId, height: height, width: width, position_x: position_x, position_y: position_y}, 10000);
+}
+
+export function updateShapeFromChannel(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
     channel?.on("update_shape", (responseShape: Shape) => {
         ok_fn(prevShapes => {
             const shapesCopyVal = [...prevShapes];
@@ -32,10 +38,6 @@ export function subscribeToShape(channel: Channel | undefined, ok_fn: React.Disp
     });
 }
 
-export function sendShape(channel: Channel | undefined, documentId: number, height: number, width: number, position_x: number, position_y: number) {
-    channel?.push("new_shape", {document_id: documentId, height: height, width: width, position_x: position_x, position_y: position_y}, 10000);
-}
-
-export function updateShape(channel: Channel | undefined, shape: Shape) {
+export function updateShapeToChannel(channel: Channel | undefined, shape: Shape) {
     channel?.push("update_shape", {id: shape.id, document_id: shape.document_id, height: shape.height, width: shape.width, position_x: shape.position_x, position_y: shape.position_y});
 }
