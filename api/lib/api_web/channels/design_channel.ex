@@ -36,7 +36,7 @@ defmodule ApiWeb.DesignChannel do
       position_y: shape["position_y"]})
     do
       {:ok, shape} ->
-        broadcast!(socket, "update_shape", %{
+        broadcast_from!(socket, "update_shape", %{
           id: shape.id,
           document_id: shape.document_id,
           height: shape.height,

@@ -41,20 +41,11 @@ export function deselectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
     });
 }
 
-export function moveShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, shapes: Shape[], updateShape: (channel: Channel | undefined, shape: Shape) => void, channel: Channel | undefined) {
+export function moveShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, updateShape: (channel: Channel | undefined, shape: Shape) => void, channel: Channel | undefined) {
     const canvasPos = e.currentTarget.getBoundingClientRect();
     const mouseXRelativeToCanvas = e.clientX - canvasPos.left;
     const mouseYRelativeToCanvas = e.clientY - canvasPos.top;
 
-    shapes.forEach((shape) => {
-        if(shape.withinBounds(mouseXRelativeToCanvas, mouseYRelativeToCanvas)) {
-            shape.position_x += e.movementX;
-            shape.position_y += e.movementY;
-            updateShape(channel, shape);
-        }
-    });
-
-    /*
     setShapes(prevShapes => {
         const shapeValCopy = [...prevShapes];
         var updated = false;
@@ -68,5 +59,4 @@ export function moveShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, sh
         });
         return updated ? shapeValCopy : prevShapes;
     });
-    */
 }
