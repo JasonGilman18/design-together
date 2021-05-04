@@ -15,7 +15,6 @@ export const DesignPage = (props: DesignPageProps) => (
                 <h1>Design Page</h1>
                 <button onClick={(e) => props.logout(props.setAuthenticated)}>logout</button>
                 <button onClick={(e) => props.sendShape(props.channel, props.docId, 50, 100, 0, 0)}>Add Rectangle</button>
-                <button onClick={(e) => props.sendShape(props.channel, props.docId, 50, 100, 200, 0)}>Add Rectangle2</button>
                 <Link 
                     to={{
                         pathname: "/dashboard"
@@ -27,7 +26,18 @@ export const DesignPage = (props: DesignPageProps) => (
                 <canvas 
                     ref={props.canvas}
                     style={{backgroundColor: "green"}}
-                    onMouseDown={(e) => props.selectShape(e, props.setShapes)}
+                    onMouseDown={(e) => {
+                        props.selectShape(e, props.setShapes);
+                        props.setMouseDown(true);
+                    }}
+                    onMouseMove={(e) => {
+                        if(props.mouseDown)
+                            props.moveShape(e, props.setShapes);
+                    }}
+                    onMouseUp={(e) => {
+                        props.deselectShape(e, props.setShapes);
+                        props.setMouseDown(false);
+                    }}
                 >
                 </canvas>
             </>
@@ -38,10 +48,14 @@ interface DesignPageProps {
     loading: boolean,
     shapes: Array<Shape>,
     docId: number,
+    mouseDown: boolean,
     canvas: React.MutableRefObject<HTMLCanvasElement>,
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
     sendShape: (channel: Channel | undefined, documentId: number, height: number, width: number, xPosition: number, yPosition: number) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     selectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void,
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
+    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+    moveShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void,
+    setMouseDown: React.Dispatch<React.SetStateAction<boolean>>,
+    deselectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void
 }

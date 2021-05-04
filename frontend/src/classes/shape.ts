@@ -5,6 +5,7 @@ export default class Shape {
     position_y: number;
     height: number;
     width: number;
+    selected: boolean;
 
     public constructor(shapeId: number, documentId: number, positionX: number, positionY: number, height: number, width: number) {
         this.id = shapeId;
@@ -13,6 +14,7 @@ export default class Shape {
         this.position_y = positionY;
         this.height = height;
         this.width = width;
+        this.selected = false;
     }
 
     public getBounds(): {topLeft: {x: number, y: number}, topRight: {x: number, y: number}, bottomLeft: {x: number, y: number}, bottomRight: {x: number, y: number}} {

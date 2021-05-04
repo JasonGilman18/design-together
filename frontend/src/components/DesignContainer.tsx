@@ -2,7 +2,7 @@ import { Channel } from "phoenix";
 import { useEffect, useRef, useState } from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
-import {drawRectangle, selectShape} from '../services/design_service';
+import {deselectShape, drawRectangle, moveShape, selectShape} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
 import { connectToDocument, subscribeToShape, sendShape } from "../services/ws_api_service";
 
@@ -12,6 +12,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     const [channel, setChannel] = useState<Channel>();
     const [loading, setLoading] = useState<boolean>(true);
     const [shapes, setShapes] = useState<Array<Shape>>([]);
+    const [mouseDown, setMouseDown] = useState<boolean>(false);
     const canvas = useRef<HTMLCanvasElement>(document.createElement("canvas"));
 
     useEffect(() => {
@@ -52,12 +53,16 @@ export default function DesignContainer(props: DesignContainerProps) {
             shapes={shapes}
             channel={channel}
             canvas={canvas}
+            mouseDown={mouseDown}
             docId={props.location.state.doc_id}
             setShapes={setShapes}
             sendShape={sendShape}
             logout={logout}
             setAuthenticated={props.setAuthenticated}
             selectShape={selectShape}
+            moveShape={moveShape}
+            setMouseDown={setMouseDown}
+            deselectShape={deselectShape}
         />
     );
 }

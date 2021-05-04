@@ -21,8 +21,37 @@ export function selectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, 
         var updated = false;
         shapeValCopy.forEach((shape) => {
             if(shape.withinBounds(mouseXRelativeToCanvas, mouseYRelativeToCanvas)) {
-                shape.width = 200;
-                shape.height = 100;
+                shape.selected = true;
+                updated = true;
+            }
+        });
+        return updated ? shapeValCopy : prevShapes;
+    });
+}
+
+export function deselectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) {
+    setShapes(prevShapes => {
+        const shapeValCopy = [...prevShapes];
+        shapeValCopy.forEach((shape) => {
+            if(shape.selected)
+                shape.selected = false;
+        });
+        return shapeValCopy;
+    });
+}
+
+export function moveShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) {
+    const canvasPos = e.currentTarget.getBoundingClientRect();
+    const mouseXRelativeToCanvas = e.clientX - canvasPos.left;
+    const mouseYRelativeToCanvas = e.clientY - canvasPos.top;
+
+    setShapes(prevShapes => {
+        const shapeValCopy = [...prevShapes];
+        var updated = false;
+        shapeValCopy.forEach((shape) => {
+            if(shape.withinBounds(mouseXRelativeToCanvas, mouseYRelativeToCanvas)) {
+                shape.position_x += e.movementX;
+                shape.position_y += e.movementY;
                 updated = true;
             }
         });
