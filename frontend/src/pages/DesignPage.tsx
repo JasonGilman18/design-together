@@ -49,7 +49,7 @@ interface DesignPageProps {
     shapes: Array<Shape>,
     docId: number,
     mouseDown: boolean,
-    canvas: React.MutableRefObject<HTMLCanvasElement>,
+    canvas: React.MutableRefObject<HTMLCanvasElement | null>,
     
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,

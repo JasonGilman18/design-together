@@ -2,12 +2,18 @@ import {Channel, Socket} from 'phoenix';
 import React from 'react';
 import Shape from '../classes/shape';
 
-export function connectToDocumentChannel(authToken: string, doc_id: number, ok_fn: React.Dispatch<React.SetStateAction<Channel | undefined>>) {
+export function connectToDocumentChannel(authToken: string, doc_id: number, ok_fn_channel: React.Dispatch<React.SetStateAction<Channel | undefined>>, ok_fn_socket: React.Dispatch<React.SetStateAction<Socket | undefined>>) {
     var socket = new Socket('ws://localhost:4000/socket', {params: {authToken: authToken}});
     socket.connect();
     var new_channel = socket.channel('document:'+doc_id, {authToken: authToken});
     new_channel.join();
-    ok_fn(new_channel);
+    ok_fn_channel(new_channel);
+    ok_fn_socket(socket);
+}
+
+export function disconnectFromDocumentChannel(channel: Channel | undefined, socket: Socket | undefined) {
+    channel?.leave();
+    socket?.disconnect();
 }
 
 export function newShapeFromChannel(channel: Channel | undefined, ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>) {
