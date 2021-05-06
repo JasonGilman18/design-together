@@ -1,4 +1,4 @@
-import {Channel} from "phoenix";
+import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
@@ -7,7 +7,8 @@ import {deselectShape,
     moveShape, 
     selectShape} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
-import {connectToDocumentChannel, 
+import {connectToDocumentChannel,
+    disconnectFromDocumentChannel,
     newShapeToChannel, 
     newShapeFromChannel, 
     updateShapeToChannel, 
@@ -17,28 +18,37 @@ export default function DesignContainer(props: DesignContainerProps) {
 
     const [authToken, setAuthToken] = useState<string>("");
     const [channel, setChannel] = useState<Channel>();
+    const [socket, setSocket] = useState<Socket>();
     const [loading, setLoading] = useState<boolean>(true);
     const [shapes, setShapes] = useState<Array<Shape>>([]);
     const [mouseDown, setMouseDown] = useState<boolean>(false);
-    const canvas = useRef<HTMLCanvasElement>(document.createElement("canvas"));
+    const canvas = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         reqAuthToken(props.location.state.doc_id, setAuthToken);
+        return function cleanupAuthToken() {
+            setAuthToken("");
+        };
     }, []);
 
     useEffect(() => {
         if(authToken !== "" && channel === undefined) {
             setLoading(false);
-            connectToDocumentChannel(authToken, props.location.state.doc_id, setChannel);
+            connectToDocumentChannel(authToken, props.location.state.doc_id, setChannel, setSocket);
         }
         else {
             setLoading(true);
         }
+        return function cleanupDocumentConnection() {
+            disconnectFromDocumentChannel(channel, socket);
+        };
     }, [authToken]);
 
     useEffect(() => {
+        if(canvas.current !== null && canvas.current !== undefined) {
             canvas.current.width = 500;
             canvas.current.height = 500;
+        }
     }, [loading]);
 
     useEffect(() => {
@@ -49,7 +59,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     }, [channel]);
 
     useEffect(() => {
-        canvas.current.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
+        canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
         shapes.forEach((shape) => {
             newShape(canvas, shape);
         });

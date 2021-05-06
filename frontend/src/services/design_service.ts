@@ -2,9 +2,9 @@ import { Channel } from "phoenix";
 import React from "react";
 import Shape from "../classes/shape";
 
-export function newShape(canvas: React.MutableRefObject<HTMLCanvasElement>, shape: Shape) {
-    const context = canvas.current.getContext("2d");
-    if(context !== null) {
+export function newShape(canvas: React.MutableRefObject<HTMLCanvasElement | null>, shape: Shape) {
+    const context = canvas.current?.getContext("2d");
+    if(context !== null && context !== undefined) {
         context.beginPath();
         context.fillStyle = "black";
         context.rect(shape.position_x, shape.position_y, shape.width, shape.height);
