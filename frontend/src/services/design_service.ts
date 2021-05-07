@@ -23,13 +23,20 @@ export function selectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
         const shapeValCopy = [...prevShapes];
         var updated = false;
         shapeValCopy.forEach((shape) => {
+            shape.selected = false;
+        });
+        shapeValCopy.forEach((shape) => {
             if(shape.withinBounds(mouseXRelativeToCanvas, mouseYRelativeToCanvas)) {
                 shape.selected = true;
                 updated = true;
-                displaySelectionOnCanvas(canvas, shape);
             }
         });
-        return updated ? shapeValCopy : prevShapes;
+        if(!updated) {
+            shapeValCopy.forEach((shape) => {
+                shape.selected = false;
+            });
+        }
+        return shapeValCopy;
     });
 }
 
