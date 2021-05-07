@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
 import {deselectShape, 
-    newShape, 
+    displayShapes, 
     moveShape, 
     selectShape} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
@@ -61,7 +61,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     useEffect(() => {
         canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
         shapes.forEach((shape) => {
-            newShape(canvas, shape);
+            displayShapes(canvas, shape);
         });
     }, [shapes]);
 
