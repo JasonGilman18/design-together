@@ -29,7 +29,8 @@ export const DesignPage = (props: DesignPageProps) => (
                     ref={props.canvas}
                     style={{backgroundColor: "green"}}
                     onMouseDown={(e) => {
-                        props.selectShape(e, props.canvas, props.setShapes);
+                        props.mouseDownOnCanvas(e, props.canvas, props.setShapes);
+                        //props.selectShape(e, props.canvas, props.setShapes);
                         props.setMouseDown(true);
                     }}
                     onMouseMove={(e) => {
@@ -66,7 +67,8 @@ interface DesignPageProps {
         channel: Channel | undefined
     ) => void,
     setMouseDown: React.Dispatch<React.SetStateAction<boolean>>,
-    deselectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, 
+    mouseDownOnCanvas: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+        canvas: React.MutableRefObject<HTMLCanvasElement | null>,
         setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
     ) => void,
     

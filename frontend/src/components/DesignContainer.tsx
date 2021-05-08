@@ -2,8 +2,8 @@ import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
-import {deselectShape, 
-    displayShapes, 
+import {displayShapesOnCanvas,
+    mouseDownOnCanvas, 
     moveShape, 
     selectShape} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
@@ -61,7 +61,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     useEffect(() => {
         canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
         shapes.forEach((shape) => {
-            displayShapes(canvas, shape);
+            displayShapesOnCanvas(canvas, shape);
         });
     }, [shapes]);
 
@@ -81,7 +81,7 @@ export default function DesignContainer(props: DesignContainerProps) {
             selectShape={selectShape}
             moveShape={moveShape}
             setMouseDown={setMouseDown}
-            deselectShape={deselectShape}
+            mouseDownOnCanvas={mouseDownOnCanvas}
 
             updateShapeToChannel={updateShapeToChannel}
             newShapeToChannel={newShapeToChannel}

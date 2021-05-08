@@ -2,13 +2,20 @@ import { Channel } from "phoenix";
 import React from "react";
 import Shape from "../classes/shape";
 
-export function displayShapes(canvas: React.MutableRefObject<HTMLCanvasElement | null>, shape: Shape) {
+export function displayShapesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, shape: Shape) {
     if(shape.selected) {
-        displayShapeOnCanvas(canvas, shape);
-        displaySelectionOnCanvas(canvas, shape);
+        drawShapeOnCanvas(canvas, shape);
+        drawSelectionOnCanvas(canvas, shape);
     }
     else
-        displayShapeOnCanvas(canvas, shape);
+        drawShapeOnCanvas(canvas, shape);
+}
+
+export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+    canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
+    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
+) {
+    
 }
 
 export function selectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
@@ -40,19 +47,6 @@ export function selectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     });
 }
 
-export function deselectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, 
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
-) {
-    setShapes(prevShapes => {
-        const shapeValCopy = [...prevShapes];
-        shapeValCopy.forEach((shape) => {
-            if(shape.selected)
-                shape.selected = false;
-        });
-        return shapeValCopy;
-    });
-}
-
 export function moveShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, 
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
     updateShape: (channel: Channel | undefined, shape: Shape) => void, 
@@ -77,7 +71,7 @@ export function moveShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     });
 }
 
-function displayShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
+function drawShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
     shape: Shape
 ) {
     const context = canvas.current?.getContext("2d");
@@ -89,7 +83,7 @@ function displayShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement |
     }
 }
 
-function displaySelectionOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
+function drawSelectionOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
     shape: Shape
 ) {
     const bounds = shape.getBounds();
@@ -98,8 +92,14 @@ function displaySelectionOnCanvas(canvas: React.MutableRefObject<HTMLCanvasEleme
 
     context?.beginPath();
     context?.arc(bounds.topLeft.x, bounds.topLeft.y, bubbleRadius, 0, 2*Math.PI);
+    context?.stroke();
+    context?.beginPath();
     context?.arc(bounds.topRight.x, bounds.topRight.y, bubbleRadius, 0, 2*Math.PI);
+    context?.stroke();
+    context?.beginPath();
     context?.arc(bounds.bottomLeft.x, bounds.bottomLeft.y, bubbleRadius, 0, 2*Math.PI);
+    context?.stroke();
+    context?.beginPath();
     context?.arc(bounds.bottomRight.x, bounds.bottomRight.y, bubbleRadius, 0, 2*Math.PI);
     context?.stroke();
 }
