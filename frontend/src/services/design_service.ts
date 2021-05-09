@@ -16,26 +16,21 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
 ) {
     const mousePos = getMouseCoordinates(e);
-
-    //deselect all
-
-    //if mouse is in 10x10 square (5 left of radius, 5 right of radius), select and move
-    //else if mouse is within boundary of shape, select
-    //else do nothing since everything is deselected before
-
     setShapes(prevShapes => {
         const shapeValCopy = [...prevShapes];
-        var updated = false;
         shapeValCopy.forEach((shape) => {
             shape.selected = false;
         });
         shapeValCopy.forEach((shape) => {
-            if(shape.withinBounds(mousePos.x, mousePos.y)) {
+            const withinResize = shape.withinResizeBounds(mousePos.x, mousePos.y);
+            if(withinResize != "") {
                 shape.selected = true;
-                updated = true;
+                console.log(withinResize);
+            }
+            else if(shape.withinShapeBounds(mousePos.x, mousePos.y)) {
+                shape.selected = true;
             }
         });
-
         return shapeValCopy;
     });
 }
@@ -52,7 +47,7 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
             const shapeValCopy = [...prevShapes];
             var updated = false;
             shapeValCopy.forEach((shape) => {
-                if(shape.withinBounds(mousePos.x, mousePos.y)) {
+                if(shape.withinShapeBounds(mousePos.x, mousePos.y)) {
                     shape.position_x += e.movementX;
                     shape.position_y += e.movementY;
                     updated = true;
@@ -89,7 +84,7 @@ function drawShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | nu
 function drawSelectionOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
     shape: Shape
 ) {
-    const bounds = shape.getBounds();
+    const bounds = shape.getShapeBounds();
     const context = canvas.current?.getContext('2d');
     const bubbleRadius = 5;
 
