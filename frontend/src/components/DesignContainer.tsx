@@ -20,7 +20,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     const [socket, setSocket] = useState<Socket>();
     const [loading, setLoading] = useState<boolean>(true);
     const [shapes, setShapes] = useState<Array<Shape>>([]);
-    const [mouseDown, setMouseDown] = useState<boolean>(false);
+    const [mouseDown, setMouseDown] = useState<string>("");
     const canvas = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {

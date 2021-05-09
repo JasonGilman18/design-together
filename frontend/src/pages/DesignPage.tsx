@@ -29,8 +29,7 @@ export const DesignPage = (props: DesignPageProps) => (
                     ref={props.canvas}
                     style={{backgroundColor: "green"}}
                     onMouseDown={(e) => {
-                        props.mouseDownOnCanvas(e, props.canvas, props.setShapes);
-                        props.setMouseDown(true);
+                        props.mouseDownOnCanvas(e, props.canvas, props.setShapes, props.setMouseDown);
                     }}
                     onMouseMove={(e) => {
                         props.mouseMoveOnCanvas(e, props.mouseDown, props.setShapes, 
@@ -38,7 +37,7 @@ export const DesignPage = (props: DesignPageProps) => (
                         );
                     }}
                     onMouseUp={(e) => {
-                        props.setMouseDown(false);
+                        props.setMouseDown("");
                     }}
                 >
                 </canvas>
@@ -50,7 +49,7 @@ interface DesignPageProps {
     loading: boolean,
     shapes: Array<Shape>,
     docId: number,
-    mouseDown: boolean,
+    mouseDown: string,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,
     
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
@@ -58,15 +57,16 @@ interface DesignPageProps {
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
 
     mouseMoveOnCanvas: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-        mouseDown: boolean,
+        mouseDown: string,
         setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
         updateShape: (channel: Channel | undefined, shape: Shape) => void, 
         channel: Channel | undefined
     ) => void,
-    setMouseDown: React.Dispatch<React.SetStateAction<boolean>>,
+    setMouseDown: React.Dispatch<React.SetStateAction<string>>,
     mouseDownOnCanvas: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
         canvas: React.MutableRefObject<HTMLCanvasElement | null>,
-        setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
+        setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+        setMouseDown: React.Dispatch<React.SetStateAction<string>>
     ) => void,
     
     updateShapeToChannel: (channel: Channel | undefined, shape: Shape) => void,

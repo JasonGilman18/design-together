@@ -13,7 +13,8 @@ export function displayShapesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
 
 export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
+    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+    setMouseDown: React.Dispatch<React.SetStateAction<string>>
 ) {
     const mousePos = getMouseCoordinates(e);
     setShapes(prevShapes => {
@@ -25,24 +26,27 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
             const withinResize = shape.withinResizeBounds(mousePos.x, mousePos.y);
             if(withinResize != "") {
                 shape.selected = true;
-                console.log(withinResize);
+                setMouseDown("resize");
             }
             else if(shape.withinShapeBounds(mousePos.x, mousePos.y)) {
                 shape.selected = true;
+                setMouseDown("shape");
             }
+            else
+                setMouseDown("canvas");
         });
         return shapeValCopy;
     });
 }
 
 export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-    mouseDown: boolean, 
+    mouseDown: string, 
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
     updateShape: (channel: Channel | undefined, shape: Shape) => void, 
     channel: Channel | undefined
 ) {
-    if(mouseDown) {
-        const mousePos = getMouseCoordinates(e);
+    const mousePos = getMouseCoordinates(e);
+    if(mouseDown === "shape") {
         setShapes(prevShapes => {
             const shapeValCopy = [...prevShapes];
             var updated = false;
@@ -52,6 +56,40 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
                     shape.position_y += e.movementY;
                     updated = true;
                     updateShape(channel, shape);
+                }
+            });
+            return updated ? shapeValCopy : prevShapes;
+        });
+    }
+    else if(mouseDown === "resize") {
+        setShapes(prevShapes => {
+            const shapeValCopy = [...prevShapes];
+            var updated = false;
+            shapeValCopy.forEach((shape) => {
+                const withinResize = shape.withinResizeBounds(mousePos.x, mousePos.y);
+                if(withinResize === "topLeft") {
+                    shape.position_x += e.movementX;
+                    shape.position_y += e.movementY;
+                    shape.height -= e.movementY;
+                    shape.width -= e.movementX;
+                    updated = true;
+                }
+                else if(withinResize === "topRight") {
+                    shape.position_y += e.movementY;
+                    shape.height -= e.movementY;
+                    shape.width += e.movementX;
+                    updated = true;
+                }
+                else if(withinResize === "bottomLeft") {
+                    shape.position_x += e.movementX;
+                    shape.height += e.movementY;
+                    shape.width -= e.movementX;
+                    updated = true;
+                }
+                else if(withinResize === "bottomRight") {
+                    shape.height += e.movementY;
+                    shape.width += e.movementX;
+                    updated = true;
                 }
             });
             return updated ? shapeValCopy : prevShapes;
