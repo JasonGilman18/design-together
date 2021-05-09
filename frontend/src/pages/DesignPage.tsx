@@ -14,7 +14,9 @@ export const DesignPage = (props: DesignPageProps) => (
             <>
                 <h1>Design Page</h1>
                 <button onClick={(e) => props.logout(props.setAuthenticated)}>logout</button>
-                <button onClick={(e) => props.newShapeToChannel(props.channel, props.docId, 50, 100, 0, 0)}>Add Rectangle</button>
+                <button onClick={(e) => props.newShapeToChannel(props.channel, props.docId, 50, 100, 0, 0)}>
+                    Add Rectangle
+                </button>
                 <Link 
                     to={{
                         pathname: "/dashboard"
@@ -27,16 +29,15 @@ export const DesignPage = (props: DesignPageProps) => (
                     ref={props.canvas}
                     style={{backgroundColor: "green"}}
                     onMouseDown={(e) => {
-                        props.selectShape(e, props.setShapes);
-                        props.setMouseDown(true);
+                        props.mouseDownOnCanvas(e, props.canvas, props.setShapes, props.setMouseDown);
                     }}
                     onMouseMove={(e) => {
-                        if(props.mouseDown)
-                            props.moveShape(e, props.setShapes, props.updateShapeToChannel, props.channel);
+                        props.mouseMoveOnCanvas(e, props.mouseDown, props.setShapes, 
+                            props.updateShapeToChannel, props.channel
+                        );
                     }}
                     onMouseUp={(e) => {
-                        props.deselectShape(e, props.setShapes);
-                        props.setMouseDown(false);
+                        props.setMouseDown("");
                     }}
                 >
                 </canvas>
@@ -48,18 +49,28 @@ interface DesignPageProps {
     loading: boolean,
     shapes: Array<Shape>,
     docId: number,
-    mouseDown: boolean,
+    mouseDown: string,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,
     
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
 
-    selectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void,
-    moveShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, updateShape: (channel: Channel | undefined, shape: Shape) => void, channel: Channel | undefined) => void,
-    setMouseDown: React.Dispatch<React.SetStateAction<boolean>>,
-    deselectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, setShapes: React.Dispatch<React.SetStateAction<Shape[]>>) => void,
+    mouseMoveOnCanvas: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+        mouseDown: string,
+        setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
+        updateShape: (channel: Channel | undefined, shape: Shape) => void, 
+        channel: Channel | undefined
+    ) => void,
+    setMouseDown: React.Dispatch<React.SetStateAction<string>>,
+    mouseDownOnCanvas: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+        canvas: React.MutableRefObject<HTMLCanvasElement | null>,
+        setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+        setMouseDown: React.Dispatch<React.SetStateAction<string>>
+    ) => void,
     
     updateShapeToChannel: (channel: Channel | undefined, shape: Shape) => void,
-    newShapeToChannel: (channel: Channel | undefined, documentId: number, height: number, width: number, xPosition: number, yPosition: number) => void
+    newShapeToChannel: (channel: Channel | undefined, documentId: number, height: number, 
+        width: number, xPosition: number, yPosition: number
+    ) => void
 }

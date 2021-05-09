@@ -2,10 +2,9 @@ import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
-import {deselectShape, 
-    newShape, 
-    moveShape, 
-    selectShape} from '../services/design_service';
+import {displayShapesOnCanvas,
+    mouseDownOnCanvas, 
+    mouseMoveOnCanvas} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
 import {connectToDocumentChannel,
     disconnectFromDocumentChannel,
@@ -21,7 +20,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     const [socket, setSocket] = useState<Socket>();
     const [loading, setLoading] = useState<boolean>(true);
     const [shapes, setShapes] = useState<Array<Shape>>([]);
-    const [mouseDown, setMouseDown] = useState<boolean>(false);
+    const [mouseDown, setMouseDown] = useState<string>("");
     const canvas = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
@@ -61,7 +60,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     useEffect(() => {
         canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
         shapes.forEach((shape) => {
-            newShape(canvas, shape);
+            displayShapesOnCanvas(canvas, shape);
         });
     }, [shapes]);
 
@@ -78,10 +77,9 @@ export default function DesignContainer(props: DesignContainerProps) {
             logout={logout}
             setAuthenticated={props.setAuthenticated}
 
-            selectShape={selectShape}
-            moveShape={moveShape}
+            mouseMoveOnCanvas={mouseMoveOnCanvas}
             setMouseDown={setMouseDown}
-            deselectShape={deselectShape}
+            mouseDownOnCanvas={mouseDownOnCanvas}
 
             updateShapeToChannel={updateShapeToChannel}
             newShapeToChannel={newShapeToChannel}
