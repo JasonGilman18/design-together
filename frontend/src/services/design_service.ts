@@ -15,16 +15,13 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
 ) {
-    
-}
+    const mousePos = getMouseCoordinates(e);
 
-export function selectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-    canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
-) {
-    const canvasPos = e.currentTarget.getBoundingClientRect();
-    const mouseXRelativeToCanvas = e.clientX - canvasPos.left;
-    const mouseYRelativeToCanvas = e.clientY - canvasPos.top;
+    //deselect all
+
+    //if mouse is in 10x10 square (5 left of radius, 5 right of radius), select and move
+    //else if mouse is within boundary of shape, select
+    //else do nothing since everything is deselected before
 
     setShapes(prevShapes => {
         const shapeValCopy = [...prevShapes];
@@ -33,42 +30,48 @@ export function selectShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
             shape.selected = false;
         });
         shapeValCopy.forEach((shape) => {
-            if(shape.withinBounds(mouseXRelativeToCanvas, mouseYRelativeToCanvas)) {
+            if(shape.withinBounds(mousePos.x, mousePos.y)) {
                 shape.selected = true;
                 updated = true;
             }
         });
-        if(!updated) {
-            shapeValCopy.forEach((shape) => {
-                shape.selected = false;
-            });
-        }
+
         return shapeValCopy;
     });
 }
 
-export function moveShape(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, 
+export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+    mouseDown: boolean, 
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
     updateShape: (channel: Channel | undefined, shape: Shape) => void, 
     channel: Channel | undefined
 ) {
+    if(mouseDown) {
+        const mousePos = getMouseCoordinates(e);
+        setShapes(prevShapes => {
+            const shapeValCopy = [...prevShapes];
+            var updated = false;
+            shapeValCopy.forEach((shape) => {
+                if(shape.withinBounds(mousePos.x, mousePos.y)) {
+                    shape.position_x += e.movementX;
+                    shape.position_y += e.movementY;
+                    updated = true;
+                    updateShape(channel, shape);
+                }
+            });
+            return updated ? shapeValCopy : prevShapes;
+        });
+    }
+}
+
+function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     const canvasPos = e.currentTarget.getBoundingClientRect();
     const mouseXRelativeToCanvas = e.clientX - canvasPos.left;
     const mouseYRelativeToCanvas = e.clientY - canvasPos.top;
-
-    setShapes(prevShapes => {
-        const shapeValCopy = [...prevShapes];
-        var updated = false;
-        shapeValCopy.forEach((shape) => {
-            if(shape.withinBounds(mouseXRelativeToCanvas, mouseYRelativeToCanvas)) {
-                shape.position_x += e.movementX;
-                shape.position_y += e.movementY;
-                updated = true;
-                updateShape(channel, shape);
-            }
-        });
-        return updated ? shapeValCopy : prevShapes;
-    });
+    return {
+        x: mouseXRelativeToCanvas,
+        y: mouseYRelativeToCanvas
+    }
 }
 
 function drawShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 

@@ -4,8 +4,7 @@ import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
 import {displayShapesOnCanvas,
     mouseDownOnCanvas, 
-    moveShape, 
-    selectShape} from '../services/design_service';
+    mouseMoveOnCanvas} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
 import {connectToDocumentChannel,
     disconnectFromDocumentChannel,
@@ -78,8 +77,7 @@ export default function DesignContainer(props: DesignContainerProps) {
             logout={logout}
             setAuthenticated={props.setAuthenticated}
 
-            selectShape={selectShape}
-            moveShape={moveShape}
+            mouseMoveOnCanvas={mouseMoveOnCanvas}
             setMouseDown={setMouseDown}
             mouseDownOnCanvas={mouseDownOnCanvas}
 

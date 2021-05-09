@@ -30,12 +30,12 @@ export const DesignPage = (props: DesignPageProps) => (
                     style={{backgroundColor: "green"}}
                     onMouseDown={(e) => {
                         props.mouseDownOnCanvas(e, props.canvas, props.setShapes);
-                        //props.selectShape(e, props.canvas, props.setShapes);
                         props.setMouseDown(true);
                     }}
                     onMouseMove={(e) => {
-                        if(props.mouseDown)
-                            props.moveShape(e, props.setShapes, props.updateShapeToChannel, props.channel);
+                        props.mouseMoveOnCanvas(e, props.mouseDown, props.setShapes, 
+                            props.updateShapeToChannel, props.channel
+                        );
                     }}
                     onMouseUp={(e) => {
                         props.setMouseDown(false);
@@ -57,11 +57,8 @@ interface DesignPageProps {
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
 
-    selectShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-        canvas: React.MutableRefObject<HTMLCanvasElement | null>,
-        setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
-    ) => void,
-    moveShape: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, 
+    mouseMoveOnCanvas: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
+        mouseDown: boolean,
         setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
         updateShape: (channel: Channel | undefined, shape: Shape) => void, 
         channel: Channel | undefined
