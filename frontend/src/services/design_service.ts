@@ -91,6 +91,7 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
                     shape.width += e.movementX;
                     updated = true;
                 }
+                if(updated) updateShape(channel, shape);
             });
             return updated ? shapeValCopy : prevShapes;
         });
