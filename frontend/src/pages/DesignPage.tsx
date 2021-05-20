@@ -32,8 +32,9 @@ export const DesignPage = (props: DesignPageProps) => (
                         props.mouseDownOnCanvas(e, props.canvas, props.setShapes, props.setMouseDown);
                     }}
                     onMouseMove={(e) => {
-                        props.mouseMoveOnCanvas(e, props.mouseDown, props.setShapes, 
-                            props.updateShapeToChannel, props.channel
+                        props.mouseMoveOnCanvas(e, props.mouseDown, props.setMouseMoveX, 
+                            props.setMouseMoveY, props.setShapes, props.updateShapeToChannel, 
+                            props.channel
                         );
                     }}
                     onMouseUp={(e) => {
@@ -48,6 +49,8 @@ interface DesignPageProps {
     channel: Channel | undefined,
     loading: boolean,
     shapes: Array<Shape>,
+    mouseMoveX: number,
+    mouseMoveY: number,
     docId: number,
     mouseDown: string,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,
@@ -55,9 +58,12 @@ interface DesignPageProps {
     logout: (ok_fn: React.Dispatch<React.SetStateAction<boolean>>) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+    setMouseMoveX: React.Dispatch<React.SetStateAction<number>>,
+    setMouseMoveY: React.Dispatch<React.SetStateAction<number>>,
 
-    mouseMoveOnCanvas: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-        mouseDown: string,
+    mouseMoveOnCanvas: (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>, 
+        mouseDown: string, setMouseMoveX: React.Dispatch<React.SetStateAction<number>>, 
+        setMouseMoveY: React.Dispatch<React.SetStateAction<number>>, 
         setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
         updateShape: (channel: Channel | undefined, shape: Shape) => void, 
         channel: Channel | undefined
