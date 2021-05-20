@@ -1,17 +1,13 @@
 import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import Shape from "../classes/shape";
-import {DesignPage} from "../pages/DesignPage";
+import {DesignPage} from "../presentation_components/DesignPage";
 import {displayShapesOnCanvas,
-    drawGridlinesOnCanvas,
-    mouseDownOnCanvas, 
-    mouseMoveOnCanvas} from '../services/design_service';
-import { logout, reqAuthToken } from "../services/http_api_service";
+    drawGridlinesOnCanvas} from '../services/design_service';
+import {reqAuthToken} from "../services/http_api_service";
 import {connectToDocumentChannel,
     disconnectFromDocumentChannel,
-    newShapeToChannel, 
     newShapeFromChannel, 
-    updateShapeToChannel, 
     updateShapeFromChannel} from "../services/ws_api_service";
 
 export default function DesignContainer(props: DesignContainerProps) {
@@ -88,19 +84,11 @@ export default function DesignContainer(props: DesignContainerProps) {
             canvas={canvas}
             mouseDown={mouseDown}
             docId={props.location.state.doc_id}
-
             setShapes={setShapes}
-            logout={logout}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}
             setMouseMoveY={setMouseMoveY}
-
-            mouseMoveOnCanvas={mouseMoveOnCanvas}
             setMouseDown={setMouseDown}
-            mouseDownOnCanvas={mouseDownOnCanvas}
-
-            updateShapeToChannel={updateShapeToChannel}
-            newShapeToChannel={newShapeToChannel}
         />
     );
 }

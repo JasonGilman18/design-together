@@ -1,6 +1,6 @@
 import React from 'react';
 import {GoogleLogin} from 'react-google-login';
-import {login} from './../services/http_api_service';
+import {login} from '../services/http_api_service';
 
 export const LoginPage = (props: LoginPageProps) => (
 
