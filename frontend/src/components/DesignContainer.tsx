@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import Shape from "../classes/shape";
 import {DesignPage} from "../pages/DesignPage";
 import {displayShapesOnCanvas,
+    drawGridlinesOnCanvas,
     mouseDownOnCanvas, 
     mouseMoveOnCanvas} from '../services/design_service';
 import { logout, reqAuthToken } from "../services/http_api_service";
@@ -21,6 +22,8 @@ export default function DesignContainer(props: DesignContainerProps) {
     const [loading, setLoading] = useState<boolean>(true);
     const [shapes, setShapes] = useState<Array<Shape>>([]);
     const [mouseDown, setMouseDown] = useState<string>("");
+    const [mouseMoveX, setMouseMoveX] = useState<number>(0);
+    const [mouseMoveY, setMouseMoveY] = useState<number>(0);
     const canvas = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
@@ -47,6 +50,7 @@ export default function DesignContainer(props: DesignContainerProps) {
         if(canvas.current !== null && canvas.current !== undefined) {
             canvas.current.width = 500;
             canvas.current.height = 500;
+            drawGridlinesOnCanvas(canvas);
         }
     }, [loading]);
 
@@ -59,6 +63,7 @@ export default function DesignContainer(props: DesignContainerProps) {
 
     useEffect(() => {
         canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
+        drawGridlinesOnCanvas(canvas);
         shapes.forEach((shape) => {
             displayShapesOnCanvas(canvas, shape);
         });
@@ -68,6 +73,8 @@ export default function DesignContainer(props: DesignContainerProps) {
         <DesignPage
             loading={loading}
             shapes={shapes}
+            mouseMoveX={mouseMoveX}
+            mouseMoveY={mouseMoveY}
             channel={channel}
             canvas={canvas}
             mouseDown={mouseDown}
@@ -76,6 +83,8 @@ export default function DesignContainer(props: DesignContainerProps) {
             setShapes={setShapes}
             logout={logout}
             setAuthenticated={props.setAuthenticated}
+            setMouseMoveX={setMouseMoveX}
+            setMouseMoveY={setMouseMoveY}
 
             mouseMoveOnCanvas={mouseMoveOnCanvas}
             setMouseDown={setMouseDown}

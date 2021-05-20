@@ -40,25 +40,42 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
 }
 
 export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
-    mouseDown: string, 
+    mouseDown: string,
+    setMouseMoveX: React.Dispatch<React.SetStateAction<number>>,
+    setMouseMoveY: React.Dispatch<React.SetStateAction<number>>, 
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
     updateShape: (channel: Channel | undefined, shape: Shape) => void, 
     channel: Channel | undefined
 ) {
     const mousePos = getMouseCoordinates(e);
+    const mouseSensitivity = 10;
+    const gridSnap = 10;
     if(mouseDown === "shape") {
         setShapes(prevShapes => {
             const shapeValCopy = [...prevShapes];
-            var updated = false;
             shapeValCopy.forEach((shape) => {
                 if(shape.withinShapeBounds(mousePos.x, mousePos.y)) {
-                    shape.position_x += e.movementX;
-                    shape.position_y += e.movementY;
-                    updated = true;
-                    updateShape(channel, shape);
+                    setMouseMoveX(mouseMoveX => {
+                        if(Math.abs(mouseMoveX) >= mouseSensitivity) {
+                            shape.position_x += (mouseMoveX/mouseSensitivity)*gridSnap;
+                            updateShape(channel, shape);
+                            return 0;
+                        }
+                        else
+                            return mouseMoveX + e.movementX;
+                    });
+                    setMouseMoveY(mouseMoveY => {
+                        if(Math.abs(mouseMoveY) >= mouseSensitivity) {
+                            shape.position_y += (mouseMoveY/mouseSensitivity)*gridSnap;
+                            updateShape(channel, shape);
+                            return 0;
+                        }
+                        else
+                            return mouseMoveY + e.movementY;
+                    });
                 }
             });
-            return updated ? shapeValCopy : prevShapes;
+            return shapeValCopy;
         });
     }
     else if(mouseDown === "resize") {
@@ -98,6 +115,26 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     }
 }
 
+export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>) {
+    const ctx = canvas.current?.getContext('2d');
+    const height = 500;
+    const width = 500;
+    const cellSize = 10;
+
+    for(var x=0;x<=width;x+=cellSize) {
+        ctx?.moveTo(x, 0);
+        ctx?.lineTo(x, height);
+    }
+
+    for(var y=0;y<=height;y+=cellSize) {
+        ctx?.moveTo(0, y);
+        ctx?.lineTo(width, y);
+    }
+
+    if(ctx !== undefined && ctx !== null) ctx.strokeStyle = "grey";
+    ctx?.stroke();
+}
+
 function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     const canvasPos = e.currentTarget.getBoundingClientRect();
     const mouseXRelativeToCanvas = e.clientX - canvasPos.left;
@@ -114,7 +151,7 @@ function drawShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | nu
     const context = canvas.current?.getContext("2d");
     if(context !== null && context !== undefined) {
         context.beginPath();
-        context.fillStyle = "black";
+        context.strokeStyle = "black";
         context.rect(shape.position_x, shape.position_y, shape.width, shape.height);
         context.stroke();
     }
