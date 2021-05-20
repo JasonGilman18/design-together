@@ -115,10 +115,11 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     }
 }
 
-export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>) {
+export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
+    canvasWidth: number, canvasHeight: number) {
     const ctx = canvas.current?.getContext('2d');
-    const height = 500;
-    const width = 500;
+    const height = canvasHeight;
+    const width = canvasWidth;
     const cellSize = 10;
 
     for(var x=0;x<=width;x+=cellSize) {

@@ -12,19 +12,6 @@ export const DesignPage = (props: DesignPageProps) => (
             </>
         :
             <>
-                <h1>Design Page</h1>
-                <button onClick={(e) => props.logout(props.setAuthenticated)}>logout</button>
-                <button onClick={(e) => props.newShapeToChannel(props.channel, props.docId, 50, 100, 0, 0)}>
-                    Add Rectangle
-                </button>
-                <Link 
-                    to={{
-                        pathname: "/dashboard"
-                    }}
-                >
-                    Dashboard
-                </Link>
-                
                 <canvas 
                     ref={props.canvas}
                     style={{backgroundColor: "green"}}

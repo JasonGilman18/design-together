@@ -27,6 +27,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     const canvas = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
+        window.addEventListener("resize", canvasResize);
         reqAuthToken(props.location.state.doc_id, setAuthToken);
         return function cleanupAuthToken() {
             setAuthToken("");
@@ -47,11 +48,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     }, [authToken]);
 
     useEffect(() => {
-        if(canvas.current !== null && canvas.current !== undefined) {
-            canvas.current.width = 500;
-            canvas.current.height = 500;
-            drawGridlinesOnCanvas(canvas);
-        }
+        canvasResize();
     }, [loading]);
 
     useEffect(() => {
@@ -62,12 +59,24 @@ export default function DesignContainer(props: DesignContainerProps) {
     }, [channel]);
 
     useEffect(() => {
+        canvasClear();
+    }, [shapes]);
+
+    function canvasResize() {
+        if(canvas.current !== null && canvas.current !== undefined) {
+            canvas.current.width = window.innerWidth;
+            canvas.current.height = window.innerHeight;
+            drawGridlinesOnCanvas(canvas, window.innerWidth, window.innerHeight);
+        }
+    }
+
+    function canvasClear() {
         canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
-        drawGridlinesOnCanvas(canvas);
+        drawGridlinesOnCanvas(canvas, window.innerWidth, window.innerHeight);
         shapes.forEach((shape) => {
             displayShapesOnCanvas(canvas, shape);
         });
-    }, [shapes]);
+    }
 
     return (
         <DesignPage
