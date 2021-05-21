@@ -21,7 +21,9 @@ defmodule ApiWeb.DesignChannel do
           height: shape.height,
           width: shape.width,
           position_x: shape.position_x,
-          position_y: shape.position_y})
+          position_y: shape.position_y,
+          filled: shape.filled,
+          rounded: shape.rounded})
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
     end

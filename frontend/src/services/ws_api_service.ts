@@ -24,16 +24,17 @@ export function newShapeFromChannel(channel: Channel | undefined,
 ) {
     channel?.on("new_shape", (responseShape: Shape) => {
         const newShape = new Shape(responseShape.id, responseShape.document_id, responseShape.position_x, 
-            responseShape.position_y, responseShape.height, responseShape.width);
+            responseShape.position_y, responseShape.height, responseShape.width, responseShape.filled, 
+            responseShape.rounded);
         ok_fn(prevShapes => [...prevShapes, newShape]);
     });
 }
 
 export function newShapeToChannel(channel: Channel | undefined, documentId: number, height: number, width: number, 
-    position_x: number, position_y: number
+    position_x: number, position_y: number, filled: boolean, rounded: number
 ) {
     channel?.push("new_shape", {document_id: documentId, height: height, width: width, position_x: position_x, 
-        position_y: position_y}, 10000);
+        position_y: position_y, filled: filled, rounded: rounded}, 10000);
 }
 
 export function updateShapeFromChannel(channel: Channel | undefined, 
