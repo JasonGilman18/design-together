@@ -21,9 +21,12 @@ export default function DesignContainer(props: DesignContainerProps) {
     const [mouseMoveX, setMouseMoveX] = useState<number>(0);
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
     const canvas = useRef<HTMLCanvasElement>(null);
+    const shapeToolbarWidth = 200;
+    const filebarHeight = 50;
+    const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - shapeToolbarWidth);
+    const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - filebarHeight);
 
     useEffect(() => {
-        window.addEventListener("resize", canvasResize);
         reqAuthToken(props.location.state.doc_id, setAuthToken);
         return function cleanupAuthToken() {
             setAuthToken("");
@@ -44,8 +47,16 @@ export default function DesignContainer(props: DesignContainerProps) {
     }, [authToken]);
 
     useEffect(() => {
-        canvasResize();
-    }, [loading]);
+        if(canvas.current !== null && canvas.current !== undefined) {
+            canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
+            canvas.current.width = canvasWidth;
+            canvas.current.height = canvasHeight;
+            drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
+            shapes.forEach((shape) => {
+                displayShapesOnCanvas(canvas, shape);
+            });
+        }
+    }, [loading, shapes, canvasHeight, canvasWidth]);
 
     useEffect(() => {
         if(channel !== undefined) {
@@ -53,26 +64,6 @@ export default function DesignContainer(props: DesignContainerProps) {
             updateShapeFromChannel(channel, setShapes);
         }
     }, [channel]);
-
-    useEffect(() => {
-        canvasClear();
-    }, [shapes]);
-
-    function canvasResize() {
-        if(canvas.current !== null && canvas.current !== undefined) {
-            canvas.current.width = window.innerWidth;
-            canvas.current.height = window.innerHeight;
-            drawGridlinesOnCanvas(canvas, window.innerWidth, window.innerHeight);
-        }
-    }
-
-    function canvasClear() {
-        canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
-        drawGridlinesOnCanvas(canvas, window.innerWidth, window.innerHeight);
-        shapes.forEach((shape) => {
-            displayShapesOnCanvas(canvas, shape);
-        });
-    }
 
     return (
         <DesignPage
@@ -83,12 +74,18 @@ export default function DesignContainer(props: DesignContainerProps) {
             channel={channel}
             canvas={canvas}
             mouseDown={mouseDown}
+            shapeToolbarWidth={shapeToolbarWidth}
+            filebarHeight={filebarHeight}
+            canvasHeight={canvasHeight}
+            canvasWidth={canvasWidth}
             docId={props.location.state.doc_id}
             setShapes={setShapes}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}
             setMouseMoveY={setMouseMoveY}
             setMouseDown={setMouseDown}
+            setCanvasWidth={setCanvasWidth}
+            setCanvasHeight={setCanvasHeight}
         />
     );
 }
