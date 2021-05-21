@@ -156,8 +156,9 @@ function drawShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | nu
     if(context !== null && context !== undefined) {
         context.beginPath();
         context.strokeStyle = "black";
+        context.fillStyle = "black";
         context.rect(shape.position_x, shape.position_y, shape.width, shape.height);
-        context.stroke();
+        shape.filled ? context.fill() : context.stroke();
     }
 }
 
