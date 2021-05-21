@@ -1,18 +1,47 @@
 import { Channel } from 'phoenix';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { newShapeToChannel } from '../services/ws_api_service';
+import {ReactComponent as SquareSVG} from '../icons/square.svg';
+import {ReactComponent as SquareFillSVG} from '../icons/square-fill.svg';
+import {ReactComponent as SquareRoundedSVG} from '../icons/square-rounded.svg';
+import {ReactComponent as SquareFillRoundedSVG} from '../icons/square-fill-rounded.svg';
+import {ReactComponent as RectangleSVG} from '../icons/rectangle.svg';
+import {ReactComponent as RectangleFillSVG} from '../icons/rectangle-fill.svg';
+import {ReactComponent as RectangleRoundedSVG} from '../icons/rectangle-rounded.svg';
+import {ReactComponent as RectangleFillRoundedSVG} from '../icons/rectangle-fill-rounded.svg';
 
-export const ShapeToolbar = (props: ShapeToolbarProps) => (
+export const ShapeToolbar = (props: ShapeToolbarProps) => {
 
+    const [containerOpen, setContainerOpen] = useState<Array<boolean>>([true])
+
+    return (
     <ToolbarContainer>
         <ToolbarType>
-            <TypeLabel><h5>Containers</h5></TypeLabel>
-            <TypeButtonContainer>
-                <TypeButton/>
-                <TypeButton/>
-                <TypeButton/>
-                <TypeButton/>
-                <TypeButton/>
+            <TypeLabel>
+                <h5>Containers</h5>
+                <h5 onClick={() => setContainerOpen(arr => {
+                        const copyArr = [...arr];
+                        copyArr[0] = !copyArr[0];
+                        return copyArr;
+                    })}
+                >X</h5>
+            </TypeLabel>
+            <TypeButtonContainer 
+                style={
+                    containerOpen[0]
+                        ?{height:"100px", border:"solid 1px #dcdcdc", borderTop:"transparent", borderRight:"transparent", borderLeft:"transparent"}
+                        :{height:"0px", border:"none"}
+                }
+            >
+                <TypeButton><SquareSVG style={{height:"65%", width:"65%"}}/></TypeButton>
+                <TypeButton><SquareFillSVG style={{height:"65%", width:"65%"}}/></TypeButton>
+                <TypeButton><SquareRoundedSVG style={{height:"65%", width:"65%"}}/></TypeButton>
+                <TypeButton><SquareFillRoundedSVG style={{height:"65%", width:"65%"}}/></TypeButton>
+                <TypeButton><RectangleSVG style={{height:"75%", width:"75%"}}/></TypeButton>
+                <TypeButton><RectangleFillSVG style={{height:"75%", width:"75%"}}/></TypeButton>
+                <TypeButton><RectangleRoundedSVG style={{height:"75%", width:"75%"}}/></TypeButton>
+                <TypeButton><RectangleFillRoundedSVG style={{height:"75%", width:"75%"}}/></TypeButton>
             </TypeButtonContainer>
         </ToolbarType>
         {/*
@@ -27,8 +56,8 @@ export const ShapeToolbar = (props: ShapeToolbarProps) => (
             <h3>Square</h3>
         </ShapeButton>
         */}
-    </ToolbarContainer>
-);
+    </ToolbarContainer>)
+};
 
 const ToolbarContainer = styled.div`
     grid-column: 1/2;
@@ -64,21 +93,22 @@ const TypeLabel = styled.div`
 `;
 
 const TypeButtonContainer = styled.div`
-    height: 100px;
+    transition: height .5s, border .5s;
     width: 100%;
-    border: solid 1px #dcdcdc;
-    border-top: transparent;
     display: flex;
     flex-wrap: wrap;
+    overflow: hidden;
 `;
 
 const TypeButton = styled.div`
-    width: 40px;
-    height: 40px;
-    background-color: green;
-    text-align: center;
+    flex: 25% 0 0;
+    height: 49.5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
     &:hover {
-        background-color: blue;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     }
 `;
 
