@@ -1,17 +1,13 @@
 import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import Shape from "../classes/shape";
-import {DesignPage} from "../pages/DesignPage";
+import {DesignPage} from "../presentation_components/DesignPage";
 import {displayShapesOnCanvas,
-    drawGridlinesOnCanvas,
-    mouseDownOnCanvas, 
-    mouseMoveOnCanvas} from '../services/design_service';
-import { logout, reqAuthToken } from "../services/http_api_service";
+    drawGridlinesOnCanvas} from '../services/design_service';
+import {reqAuthToken} from "../services/http_api_service";
 import {connectToDocumentChannel,
     disconnectFromDocumentChannel,
-    newShapeToChannel, 
     newShapeFromChannel, 
-    updateShapeToChannel, 
     updateShapeFromChannel} from "../services/ws_api_service";
 
 export default function DesignContainer(props: DesignContainerProps) {
@@ -25,6 +21,10 @@ export default function DesignContainer(props: DesignContainerProps) {
     const [mouseMoveX, setMouseMoveX] = useState<number>(0);
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
     const canvas = useRef<HTMLCanvasElement>(null);
+    const shapeToolbarWidth = 200;
+    const filebarHeight = 50;
+    const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - shapeToolbarWidth-100);
+    const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - filebarHeight-100);
 
     useEffect(() => {
         reqAuthToken(props.location.state.doc_id, setAuthToken);
@@ -48,11 +48,15 @@ export default function DesignContainer(props: DesignContainerProps) {
 
     useEffect(() => {
         if(canvas.current !== null && canvas.current !== undefined) {
-            canvas.current.width = 500;
-            canvas.current.height = 500;
-            drawGridlinesOnCanvas(canvas);
+            canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
+            canvas.current.width = canvasWidth;
+            canvas.current.height = canvasHeight;
+            drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
+            shapes.forEach((shape) => {
+                displayShapesOnCanvas(canvas, shape);
+            });
         }
-    }, [loading]);
+    }, [loading, shapes, canvasHeight, canvasWidth]);
 
     useEffect(() => {
         if(channel !== undefined) {
@@ -60,14 +64,6 @@ export default function DesignContainer(props: DesignContainerProps) {
             updateShapeFromChannel(channel, setShapes);
         }
     }, [channel]);
-
-    useEffect(() => {
-        canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
-        drawGridlinesOnCanvas(canvas);
-        shapes.forEach((shape) => {
-            displayShapesOnCanvas(canvas, shape);
-        });
-    }, [shapes]);
 
     return (
         <DesignPage
@@ -78,20 +74,18 @@ export default function DesignContainer(props: DesignContainerProps) {
             channel={channel}
             canvas={canvas}
             mouseDown={mouseDown}
+            shapeToolbarWidth={shapeToolbarWidth}
+            filebarHeight={filebarHeight}
+            canvasHeight={canvasHeight}
+            canvasWidth={canvasWidth}
             docId={props.location.state.doc_id}
-
             setShapes={setShapes}
-            logout={logout}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}
             setMouseMoveY={setMouseMoveY}
-
-            mouseMoveOnCanvas={mouseMoveOnCanvas}
             setMouseDown={setMouseDown}
-            mouseDownOnCanvas={mouseDownOnCanvas}
-
-            updateShapeToChannel={updateShapeToChannel}
-            newShapeToChannel={newShapeToChannel}
+            setCanvasWidth={setCanvasWidth}
+            setCanvasHeight={setCanvasHeight}
         />
     );
 }
