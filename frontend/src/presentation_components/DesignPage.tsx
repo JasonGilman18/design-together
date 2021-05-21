@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 import Shape from '../classes/shape';
 import {Channel} from 'phoenix';
-import styled, { StyledComponent } from 'styled-components';
+import styled from 'styled-components';
 import {ShapeToolbar} from './ShapeToolbar';
 import {mouseDownOnCanvas, 
     mouseMoveOnCanvas} from '../services/design_service';
@@ -19,20 +19,32 @@ export const DesignPage = (props: DesignPageProps) => (
        :
             <DesignPageContainer>
                 <Filebar>
+                    <Link
+                        to={{
+                            pathname: "/dashboard"
+                        }}
+                    >
+                        Dashboard
+                    </Link>
+                    <button onClick={(e) => logout(props.setAuthenticated)}>Logout</button>
                     <button onClick={(e) => {
                         props.setCanvasWidth(window.innerWidth-props.shapeToolbarWidth);
                         props.setCanvasHeight(window.innerHeight-props.filebarHeight);
                     }}>
                         Resize to Window
                     </button>
-                    <input type="number" value={props.canvasWidth} onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}/>
-                    <input type="number" value={props.canvasHeight} onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}/>
+                    <input type="number" value={props.canvasWidth} 
+                        onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
+                    />
+                    <input type="number" value={props.canvasHeight} 
+                        onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
+                    />
                 </Filebar>
                 <ShapeToolbar channel={props.channel} docId={props.docId}/>
                 <CanvasContainer>
                     <canvas 
                         ref={props.canvas}
-                        style={{backgroundColor: "green"}}
+                        style={{backgroundColor: "#ffffff", boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}}
                         onMouseDown={(e) => {
                             mouseDownOnCanvas(e, props.canvas, props.setShapes, props.setMouseDown);
                         }}
@@ -60,17 +72,22 @@ const DesignPageContainer = styled.div`
     width: 100vw;
     grid-template-columns: 200px auto;
     grid-template-rows: 50px auto;
+    background-color: #f8f9fa;
 `;
 
 const Filebar = styled.div`
     grid-column: 1/3;
     grid-row: 1/2;
-    background-color: black;
+    background-color: #fbfbfb;
+    border: solid 1px #dcdcdc;
 `;
 
 const CanvasContainer = styled.div`
     grid-column: 2/3;
     grid-row: 2/3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 interface DesignPageProps {

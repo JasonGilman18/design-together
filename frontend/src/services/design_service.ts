@@ -132,7 +132,10 @@ export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
         ctx?.lineTo(width, y);
     }
 
-    if(ctx !== undefined && ctx !== null) ctx.strokeStyle = "grey";
+    if(ctx !== undefined && ctx !== null) {
+        ctx.strokeStyle = "#dcdcdc"; //#f6f6f6
+        ctx.lineWidth = .5;
+    }
     ctx?.stroke();
 }
 

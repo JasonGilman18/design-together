@@ -23,8 +23,8 @@ export default function DesignContainer(props: DesignContainerProps) {
     const canvas = useRef<HTMLCanvasElement>(null);
     const shapeToolbarWidth = 200;
     const filebarHeight = 50;
-    const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - shapeToolbarWidth);
-    const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - filebarHeight);
+    const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - shapeToolbarWidth-100);
+    const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - filebarHeight-100);
 
     useEffect(() => {
         reqAuthToken(props.location.state.doc_id, setAuthToken);
