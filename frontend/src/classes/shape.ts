@@ -8,15 +8,19 @@ export default class Shape {
     position_y: number;
     height: number;
     width: number;
+    filled: boolean;
+    rounded: number;
     selected: boolean;
 
-    public constructor(shapeId: number, documentId: number, positionX: number, positionY: number, height: number, width: number) {
+    public constructor(shapeId: number, documentId: number, positionX: number, positionY: number, height: number, width: number, filled: boolean, rounded: number) {
         this.id = shapeId;
         this.document_id = documentId;
         this.position_x = positionX;
         this.position_y = positionY;
         this.height = height;
         this.width = width;
+        this.filled = filled;
+        this.rounded = rounded;
         this.selected = false;
     }
 
