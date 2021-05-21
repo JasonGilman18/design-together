@@ -82,6 +82,14 @@ export default class Shape {
             : "";
     }
 
+    public overlapping(shape: Shape): boolean {
+        const thisBounds = this.getShapeBounds();
+        const bounds = shape.getShapeBounds();
+        const colOverlap = !(thisBounds.topLeft.x > bounds.bottomRight.x || thisBounds.bottomRight.x < bounds.topLeft.x);
+        const rowOverlap = !(thisBounds.topLeft.y > bounds.bottomRight.y || thisBounds.bottomRight.y < bounds.topLeft.y);
+        return colOverlap || rowOverlap;
+    }
+
     private withinBounds(bounds: Bounds, mouseX: number, mouseY: number): boolean {
         return (bounds.topLeft.x <= mouseX && bounds.topLeft.y <= mouseY)
             ? (bounds.bottomRight.x >= mouseX && bounds.bottomRight.y >= mouseY)

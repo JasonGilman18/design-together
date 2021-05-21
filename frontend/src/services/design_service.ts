@@ -14,7 +14,8 @@ export function displayShapesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
 export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
-    setMouseDown: React.Dispatch<React.SetStateAction<string>>
+    setMouseDown: React.Dispatch<React.SetStateAction<string>>,
+    setSelectedShapeIndex: React.Dispatch<React.SetStateAction<number>>
 ) {
     const mousePos = getMouseCoordinates(e);
     setShapes(prevShapes => {
@@ -22,7 +23,7 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
         shapeValCopy.forEach((shape) => {
             shape.selected = false;
         });
-        shapeValCopy.forEach((shape) => {
+        shapeValCopy.forEach((shape, index) => {
             const withinResize = shape.withinResizeBounds(mousePos.x, mousePos.y);
             if(withinResize != "") {
                 shape.selected = true;
@@ -31,6 +32,7 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
             else if(shape.withinShapeBounds(mousePos.x, mousePos.y)) {
                 shape.selected = true;
                 setMouseDown("shape");
+                setSelectedShapeIndex(index);
             }
             else
                 setMouseDown("canvas");
@@ -41,6 +43,8 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
 
 export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     mouseDown: string,
+    mouseMoveX: number,
+    mouseMoveY: number,
     setMouseMoveX: React.Dispatch<React.SetStateAction<number>>,
     setMouseMoveY: React.Dispatch<React.SetStateAction<number>>, 
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
@@ -53,28 +57,40 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     if(mouseDown === "shape") {
         setShapes(prevShapes => {
             const shapeValCopy = [...prevShapes];
-            shapeValCopy.forEach((shape) => {
-                if(shape.withinShapeBounds(mousePos.x, mousePos.y)) {
-                    setMouseMoveX(mouseMoveX => {
-                        if(Math.abs(mouseMoveX) >= mouseSensitivity) {
-                            shape.position_x += (mouseMoveX/mouseSensitivity)*gridSnap;
-                            updateShape(channel, shape);
-                            return 0;
-                        }
-                        else
-                            return mouseMoveX + e.movementX;
-                    });
-                    setMouseMoveY(mouseMoveY => {
-                        if(Math.abs(mouseMoveY) >= mouseSensitivity) {
-                            shape.position_y += (mouseMoveY/mouseSensitivity)*gridSnap;
-                            updateShape(channel, shape);
-                            return 0;
-                        }
-                        else
-                            return mouseMoveY + e.movementY;
-                    });
+            var numShapesInBounds = 0;
+            var shapeIndex = 0;
+            shapeValCopy.forEach((shape, index) => {
+                if(shape.withinShapeBounds(mousePos.x, mousePos.y) && shape.selected) {
+                    numShapesInBounds++;
+                    shapeIndex = index;
                 }
             });
+            if(numShapesInBounds == 1) {
+                var potentialMouseMoveX = mouseMoveX + e.movementX;
+                var potentialMouseMoveY = mouseMoveY + e.movementY;
+                if(Math.abs(mouseMoveX) >= mouseSensitivity) {
+                    shapeValCopy[shapeIndex].position_x += (mouseMoveX/mouseSensitivity)*gridSnap;
+                    potentialMouseMoveX = 0;
+                }
+                if(Math.abs(mouseMoveY) >= mouseSensitivity) {
+                    shapeValCopy[shapeIndex].position_y += (mouseMoveY/mouseSensitivity)*gridSnap;
+                    potentialMouseMoveY = 0;
+                }
+
+                var overlapping = false;
+                shapeValCopy.forEach((shape, index) => {
+                    if(index !== shapeIndex) {
+                        if(shape.overlapping(shapeValCopy[shapeIndex]))
+                            overlapping = true;
+                    }
+                });
+
+                if(!overlapping) {
+                    setMouseMoveX(potentialMouseMoveX);
+                    setMouseMoveY(potentialMouseMoveY);
+                    updateShape(channel, shapeValCopy[shapeIndex]);
+                }
+            }
             return shapeValCopy;
         });
     }

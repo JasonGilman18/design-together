@@ -17,6 +17,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     const [socket, setSocket] = useState<Socket>();
     const [loading, setLoading] = useState<boolean>(true);
     const [shapes, setShapes] = useState<Array<Shape>>([]);
+    const [selectedShapeIndex, setSelectedShapeIndex] = useState<number>(-1);
     const [mouseDown, setMouseDown] = useState<string>("");
     const [mouseMoveX, setMouseMoveX] = useState<number>(0);
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
@@ -74,11 +75,13 @@ export default function DesignContainer(props: DesignContainerProps) {
             channel={channel}
             canvas={canvas}
             mouseDown={mouseDown}
+            selectedShapeIndex={selectedShapeIndex}
             shapeToolbarWidth={shapeToolbarWidth}
             filebarHeight={filebarHeight}
             canvasHeight={canvasHeight}
             canvasWidth={canvasWidth}
             docId={props.location.state.doc_id}
+            setSelectedShapeIndex={setSelectedShapeIndex}
             setShapes={setShapes}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}

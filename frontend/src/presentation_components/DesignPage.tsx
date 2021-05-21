@@ -39,6 +39,23 @@ export const DesignPage = (props: DesignPageProps) => (
                     <input type="number" value={props.canvasHeight} 
                         onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
                     />
+                    {
+                        props.selectedShapeIndex !== -1
+                            ? (
+                                <input type="number" 
+                                    value={props.shapes[props.selectedShapeIndex].width}
+                                    onChange={(e) => {
+                                        props.setShapes(prevShapes => {
+                                            const shapesCopy = [...prevShapes];
+                                            shapesCopy[props.selectedShapeIndex].width = parseInt(e.target.value);
+                                            return shapesCopy;
+                                        });
+                                    }}
+                                    min={10}
+                                />
+                            )
+                            : null
+                    }
                 </Filebar>
                 <ShapeToolbar channel={props.channel} docId={props.docId}/>
                 <CanvasContainer>
@@ -46,14 +63,14 @@ export const DesignPage = (props: DesignPageProps) => (
                         ref={props.canvas}
                         style={{backgroundColor: "#ffffff", boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}}
                         onMouseDown={(e) => {
-                            mouseDownOnCanvas(e, props.canvas, props.setShapes, props.setMouseDown);
+                            mouseDownOnCanvas(e, props.canvas, props.setShapes, props.setMouseDown, props.setSelectedShapeIndex);
                         }}
-                        onMouseMove={(e) => {
-                            mouseMoveOnCanvas(e, props.mouseDown, props.setMouseMoveX, 
-                                props.setMouseMoveY, props.setShapes, updateShapeToChannel, 
-                                props.channel
+                        /*onMouseMove={(e) => {
+                            mouseMoveOnCanvas(e, props.mouseDown, props.mouseMoveX, props.mouseMoveY, 
+                                props.setMouseMoveX, props.setMouseMoveY, props.setShapes, 
+                                updateShapeToChannel, props.channel
                             );
-                        }}
+                        }}*/
                         onMouseUp={(e) => {
                             props.setMouseDown("");
                         }}
@@ -98,6 +115,7 @@ interface DesignPageProps {
     mouseMoveY: number,
     docId: number,
     mouseDown: string,
+    selectedShapeIndex: number,
     shapeToolbarWidth: number,
     filebarHeight: number,
     canvasHeight: number,
@@ -108,6 +126,7 @@ interface DesignPageProps {
     setMouseMoveX: React.Dispatch<React.SetStateAction<number>>,
     setMouseMoveY: React.Dispatch<React.SetStateAction<number>>,
     setMouseDown: React.Dispatch<React.SetStateAction<string>>,
+    setSelectedShapeIndex: React.Dispatch<React.SetStateAction<number>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>
 }
