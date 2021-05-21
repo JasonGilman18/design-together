@@ -157,8 +157,26 @@ function drawShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | nu
         context.beginPath();
         context.strokeStyle = "black";
         context.fillStyle = "black";
-        context.rect(shape.position_x, shape.position_y, shape.width, shape.height);
+        if(shape.rounded == 0)
+            context.rect(shape.position_x, shape.position_y, shape.width, shape.height);
+        else {
+            const bounds = shape.getShapeBounds();
+            context.moveTo(bounds.topLeft.x, bounds.topLeft.y+shape.rounded);
+            context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-shape.rounded);
+            context.arcTo(bounds.bottomLeft.x, bounds.bottomLeft.y,
+                bounds.bottomRight.x, bounds.bottomRight.y, shape.rounded);
+            context.lineTo(bounds.bottomRight.x-shape.rounded, bounds.bottomRight.y);
+            context.arcTo(bounds.bottomRight.x, bounds.bottomRight.y, 
+                bounds.topRight.x, bounds.topRight.y, shape.rounded);
+            context.lineTo(bounds.topRight.x, bounds.topRight.y+shape.rounded);
+            context.arcTo(bounds.topRight.x, bounds.topRight.y,
+                bounds.topLeft.x, bounds.topLeft.y, shape.rounded);
+            context.lineTo(bounds.topLeft.x+shape.rounded, bounds.topLeft.y);
+            context.arcTo(bounds.topLeft.x, bounds.topLeft.y,
+                bounds.bottomLeft.x, bounds.bottomLeft.y, shape.rounded);
+        }
         shape.filled ? context.fill() : context.stroke();
+        context.closePath();
     }
 }
 
