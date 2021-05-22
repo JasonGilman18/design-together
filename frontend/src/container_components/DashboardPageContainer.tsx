@@ -5,7 +5,7 @@ import {reqAuthToken, getDocuments, logout, postDocument} from '../services/http
 //pages ======================================================
 import {DashboardPage} from "../presentation_components/DashboardPage";
 
-export default function DashboardContainer(props: DashboardContainerProps) {
+export default function DashboardPageContainer(props: DashboardPageContainerProps) {
 
     const [documents, setDocuments] = useState<Array<{doc_id: number, doc_name: string}>>([]);
     const [userInput, setUserInput] = useState<string>("");
@@ -35,6 +35,6 @@ export default function DashboardContainer(props: DashboardContainerProps) {
     );   
 }
 
-interface DashboardContainerProps {
+interface DashboardPageContainerProps {
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }

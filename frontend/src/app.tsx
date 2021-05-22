@@ -9,9 +9,9 @@ import {
 //services ==================================================
 import {getAuthenticated} from './services/http_api_service';
 //components ================================================
-import LoginContainer from './container_components/LoginContainer';
-import DashboardContainer from './container_components/DashboardContainer';
-import DesignContainer from './container_components/DesignContainer';
+import LoginPageContainer from './container_components/LoginPageContainer';
+import DashboardPageContainer from './container_components/DashboardPageContainer';
+import DesignPageContainer from './container_components/DesignPageContainer';
 
 export default function App() {
 
@@ -27,21 +27,21 @@ export default function App() {
                 <Route exact path="/" children={() => (
                     authenticated
                         ? <Redirect to="/dashboard"/>
-                        : <LoginContainer
+                        : <LoginPageContainer
                             setAuthenticated={setAuthenticated}
                         />
                 )}/>
                 <Route path="/dashboard" children={({location}) => (
                     !authenticated
                         ? <Redirect to="/"/>
-                        : <DashboardContainer
+                        : <DashboardPageContainer
                             setAuthenticated={setAuthenticated}
                         />
                 )}/>
                 <Route path="/design" children={({location}) => (
                     !authenticated
                         ? <Redirect to="/"/>
-                        : <DesignContainer 
+                        : <DesignPageContainer 
                             location={location}
                             setAuthenticated={setAuthenticated}
                         />

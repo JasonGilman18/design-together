@@ -4,7 +4,7 @@ import {Channel} from 'phoenix';
 import styled from 'styled-components';
 import {ComponentToolbarContainer} from '../container_components/ComponentToolbarContainer';
 import {mouseDownOnCanvas} from '../services/design_service';
-import {MenuToolbar} from './MenuToolbar';
+import {MenuToolbarContainer} from '../container_components/MenuToolbarContainer';
 import {updateShapeToChannel} from "../services/ws_api_service";
 
 export const DesignPage = (props: DesignPageProps) => (
@@ -16,7 +16,7 @@ export const DesignPage = (props: DesignPageProps) => (
             </>
         :
             <DesignPageContainer>
-                <MenuToolbar
+                <MenuToolbarContainer
                     shapes={props.shapes}
                     selectedShapeIndex={props.selectedShapeIndex}
                     componentToolbarWidth={props.componentToolbarWidth}

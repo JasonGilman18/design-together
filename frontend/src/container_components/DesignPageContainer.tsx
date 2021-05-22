@@ -10,7 +10,7 @@ import {connectToDocumentChannel,
     newShapeFromChannel, 
     updateShapeFromChannel} from "../services/ws_api_service";
 
-export default function DesignContainer(props: DesignContainerProps) {
+export default function DesignPageContainer(props: DesignPageContainerProps) {
 
     const [authToken, setAuthToken] = useState<string>("");
     const [channel, setChannel] = useState<Channel>();
@@ -93,7 +93,7 @@ export default function DesignContainer(props: DesignContainerProps) {
     );
 }
 
-interface DesignContainerProps {
+interface DesignPageContainerProps {
     location: any,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }

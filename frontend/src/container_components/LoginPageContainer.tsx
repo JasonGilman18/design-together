@@ -1,7 +1,7 @@
 import React from "react";
 import {LoginPage} from "../presentation_components/LoginPage";
 
-export default function LoginContainer(props: LoginContainerProps) {
+export default function LoginPageContainer(props: LoginPageContainerProps) {
 
     return (
         <LoginPage
@@ -10,6 +10,6 @@ export default function LoginContainer(props: LoginContainerProps) {
     );
 }
 
-interface LoginContainerProps {
+interface LoginPageContainerProps {
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }

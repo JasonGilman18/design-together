@@ -4,7 +4,7 @@ import Shape from '../classes/shape';
 import {logout} from "../services/http_api_service";
 
 export const MenuToolbar = (props: MenuToolbarProps) => (
-    <MenuToolbarContainer>
+    <ToolbarContainer>
         <Link
             to={{
                 pathname: "/dashboard"
@@ -30,22 +30,15 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
                 ? (
                     <input type="number" 
                         value={props.shapes[props.selectedShapeIndex].width}
-                        onChange={(e) => {
-                            props.setShapes(prevShapes => {
-                                const shapesCopy = [...prevShapes];
-                                shapesCopy[props.selectedShapeIndex].width = parseInt(e.target.value);
-                                return shapesCopy;
-                            });
-                        }}
-                        min={10}
+                        onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
                     />
                 )
                 : null
         }
-    </MenuToolbarContainer>
+    </ToolbarContainer>
 );
 
-const MenuToolbarContainer = styled.div`
+const ToolbarContainer = styled.div`
     grid-column: 1/3;
     grid-row: 1/2;
     background-color: #fbfbfb;
@@ -59,6 +52,7 @@ interface MenuToolbarProps {
     menuToolbarHeight: number,
     canvasHeight: number,
     canvasWidth: number,
+    updateComponentWidth: (width: number) => void,
     setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
