@@ -1,7 +1,5 @@
 import { Channel } from 'phoenix';
-import { useState } from 'react';
 import styled from 'styled-components';
-import { newShapeToChannel } from '../services/ws_api_service';
 import {ReactComponent as SquareSVG} from '../icons/square.svg';
 import {ReactComponent as SquareFillSVG} from '../icons/square-fill.svg';
 import {ReactComponent as SquareRoundedSVG} from '../icons/square-rounded.svg';
@@ -11,73 +9,51 @@ import {ReactComponent as RectangleFillSVG} from '../icons/rectangle-fill.svg';
 import {ReactComponent as RectangleRoundedSVG} from '../icons/rectangle-rounded.svg';
 import {ReactComponent as RectangleFillRoundedSVG} from '../icons/rectangle-fill-rounded.svg';
 
-export const ShapeToolbar = (props: ShapeToolbarProps) => {
+export const ComponentToolbar = (props: ComponentToolbarProps) => (
 
-    const [containerOpen, setContainerOpen] = useState<Array<boolean>>([true])
-
-    return (
     <ToolbarContainer>
         <ToolbarType>
             <TypeLabel>
                 <h5>Containers</h5>
-                <h5 onClick={() => setContainerOpen(arr => {
-                        const copyArr = [...arr];
-                        copyArr[0] = !copyArr[0];
-                        return copyArr;
-                    })}
-                >X</h5>
+                <h5 onClick={() => props.closeTypeContainer(0)}>X</h5>
             </TypeLabel>
             <TypeButtonContainer 
                 style={
-                    containerOpen[0]
-                        ?{height:"100px", border:"solid 1px #dcdcdc", borderTop:"transparent", borderRight:"transparent", borderLeft:"transparent"}
+                    props.containerOpen[0]
+                        ?{height:"100px", border:"solid 1px #dcdcdc", borderTop:"transparent", 
+                            borderRight:"transparent", borderLeft:"transparent"
+                        }
                         :{height:"0px", border:"none"}
                 }
             >
-                <TypeButton
-                    onClick={(e) => newShapeToChannel(props.channel, props.docId, 50, 50, 0, 0, false, 0)}
-                >
+                <TypeButton onClick={(e) => props.addType("square")}>
                     <SquareSVG style={{height:"65%", width:"65%"}}/>
                 </TypeButton>
-                <TypeButton
-                    onClick={(e) => newShapeToChannel(props.channel, props.docId, 50, 50, 0, 0, true, 0)}
-                >
+                <TypeButton onClick={(e) => props.addType("square-filled")}>
                     <SquareFillSVG style={{height:"65%", width:"65%"}}/>
                 </TypeButton>
-                <TypeButton
-                    onClick={(e) => newShapeToChannel(props.channel, props.docId, 50, 50, 0, 0, false, 15)}
-                >
+                <TypeButton onClick={(e) => props.addType("square-rounded")}>
                     <SquareRoundedSVG style={{height:"65%", width:"65%"}}/>
                 </TypeButton>
-                <TypeButton
-                    onClick={(e) => newShapeToChannel(props.channel, props.docId, 50, 50, 0, 0, true, 15)}
-                >
+                <TypeButton onClick={(e) => props.addType("square-filled-rounded")}>
                     <SquareFillRoundedSVG style={{height:"65%", width:"65%"}}/>
                 </TypeButton>
-                <TypeButton
-                    onClick={(e) => newShapeToChannel(props.channel, props.docId, 50, 100, 0, 0, false, 0)}
-                >
+                <TypeButton onClick={(e) => props.addType("rectangle")}>
                     <RectangleSVG style={{height:"75%", width:"75%"}}/>
                 </TypeButton>
-                <TypeButton
-                    onClick={(e) => newShapeToChannel(props.channel, props.docId, 50, 100, 0, 0, true, 0)}
-                >
+                <TypeButton onClick={(e) => props.addType("rectangle-filled")}>
                     <RectangleFillSVG style={{height:"75%", width:"75%"}}/>
                 </TypeButton>
-                <TypeButton
-                    onClick={(e) => newShapeToChannel(props.channel, props.docId, 50, 100, 0, 0, false, 15)}
-                >
+                <TypeButton onClick={(e) => props.addType("rectangle-rounded")}>
                     <RectangleRoundedSVG style={{height:"75%", width:"75%"}}/>
                 </TypeButton>
-                <TypeButton
-                    onClick={(e) => newShapeToChannel(props.channel, props.docId, 50, 100, 0, 0, true, 15)}
-                >
+                <TypeButton onClick={(e) => props.addType("rectangle-filled-rounded")}>
                     <RectangleFillRoundedSVG style={{height:"75%", width:"75%"}}/>
                 </TypeButton>
             </TypeButtonContainer>
         </ToolbarType>
-    </ToolbarContainer>)
-};
+    </ToolbarContainer>
+);
 
 const ToolbarContainer = styled.div`
     grid-column: 1/2;
@@ -132,7 +108,10 @@ const TypeButton = styled.div`
     }
 `;
 
-interface ShapeToolbarProps {
+interface ComponentToolbarProps {
     channel: Channel | undefined,
-    docId: number
+    docId: number,
+    containerOpen: Array<boolean>,
+    closeTypeContainer: (index: number) => void,
+    addType: (type: string) => void
 }

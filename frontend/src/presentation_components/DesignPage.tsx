@@ -1,12 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import Shape from '../classes/shape';
 import {Channel} from 'phoenix';
 import styled from 'styled-components';
-import {ShapeToolbar} from './ShapeToolbar';
-import {mouseDownOnCanvas, 
-    mouseMoveOnCanvas} from '../services/design_service';
-import {logout} from "../services/http_api_service";
+import {ComponentToolbarContainer} from '../container_components/ComponentToolbarContainer';
+import {mouseDownOnCanvas} from '../services/design_service';
+import {MenuToolbar} from './MenuToolbar';
 import {updateShapeToChannel} from "../services/ws_api_service";
 
 export const DesignPage = (props: DesignPageProps) => (
@@ -16,48 +14,24 @@ export const DesignPage = (props: DesignPageProps) => (
             <>
                 <LoadingMessage>Design Page Loading</LoadingMessage>
             </>
-       :
+        :
             <DesignPageContainer>
-                <Filebar>
-                    <Link
-                        to={{
-                            pathname: "/dashboard"
-                        }}
-                    >
-                        Dashboard
-                    </Link>
-                    <button onClick={(e) => logout(props.setAuthenticated)}>Logout</button>
-                    <button onClick={(e) => {
-                        props.setCanvasWidth(window.innerWidth-props.shapeToolbarWidth);
-                        props.setCanvasHeight(window.innerHeight-props.filebarHeight);
-                    }}>
-                        Resize to Window
-                    </button>
-                    <input type="number" value={props.canvasWidth} 
-                        onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
-                    />
-                    <input type="number" value={props.canvasHeight} 
-                        onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
-                    />
-                    {
-                        props.selectedShapeIndex !== -1
-                            ? (
-                                <input type="number" 
-                                    value={props.shapes[props.selectedShapeIndex].width}
-                                    onChange={(e) => {
-                                        props.setShapes(prevShapes => {
-                                            const shapesCopy = [...prevShapes];
-                                            shapesCopy[props.selectedShapeIndex].width = parseInt(e.target.value);
-                                            return shapesCopy;
-                                        });
-                                    }}
-                                    min={10}
-                                />
-                            )
-                            : null
-                    }
-                </Filebar>
-                <ShapeToolbar channel={props.channel} docId={props.docId}/>
+                <MenuToolbar
+                    shapes={props.shapes}
+                    selectedShapeIndex={props.selectedShapeIndex}
+                    componentToolbarWidth={props.componentToolbarWidth}
+                    menuToolbarHeight={props.menuToolbarHeight}
+                    canvasHeight={props.canvasHeight}
+                    canvasWidth={props.canvasWidth}
+                    setShapes={props.setShapes}
+                    setAuthenticated={props.setAuthenticated}
+                    setCanvasWidth={props.setCanvasWidth}
+                    setCanvasHeight={props.setCanvasHeight}
+                />
+                <ComponentToolbarContainer 
+                    channel={props.channel} 
+                    docId={props.docId}
+                />
                 <CanvasContainer>
                     <canvas 
                         ref={props.canvas}
@@ -65,16 +39,10 @@ export const DesignPage = (props: DesignPageProps) => (
                         onMouseDown={(e) => {
                             mouseDownOnCanvas(e, props.canvas, props.setShapes, props.setMouseDown, props.setSelectedShapeIndex);
                         }}
-                        /*onMouseMove={(e) => {
-                            mouseMoveOnCanvas(e, props.mouseDown, props.mouseMoveX, props.mouseMoveY, 
-                                props.setMouseMoveX, props.setMouseMoveY, props.setShapes, 
-                                updateShapeToChannel, props.channel
-                            );
-                        }}*/
                         onMouseUp={(e) => {
                             props.setMouseDown("");
                         }}
-                    ></canvas>
+                    />
                 </CanvasContainer>
             </DesignPageContainer>
 );
@@ -90,13 +58,6 @@ const DesignPageContainer = styled.div`
     grid-template-columns: 200px auto;
     grid-template-rows: 50px auto;
     background-color: #f8f9fa;
-`;
-
-const Filebar = styled.div`
-    grid-column: 1/3;
-    grid-row: 1/2;
-    background-color: #fbfbfb;
-    border: solid 1px #dcdcdc;
 `;
 
 const CanvasContainer = styled.div`
@@ -116,8 +77,8 @@ interface DesignPageProps {
     docId: number,
     mouseDown: string,
     selectedShapeIndex: number,
-    shapeToolbarWidth: number,
-    filebarHeight: number,
+    componentToolbarWidth: number,
+    menuToolbarHeight: number,
     canvasHeight: number,
     canvasWidth: number,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,

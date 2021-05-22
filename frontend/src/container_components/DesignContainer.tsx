@@ -22,10 +22,10 @@ export default function DesignContainer(props: DesignContainerProps) {
     const [mouseMoveX, setMouseMoveX] = useState<number>(0);
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
     const canvas = useRef<HTMLCanvasElement>(null);
-    const shapeToolbarWidth = 200;
-    const filebarHeight = 50;
-    const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - shapeToolbarWidth-100);
-    const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - filebarHeight-100);
+    const componentToolbarWidth = 200;
+    const menuToolbarHeight = 50;
+    const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - componentToolbarWidth-100);
+    const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - menuToolbarHeight-100);
 
     useEffect(() => {
         reqAuthToken(props.location.state.doc_id, setAuthToken);
@@ -76,8 +76,8 @@ export default function DesignContainer(props: DesignContainerProps) {
             canvas={canvas}
             mouseDown={mouseDown}
             selectedShapeIndex={selectedShapeIndex}
-            shapeToolbarWidth={shapeToolbarWidth}
-            filebarHeight={filebarHeight}
+            componentToolbarWidth={componentToolbarWidth}
+            menuToolbarHeight={menuToolbarHeight}
             canvasHeight={canvasHeight}
             canvasWidth={canvasWidth}
             docId={props.location.state.doc_id}
