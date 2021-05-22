@@ -1,25 +1,25 @@
-import Shape from "../classes/shape";
+import Component from "../classes/Component";
 import { MenuToolbar } from "../presentation_components/MenuToolbar";
 
 export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
 
     function updateComponentWidth(width: number) {
-        props.setShapes(prevShapes => {
-            const shapesCopy = [...prevShapes];
-            shapesCopy[props.selectedShapeIndex].width = width;
-            return shapesCopy;
+        props.setComponents(prevComponents => {
+            const componentsCopy = [...prevComponents];
+            componentsCopy[props.selectedComponentIndex].width = width;
+            return componentsCopy;
         });
     }
 
     return (
         <MenuToolbar
-            shapes={props.shapes}
-            selectedShapeIndex={props.selectedShapeIndex}
+            components={props.components}
+            selectedComponentIndex={props.selectedComponentIndex}
             componentToolbarWidth={props.componentToolbarWidth}
             menuToolbarHeight={props.menuToolbarHeight}
             canvasHeight={props.canvasHeight}
             canvasWidth={props.canvasWidth}
-            setShapes={props.setShapes}
+            setComponents={props.setComponents}
             setAuthenticated={props.setAuthenticated}
             setCanvasWidth={props.setCanvasWidth}
             setCanvasHeight={props.setCanvasHeight}
@@ -29,13 +29,13 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
 };
 
 interface MenuToolbarContainerProps {
-    shapes: Array<Shape>,
-    selectedShapeIndex: number,
+    components: Array<Component>,
+    selectedComponentIndex: number,
     componentToolbarWidth: number,
     menuToolbarHeight: number,
     canvasHeight: number,
     canvasWidth: number,
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+    setComponents: React.Dispatch<React.SetStateAction<Component[]>>,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>

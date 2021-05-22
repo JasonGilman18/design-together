@@ -1,7 +1,7 @@
 type Bounds = {topLeft: {x: number, y: number}, topRight: {x: number, y: number}, bottomLeft: {x: number, y: number}, bottomRight: {x: number, y: number}};
 type ResizeBounds = {topLeftResize: Bounds, topRightResize: Bounds, bottomLeftResize: Bounds, bottomRightResize: Bounds};
 
-export default class Shape {
+export default class Component {
     id: number;
     document_id: number;
     position_x: number;
@@ -12,8 +12,8 @@ export default class Shape {
     rounded: number;
     selected: boolean;
 
-    public constructor(shapeId: number, documentId: number, positionX: number, positionY: number, height: number, width: number, filled: boolean, rounded: number) {
-        this.id = shapeId;
+    public constructor(componentId: number, documentId: number, positionX: number, positionY: number, height: number, width: number, filled: boolean, rounded: number) {
+        this.id = componentId;
         this.document_id = documentId;
         this.position_x = positionX;
         this.position_y = positionY;
@@ -24,7 +24,7 @@ export default class Shape {
         this.selected = false;
     }
 
-    public getShapeBounds(): Bounds {
+    public getComponentBounds(): Bounds {
         return {
             topLeft: {x: this.position_x, y: this.position_y},
             topRight: {x: this.position_x + this.width, y: this.position_y},
@@ -34,7 +34,7 @@ export default class Shape {
     }
 
     public getResizeBounds(): ResizeBounds {
-        const shapeBounds = this.getShapeBounds();
+        const shapeBounds = this.getComponentBounds();
         const radius = 5;
         return {
             topLeftResize: {
@@ -64,8 +64,8 @@ export default class Shape {
         };
     }
 
-    public withinShapeBounds(mouseX: number, mouseY: number): boolean {
-        const bounds = this.getShapeBounds();
+    public withinComponentBounds(mouseX: number, mouseY: number): boolean {
+        const bounds = this.getComponentBounds();
         return this.withinBounds(bounds, mouseX, mouseY);
     }
 
@@ -82,9 +82,9 @@ export default class Shape {
             : "";
     }
 
-    public overlapping(shape: Shape): boolean {
-        const thisBounds = this.getShapeBounds();
-        const bounds = shape.getShapeBounds();
+    public overlapping(component: Component): boolean {
+        const thisBounds = this.getComponentBounds();
+        const bounds = component.getComponentBounds();
         const colOverlap = !(thisBounds.topLeft.x > bounds.bottomRight.x || thisBounds.bottomRight.x < bounds.topLeft.x);
         const rowOverlap = !(thisBounds.topLeft.y > bounds.bottomRight.y || thisBounds.bottomRight.y < bounds.topLeft.y);
         return colOverlap || rowOverlap;

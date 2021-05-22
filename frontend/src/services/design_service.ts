@@ -1,43 +1,43 @@
 import { Channel } from "phoenix";
 import React from "react";
-import Shape from "../classes/shape";
+import Component from "../classes/Component";
 
-export function displayShapesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, shape: Shape) {
-    if(shape.selected) {
-        drawShapeOnCanvas(canvas, shape);
-        drawSelectionOnCanvas(canvas, shape);
+export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, component: Component) {
+    if(component.selected) {
+        drawComponentOnCanvas(canvas, component);
+        drawSelectionOnCanvas(canvas, component);
     }
     else
-        drawShapeOnCanvas(canvas, shape);
+        drawComponentOnCanvas(canvas, component);
 }
 
 export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+    setComponents: React.Dispatch<React.SetStateAction<Component[]>>,
     setMouseDown: React.Dispatch<React.SetStateAction<string>>,
-    setSelectedShapeIndex: React.Dispatch<React.SetStateAction<number>>
+    setSelectedComponentIndex: React.Dispatch<React.SetStateAction<number>>
 ) {
     const mousePos = getMouseCoordinates(e);
-    setShapes(prevShapes => {
-        const shapeValCopy = [...prevShapes];
-        shapeValCopy.forEach((shape) => {
-            shape.selected = false;
+    setComponents(prevComponents => {
+        const componentValCopy = [...prevComponents];
+        componentValCopy.forEach((component) => {
+            component.selected = false;
         });
-        shapeValCopy.forEach((shape, index) => {
-            const withinResize = shape.withinResizeBounds(mousePos.x, mousePos.y);
+        componentValCopy.forEach((component, index) => {
+            const withinResize = component.withinResizeBounds(mousePos.x, mousePos.y);
             if(withinResize != "") {
-                shape.selected = true;
+                component.selected = true;
                 setMouseDown("resize");
             }
-            else if(shape.withinShapeBounds(mousePos.x, mousePos.y)) {
-                shape.selected = true;
-                setMouseDown("shape");
-                setSelectedShapeIndex(index);
+            else if(component.withinComponentBounds(mousePos.x, mousePos.y)) {
+                component.selected = true;
+                setMouseDown("component");
+                setSelectedComponentIndex(index);
             }
             else
                 setMouseDown("canvas");
         });
-        return shapeValCopy;
+        return componentValCopy;
     });
 }
 
@@ -47,40 +47,40 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     mouseMoveY: number,
     setMouseMoveX: React.Dispatch<React.SetStateAction<number>>,
     setMouseMoveY: React.Dispatch<React.SetStateAction<number>>, 
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>, 
-    updateShape: (channel: Channel | undefined, shape: Shape) => void, 
+    setComponents: React.Dispatch<React.SetStateAction<Component[]>>, 
+    updateComponent: (channel: Channel | undefined, Component: Component) => void, 
     channel: Channel | undefined
 ) {
     const mousePos = getMouseCoordinates(e);
     const mouseSensitivity = 10;
     const gridSnap = 10;
-    if(mouseDown === "shape") {
-        setShapes(prevShapes => {
-            const shapeValCopy = [...prevShapes];
-            var numShapesInBounds = 0;
-            var shapeIndex = 0;
-            shapeValCopy.forEach((shape, index) => {
-                if(shape.withinShapeBounds(mousePos.x, mousePos.y) && shape.selected) {
-                    numShapesInBounds++;
-                    shapeIndex = index;
+    if(mouseDown === "component") {
+        setComponents(prevComponents => {
+            const componentValCopy = [...prevComponents];
+            var numComponentsInBounds = 0;
+            var componentIndex = 0;
+            componentValCopy.forEach((component, index) => {
+                if(component.withinComponentBounds(mousePos.x, mousePos.y) && component.selected) {
+                    numComponentsInBounds++;
+                    componentIndex = index;
                 }
             });
-            if(numShapesInBounds == 1) {
+            if(numComponentsInBounds == 1) {
                 var potentialMouseMoveX = mouseMoveX + e.movementX;
                 var potentialMouseMoveY = mouseMoveY + e.movementY;
                 if(Math.abs(mouseMoveX) >= mouseSensitivity) {
-                    shapeValCopy[shapeIndex].position_x += (mouseMoveX/mouseSensitivity)*gridSnap;
+                    componentValCopy[componentIndex].position_x += (mouseMoveX/mouseSensitivity)*gridSnap;
                     potentialMouseMoveX = 0;
                 }
                 if(Math.abs(mouseMoveY) >= mouseSensitivity) {
-                    shapeValCopy[shapeIndex].position_y += (mouseMoveY/mouseSensitivity)*gridSnap;
+                    componentValCopy[componentIndex].position_y += (mouseMoveY/mouseSensitivity)*gridSnap;
                     potentialMouseMoveY = 0;
                 }
 
                 var overlapping = false;
-                shapeValCopy.forEach((shape, index) => {
-                    if(index !== shapeIndex) {
-                        if(shape.overlapping(shapeValCopy[shapeIndex]))
+                componentValCopy.forEach((component, index) => {
+                    if(index !== componentIndex) {
+                        if(component.overlapping(componentValCopy[componentIndex]))
                             overlapping = true;
                     }
                 });
@@ -88,45 +88,45 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
                 if(!overlapping) {
                     setMouseMoveX(potentialMouseMoveX);
                     setMouseMoveY(potentialMouseMoveY);
-                    updateShape(channel, shapeValCopy[shapeIndex]);
+                    updateComponent(channel, componentValCopy[componentIndex]);
                 }
             }
-            return shapeValCopy;
+            return componentValCopy;
         });
     }
     else if(mouseDown === "resize") {
-        setShapes(prevShapes => {
-            const shapeValCopy = [...prevShapes];
+        setComponents(prevComponents => {
+            const componentValCopy = [...prevComponents];
             var updated = false;
-            shapeValCopy.forEach((shape) => {
-                const withinResize = shape.withinResizeBounds(mousePos.x, mousePos.y);
+            componentValCopy.forEach((component) => {
+                const withinResize = component.withinResizeBounds(mousePos.x, mousePos.y);
                 if(withinResize === "topLeft") {
-                    shape.position_x += e.movementX;
-                    shape.position_y += e.movementY;
-                    shape.height -= e.movementY;
-                    shape.width -= e.movementX;
+                    component.position_x += e.movementX;
+                    component.position_y += e.movementY;
+                    component.height -= e.movementY;
+                    component.width -= e.movementX;
                     updated = true;
                 }
                 else if(withinResize === "topRight") {
-                    shape.position_y += e.movementY;
-                    shape.height -= e.movementY;
-                    shape.width += e.movementX;
+                    component.position_y += e.movementY;
+                    component.height -= e.movementY;
+                    component.width += e.movementX;
                     updated = true;
                 }
                 else if(withinResize === "bottomLeft") {
-                    shape.position_x += e.movementX;
-                    shape.height += e.movementY;
-                    shape.width -= e.movementX;
+                    component.position_x += e.movementX;
+                    component.height += e.movementY;
+                    component.width -= e.movementX;
                     updated = true;
                 }
                 else if(withinResize === "bottomRight") {
-                    shape.height += e.movementY;
-                    shape.width += e.movementX;
+                    component.height += e.movementY;
+                    component.width += e.movementX;
                     updated = true;
                 }
-                if(updated) updateShape(channel, shape);
+                if(updated) updateComponent(channel, component);
             });
-            return updated ? shapeValCopy : prevShapes;
+            return updated ? componentValCopy : prevComponents;
         });
     }
 }
@@ -165,41 +165,41 @@ function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>)
     }
 }
 
-function drawShapeOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
-    shape: Shape
+function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
+    component: Component
 ) {
     const context = canvas.current?.getContext("2d");
     if(context !== null && context !== undefined) {
         context.beginPath();
         context.strokeStyle = "black";
         context.fillStyle = "black";
-        if(shape.rounded == 0)
-            context.rect(shape.position_x, shape.position_y, shape.width, shape.height);
+        if(component.rounded == 0)
+            context.rect(component.position_x, component.position_y, component.width, component.height);
         else {
-            const bounds = shape.getShapeBounds();
-            context.moveTo(bounds.topLeft.x, bounds.topLeft.y+shape.rounded);
-            context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-shape.rounded);
+            const bounds = component.getComponentBounds();
+            context.moveTo(bounds.topLeft.x, bounds.topLeft.y+component.rounded);
+            context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-component.rounded);
             context.arcTo(bounds.bottomLeft.x, bounds.bottomLeft.y,
-                bounds.bottomRight.x, bounds.bottomRight.y, shape.rounded);
-            context.lineTo(bounds.bottomRight.x-shape.rounded, bounds.bottomRight.y);
+                bounds.bottomRight.x, bounds.bottomRight.y, component.rounded);
+            context.lineTo(bounds.bottomRight.x-component.rounded, bounds.bottomRight.y);
             context.arcTo(bounds.bottomRight.x, bounds.bottomRight.y, 
-                bounds.topRight.x, bounds.topRight.y, shape.rounded);
-            context.lineTo(bounds.topRight.x, bounds.topRight.y+shape.rounded);
+                bounds.topRight.x, bounds.topRight.y, component.rounded);
+            context.lineTo(bounds.topRight.x, bounds.topRight.y+component.rounded);
             context.arcTo(bounds.topRight.x, bounds.topRight.y,
-                bounds.topLeft.x, bounds.topLeft.y, shape.rounded);
-            context.lineTo(bounds.topLeft.x+shape.rounded, bounds.topLeft.y);
+                bounds.topLeft.x, bounds.topLeft.y, component.rounded);
+            context.lineTo(bounds.topLeft.x+component.rounded, bounds.topLeft.y);
             context.arcTo(bounds.topLeft.x, bounds.topLeft.y,
-                bounds.bottomLeft.x, bounds.bottomLeft.y, shape.rounded);
+                bounds.bottomLeft.x, bounds.bottomLeft.y, component.rounded);
         }
-        shape.filled ? context.fill() : context.stroke();
+        component.filled ? context.fill() : context.stroke();
         context.closePath();
     }
 }
 
 function drawSelectionOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
-    shape: Shape
+    component: Component
 ) {
-    const bounds = shape.getShapeBounds();
+    const bounds = component.getComponentBounds();
     const context = canvas.current?.getContext('2d');
     const bubbleRadius = 5;
 

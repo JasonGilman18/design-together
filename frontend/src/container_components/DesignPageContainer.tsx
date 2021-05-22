@@ -1,14 +1,14 @@
 import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
-import Shape from "../classes/shape";
+import Component from "../classes/Component";
 import {DesignPage} from "../presentation_components/DesignPage";
-import {displayShapesOnCanvas,
+import {displayComponentsOnCanvas,
     drawGridlinesOnCanvas} from '../services/design_service';
 import {reqAuthToken} from "../services/http_api_service";
 import {connectToDocumentChannel,
     disconnectFromDocumentChannel,
-    newShapeFromChannel, 
-    updateShapeFromChannel} from "../services/ws_api_service";
+    newComponentFromChannel, 
+    updateComponentFromChannel} from "../services/ws_api_service";
 
 export default function DesignPageContainer(props: DesignPageContainerProps) {
 
@@ -16,8 +16,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const [channel, setChannel] = useState<Channel>();
     const [socket, setSocket] = useState<Socket>();
     const [loading, setLoading] = useState<boolean>(true);
-    const [shapes, setShapes] = useState<Array<Shape>>([]);
-    const [selectedShapeIndex, setSelectedShapeIndex] = useState<number>(-1);
+    const [components, setComponents] = useState<Array<Component>>([]);
+    const [selectedComponentIndex, setSelectedComponentIndex] = useState<number>(-1);
     const [mouseDown, setMouseDown] = useState<string>("");
     const [mouseMoveX, setMouseMoveX] = useState<number>(0);
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
@@ -53,36 +53,36 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
             drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            shapes.forEach((shape) => {
-                displayShapesOnCanvas(canvas, shape);
+            components.forEach((component) => {
+                displayComponentsOnCanvas(canvas, component);
             });
         }
-    }, [loading, shapes, canvasHeight, canvasWidth]);
+    }, [loading, components, canvasHeight, canvasWidth]);
 
     useEffect(() => {
         if(channel !== undefined) {
-            newShapeFromChannel(channel, setShapes);
-            updateShapeFromChannel(channel, setShapes);
+            newComponentFromChannel(channel, setComponents);
+            updateComponentFromChannel(channel, setComponents);
         }
     }, [channel]);
 
     return (
         <DesignPage
             loading={loading}
-            shapes={shapes}
+            components={components}
             mouseMoveX={mouseMoveX}
             mouseMoveY={mouseMoveY}
             channel={channel}
             canvas={canvas}
             mouseDown={mouseDown}
-            selectedShapeIndex={selectedShapeIndex}
+            selectedComponentIndex={selectedComponentIndex}
             componentToolbarWidth={componentToolbarWidth}
             menuToolbarHeight={menuToolbarHeight}
             canvasHeight={canvasHeight}
             canvasWidth={canvasWidth}
             docId={props.location.state.doc_id}
-            setSelectedShapeIndex={setSelectedShapeIndex}
-            setShapes={setShapes}
+            setSelectedComponentIndex={setSelectedComponentIndex}
+            setComponents={setComponents}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}
             setMouseMoveY={setMouseMoveY}

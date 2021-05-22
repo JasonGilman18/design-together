@@ -1,11 +1,10 @@
 import React from 'react';
-import Shape from '../classes/shape';
+import Component from '../classes/Component';
 import {Channel} from 'phoenix';
 import styled from 'styled-components';
 import {ComponentToolbarContainer} from '../container_components/ComponentToolbarContainer';
 import {mouseDownOnCanvas} from '../services/design_service';
 import {MenuToolbarContainer} from '../container_components/MenuToolbarContainer';
-import {updateShapeToChannel} from "../services/ws_api_service";
 
 export const DesignPage = (props: DesignPageProps) => (
 
@@ -17,13 +16,13 @@ export const DesignPage = (props: DesignPageProps) => (
         :
             <DesignPageContainer>
                 <MenuToolbarContainer
-                    shapes={props.shapes}
-                    selectedShapeIndex={props.selectedShapeIndex}
+                    components={props.components}
+                    selectedComponentIndex={props.selectedComponentIndex}
                     componentToolbarWidth={props.componentToolbarWidth}
                     menuToolbarHeight={props.menuToolbarHeight}
                     canvasHeight={props.canvasHeight}
                     canvasWidth={props.canvasWidth}
-                    setShapes={props.setShapes}
+                    setComponents={props.setComponents}
                     setAuthenticated={props.setAuthenticated}
                     setCanvasWidth={props.setCanvasWidth}
                     setCanvasHeight={props.setCanvasHeight}
@@ -37,7 +36,7 @@ export const DesignPage = (props: DesignPageProps) => (
                         ref={props.canvas}
                         style={{backgroundColor: "#ffffff", boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}}
                         onMouseDown={(e) => {
-                            mouseDownOnCanvas(e, props.canvas, props.setShapes, props.setMouseDown, props.setSelectedShapeIndex);
+                            mouseDownOnCanvas(e, props.canvas, props.setComponents, props.setMouseDown, props.setSelectedComponentIndex);
                         }}
                         onMouseUp={(e) => {
                             props.setMouseDown("");
@@ -71,23 +70,23 @@ const CanvasContainer = styled.div`
 interface DesignPageProps {
     channel: Channel | undefined,
     loading: boolean,
-    shapes: Array<Shape>,
+    components: Array<Component>,
     mouseMoveX: number,
     mouseMoveY: number,
     docId: number,
     mouseDown: string,
-    selectedShapeIndex: number,
+    selectedComponentIndex: number,
     componentToolbarWidth: number,
     menuToolbarHeight: number,
     canvasHeight: number,
     canvasWidth: number,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+    setComponents: React.Dispatch<React.SetStateAction<Component[]>>,
     setMouseMoveX: React.Dispatch<React.SetStateAction<number>>,
     setMouseMoveY: React.Dispatch<React.SetStateAction<number>>,
     setMouseDown: React.Dispatch<React.SetStateAction<string>>,
-    setSelectedShapeIndex: React.Dispatch<React.SetStateAction<number>>,
+    setSelectedComponentIndex: React.Dispatch<React.SetStateAction<number>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>
 }

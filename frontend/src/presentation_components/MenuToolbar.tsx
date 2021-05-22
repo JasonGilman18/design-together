@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import Shape from '../classes/shape';
+import Component from '../classes/Component';
 import {logout} from "../services/http_api_service";
 
 export const MenuToolbar = (props: MenuToolbarProps) => (
@@ -26,10 +26,10 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
             onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
         />
         {
-            props.selectedShapeIndex !== -1
+            props.selectedComponentIndex !== -1
                 ? (
                     <input type="number" 
-                        value={props.shapes[props.selectedShapeIndex].width}
+                        value={props.components[props.selectedComponentIndex].width}
                         onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
                     />
                 )
@@ -46,14 +46,14 @@ const ToolbarContainer = styled.div`
 `;
 
 interface MenuToolbarProps {
-    shapes: Array<Shape>,
-    selectedShapeIndex: number,
+    components: Array<Component>,
+    selectedComponentIndex: number,
     componentToolbarWidth: number,
     menuToolbarHeight: number,
     canvasHeight: number,
     canvasWidth: number,
     updateComponentWidth: (width: number) => void,
-    setShapes: React.Dispatch<React.SetStateAction<Shape[]>>,
+    setComponents: React.Dispatch<React.SetStateAction<Component[]>>,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>
