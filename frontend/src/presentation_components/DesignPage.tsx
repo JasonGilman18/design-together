@@ -28,8 +28,7 @@ export const DesignPage = (props: DesignPageProps) => (
                     setCanvasHeight={props.setCanvasHeight}
                 />
                 <ComponentToolbarContainer 
-                    channel={props.channel} 
-                    docId={props.docId}
+                    newComponent={props.newComponent}
                 />
                 <CanvasContainer>
                     <canvas 
@@ -88,5 +87,6 @@ interface DesignPageProps {
     setMouseDown: React.Dispatch<React.SetStateAction<string>>,
     setSelectedComponentIndex: React.Dispatch<React.SetStateAction<number>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
-    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>
+    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
+    newComponent: (type: string) => void
 }

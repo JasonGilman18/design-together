@@ -1,4 +1,3 @@
-import { Channel } from 'phoenix';
 import styled from 'styled-components';
 import {ReactComponent as SquareSVG} from '../icons/square.svg';
 import {ReactComponent as SquareFillSVG} from '../icons/square-fill.svg';
@@ -26,28 +25,28 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => (
                         :{height:"0px", border:"none"}
                 }
             >
-                <TypeButton onClick={(e) => props.addType("square")}>
+                <TypeButton onClick={(e) => props.newComponent("square")}>
                     <SquareSVG style={{height:"65%", width:"65%"}}/>
                 </TypeButton>
-                <TypeButton onClick={(e) => props.addType("square-filled")}>
+                <TypeButton onClick={(e) => props.newComponent("square-filled")}>
                     <SquareFillSVG style={{height:"65%", width:"65%"}}/>
                 </TypeButton>
-                <TypeButton onClick={(e) => props.addType("square-rounded")}>
+                <TypeButton onClick={(e) => props.newComponent("square-rounded")}>
                     <SquareRoundedSVG style={{height:"65%", width:"65%"}}/>
                 </TypeButton>
-                <TypeButton onClick={(e) => props.addType("square-filled-rounded")}>
+                <TypeButton onClick={(e) => props.newComponent("square-filled-rounded")}>
                     <SquareFillRoundedSVG style={{height:"65%", width:"65%"}}/>
                 </TypeButton>
-                <TypeButton onClick={(e) => props.addType("rectangle")}>
+                <TypeButton onClick={(e) => props.newComponent("rectangle")}>
                     <RectangleSVG style={{height:"75%", width:"75%"}}/>
                 </TypeButton>
-                <TypeButton onClick={(e) => props.addType("rectangle-filled")}>
+                <TypeButton onClick={(e) => props.newComponent("rectangle-filled")}>
                     <RectangleFillSVG style={{height:"75%", width:"75%"}}/>
                 </TypeButton>
-                <TypeButton onClick={(e) => props.addType("rectangle-rounded")}>
+                <TypeButton onClick={(e) => props.newComponent("rectangle-rounded")}>
                     <RectangleRoundedSVG style={{height:"75%", width:"75%"}}/>
                 </TypeButton>
-                <TypeButton onClick={(e) => props.addType("rectangle-filled-rounded")}>
+                <TypeButton onClick={(e) => props.newComponent("rectangle-filled-rounded")}>
                     <RectangleFillRoundedSVG style={{height:"75%", width:"75%"}}/>
                 </TypeButton>
             </TypeButtonContainer>
@@ -109,9 +108,7 @@ const TypeButton = styled.div`
 `;
 
 interface ComponentToolbarProps {
-    channel: Channel | undefined,
-    docId: number,
     containerOpen: Array<boolean>,
     closeTypeContainer: (index: number) => void,
-    addType: (type: string) => void
+    newComponent: (type: string) => void
 }

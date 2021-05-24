@@ -2,13 +2,19 @@ import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import Component from "../classes/Component";
 import {DesignPage} from "../presentation_components/DesignPage";
-import {displayComponentsOnCanvas,
-    drawGridlinesOnCanvas} from '../services/design_service';
+import {
+    displayComponentsOnCanvas,
+    drawGridlinesOnCanvas,
+    getNextAvailiblePosition
+} from '../services/design_service';
 import {reqAuthToken} from "../services/http_api_service";
-import {connectToDocumentChannel,
+import {
+    connectToDocumentChannel,
     disconnectFromDocumentChannel,
-    newComponentFromChannel, 
-    updateComponentFromChannel} from "../services/ws_api_service";
+    newComponentFromChannel,
+    newComponentToChannel,
+    updateComponentFromChannel
+} from "../services/ws_api_service";
 
 export default function DesignPageContainer(props: DesignPageContainerProps) {
 
@@ -66,6 +72,76 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         }
     }, [channel]);
 
+    function newComponent(type: string) {
+        const docId = props.location.state.doc_id;
+        var height: number;
+        var width: number;
+        var filled: boolean;
+        var rounded: number;
+        var addComponent = true;
+        switch(type) {
+            case "square":
+                height = 50;
+                width = 50;
+                filled = false;
+                rounded = 0;
+                break;
+            case "square-filled":
+                height = 50;
+                width = 50;
+                filled = true;
+                rounded = 0;
+                break;
+            case "square-rounded":
+                height = 50;
+                width = 50;
+                filled = false;
+                rounded = 15;
+                break;
+            case "square-filled-rounded":
+                height = 50;
+                width = 50;
+                filled = true;
+                rounded = 15;
+                break;
+            case "rectangle":
+                height = 50;
+                width = 100;
+                filled = false;
+                rounded = 0;
+                break;
+            case "rectangle-filled":
+                height = 50;
+                width = 100;
+                filled = true;
+                rounded = 0;
+                break;
+            case "rectangle-rounded":
+                height = 50;
+                width = 100;
+                filled = false;
+                rounded = 15;
+                break;
+            case "rectangle-filled-rounded":
+                height = 50;
+                width = 100;
+                filled = true;
+                rounded = 15;
+                break;
+            default:
+                height = 0;
+                width = 0;
+                filled = false;
+                rounded = 0;
+                addComponent = false;
+                break;
+        }
+        if(addComponent) {
+            const availPos = getNextAvailiblePosition(components, width, height, canvasWidth, canvasHeight);
+            newComponentToChannel(channel, docId, height, width, availPos.x, availPos.y, filled, rounded);
+        }   
+    }
+
     return (
         <DesignPage
             loading={loading}
@@ -89,6 +165,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             setMouseDown={setMouseDown}
             setCanvasWidth={setCanvasWidth}
             setCanvasHeight={setCanvasHeight}
+            newComponent={newComponent}
         />
     );
 }

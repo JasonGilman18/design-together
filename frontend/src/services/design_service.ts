@@ -41,6 +41,115 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     });
 }
 
+export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
+    canvasWidth: number, canvasHeight: number) {
+    const ctx = canvas.current?.getContext('2d');
+    const height = canvasHeight;
+    const width = canvasWidth;
+    const cellSize = 10;
+
+    for(var x=0;x<=width;x+=cellSize) {
+        ctx?.moveTo(x, 0);
+        ctx?.lineTo(x, height);
+    }
+
+    for(var y=0;y<=height;y+=cellSize) {
+        ctx?.moveTo(0, y);
+        ctx?.lineTo(width, y);
+    }
+
+    if(ctx !== undefined && ctx !== null) {
+        ctx.strokeStyle = "#dcdcdc"; //#f6f6f6
+        ctx.lineWidth = .5;
+    }
+    ctx?.stroke();
+}
+
+export function getNextAvailiblePosition(components: Component[], width: number, height: number, 
+    canvasWidth: number, canvasHeight: number
+): {x: number, y: number} {
+    var x;
+    var y;
+    if(components.length > 0) {
+        const lastComponentBounds = components[components.length-1].getComponentBounds();
+        if(lastComponentBounds.bottomRight.x + width > canvasWidth) {
+            x = 0;
+            y = lastComponentBounds.bottomRight.y;
+        }
+        else {
+            x = lastComponentBounds.bottomRight.x;
+            y = lastComponentBounds.topRight.y;
+        }
+    }
+    else {
+        x = 0;
+        y = 0;
+    }
+    return {x: x, y: y};
+}
+
+function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+    const canvasPos = e.currentTarget.getBoundingClientRect();
+    const mouseXRelativeToCanvas = e.clientX - canvasPos.left;
+    const mouseYRelativeToCanvas = e.clientY - canvasPos.top;
+    return {
+        x: mouseXRelativeToCanvas,
+        y: mouseYRelativeToCanvas
+    }
+}
+
+function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
+    component: Component
+) {
+    const context = canvas.current?.getContext("2d");
+    if(context !== null && context !== undefined) {
+        context.beginPath();
+        context.strokeStyle = "black";
+        context.fillStyle = "black";
+        if(component.rounded == 0)
+            context.rect(component.position_x, component.position_y, component.width, component.height);
+        else {
+            const bounds = component.getComponentBounds();
+            context.moveTo(bounds.topLeft.x, bounds.topLeft.y+component.rounded);
+            context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-component.rounded);
+            context.arcTo(bounds.bottomLeft.x, bounds.bottomLeft.y,
+                bounds.bottomRight.x, bounds.bottomRight.y, component.rounded);
+            context.lineTo(bounds.bottomRight.x-component.rounded, bounds.bottomRight.y);
+            context.arcTo(bounds.bottomRight.x, bounds.bottomRight.y, 
+                bounds.topRight.x, bounds.topRight.y, component.rounded);
+            context.lineTo(bounds.topRight.x, bounds.topRight.y+component.rounded);
+            context.arcTo(bounds.topRight.x, bounds.topRight.y,
+                bounds.topLeft.x, bounds.topLeft.y, component.rounded);
+            context.lineTo(bounds.topLeft.x+component.rounded, bounds.topLeft.y);
+            context.arcTo(bounds.topLeft.x, bounds.topLeft.y,
+                bounds.bottomLeft.x, bounds.bottomLeft.y, component.rounded);
+        }
+        component.filled ? context.fill() : context.stroke();
+        context.closePath();
+    }
+}
+
+function drawSelectionOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
+    component: Component
+) {
+    const bounds = component.getComponentBounds();
+    const context = canvas.current?.getContext('2d');
+    const bubbleRadius = 5;
+
+    context?.beginPath();
+    context?.arc(bounds.topLeft.x, bounds.topLeft.y, bubbleRadius, 0, 2*Math.PI);
+    context?.stroke();
+    context?.beginPath();
+    context?.arc(bounds.topRight.x, bounds.topRight.y, bubbleRadius, 0, 2*Math.PI);
+    context?.stroke();
+    context?.beginPath();
+    context?.arc(bounds.bottomLeft.x, bounds.bottomLeft.y, bubbleRadius, 0, 2*Math.PI);
+    context?.stroke();
+    context?.beginPath();
+    context?.arc(bounds.bottomRight.x, bounds.bottomRight.y, bubbleRadius, 0, 2*Math.PI);
+    context?.stroke();
+}
+
 /*
 export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     mouseDown: string,
@@ -132,89 +241,3 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     }
 }
 */
-
-export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
-    canvasWidth: number, canvasHeight: number) {
-    const ctx = canvas.current?.getContext('2d');
-    const height = canvasHeight;
-    const width = canvasWidth;
-    const cellSize = 10;
-
-    for(var x=0;x<=width;x+=cellSize) {
-        ctx?.moveTo(x, 0);
-        ctx?.lineTo(x, height);
-    }
-
-    for(var y=0;y<=height;y+=cellSize) {
-        ctx?.moveTo(0, y);
-        ctx?.lineTo(width, y);
-    }
-
-    if(ctx !== undefined && ctx !== null) {
-        ctx.strokeStyle = "#dcdcdc"; //#f6f6f6
-        ctx.lineWidth = .5;
-    }
-    ctx?.stroke();
-}
-
-function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
-    const canvasPos = e.currentTarget.getBoundingClientRect();
-    const mouseXRelativeToCanvas = e.clientX - canvasPos.left;
-    const mouseYRelativeToCanvas = e.clientY - canvasPos.top;
-    return {
-        x: mouseXRelativeToCanvas,
-        y: mouseYRelativeToCanvas
-    }
-}
-
-function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
-    component: Component
-) {
-    const context = canvas.current?.getContext("2d");
-    if(context !== null && context !== undefined) {
-        context.beginPath();
-        context.strokeStyle = "black";
-        context.fillStyle = "black";
-        if(component.rounded == 0)
-            context.rect(component.position_x, component.position_y, component.width, component.height);
-        else {
-            const bounds = component.getComponentBounds();
-            context.moveTo(bounds.topLeft.x, bounds.topLeft.y+component.rounded);
-            context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-component.rounded);
-            context.arcTo(bounds.bottomLeft.x, bounds.bottomLeft.y,
-                bounds.bottomRight.x, bounds.bottomRight.y, component.rounded);
-            context.lineTo(bounds.bottomRight.x-component.rounded, bounds.bottomRight.y);
-            context.arcTo(bounds.bottomRight.x, bounds.bottomRight.y, 
-                bounds.topRight.x, bounds.topRight.y, component.rounded);
-            context.lineTo(bounds.topRight.x, bounds.topRight.y+component.rounded);
-            context.arcTo(bounds.topRight.x, bounds.topRight.y,
-                bounds.topLeft.x, bounds.topLeft.y, component.rounded);
-            context.lineTo(bounds.topLeft.x+component.rounded, bounds.topLeft.y);
-            context.arcTo(bounds.topLeft.x, bounds.topLeft.y,
-                bounds.bottomLeft.x, bounds.bottomLeft.y, component.rounded);
-        }
-        component.filled ? context.fill() : context.stroke();
-        context.closePath();
-    }
-}
-
-function drawSelectionOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
-    component: Component
-) {
-    const bounds = component.getComponentBounds();
-    const context = canvas.current?.getContext('2d');
-    const bubbleRadius = 5;
-
-    context?.beginPath();
-    context?.arc(bounds.topLeft.x, bounds.topLeft.y, bubbleRadius, 0, 2*Math.PI);
-    context?.stroke();
-    context?.beginPath();
-    context?.arc(bounds.topRight.x, bounds.topRight.y, bubbleRadius, 0, 2*Math.PI);
-    context?.stroke();
-    context?.beginPath();
-    context?.arc(bounds.bottomLeft.x, bounds.bottomLeft.y, bubbleRadius, 0, 2*Math.PI);
-    context?.stroke();
-    context?.beginPath();
-    context?.arc(bounds.bottomRight.x, bounds.bottomRight.y, bubbleRadius, 0, 2*Math.PI);
-    context?.stroke();
-}

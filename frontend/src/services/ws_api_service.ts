@@ -33,7 +33,6 @@ export function newComponentFromChannel(channel: Channel | undefined,
 export function newComponentToChannel(channel: Channel | undefined, documentId: number, height: number, width: number, 
     position_x: number, position_y: number, filled: boolean, rounded: number
 ) {
-    
     channel?.push("new_component", {document_id: documentId, height: height, width: width, position_x: position_x, 
         position_y: position_y, filled: filled, rounded: rounded}, 10000);
 }
