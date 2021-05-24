@@ -11,6 +11,14 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
         });
     }
 
+    function updateComponentHeight(height: number) {
+        props.setComponents(prevComponents => {
+            const componentsCopy = [...prevComponents];
+            componentsCopy[props.selectedComponentIndex].height = height;
+            return componentsCopy;
+        });
+    }
+
     return (
         <MenuToolbar
             components={props.components}
@@ -24,6 +32,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             setCanvasWidth={props.setCanvasWidth}
             setCanvasHeight={props.setCanvasHeight}
             updateComponentWidth={updateComponentWidth}
+            updateComponentHeight={updateComponentHeight}
         />
     );
 };

@@ -28,10 +28,16 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
         {
             props.selectedComponentIndex !== -1
                 ? (
-                    <input type="number" 
-                        value={props.components[props.selectedComponentIndex].width}
-                        onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
-                    />
+                    <>
+                        <input type="number" 
+                            value={props.components[props.selectedComponentIndex].width}
+                            onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
+                        />
+                        <input type="number"
+                            value={props.components[props.selectedComponentIndex].height}
+                            onChange={(e) => props.updateComponentHeight(parseInt(e.target.value))}
+                        />
+                    </>
                 )
                 : null
         }
@@ -53,6 +59,7 @@ interface MenuToolbarProps {
     canvasHeight: number,
     canvasWidth: number,
     updateComponentWidth: (width: number) => void,
+    updateComponentHeight: (height: number) => void,
     setComponents: React.Dispatch<React.SetStateAction<Component[]>>,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,

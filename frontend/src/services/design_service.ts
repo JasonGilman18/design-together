@@ -84,6 +84,12 @@ export function getNextAvailiblePosition(components: Component[], width: number,
             if(lastComponentBounds.bottomRight.x + width > canvasWidth) {
                 x = 0;
                 y = lastComponentBounds.bottomRight.y;
+                for(var i=components.length-1;i>=0;i--) {
+                    const component = components[i];
+                    const componentBounds = component.getComponentBounds();
+                    if(componentBounds.bottomRight.y >= y)
+                        y = component.getComponentBounds().bottomRight.y;       
+                }
             }
             else {
                 x = lastComponentBounds.bottomRight.x;
