@@ -12,39 +12,39 @@ defmodule ApiWeb.DesignChannel do
     end
   end
 
-  def handle_in("new_shape", shape, socket) do
-    case Design.create_shape(shape) do
-      {:ok, shape} ->
-        broadcast!(socket, "new_shape", %{
-          id: shape.id,
-          document_id: shape.document_id,
-          height: shape.height,
-          width: shape.width,
-          position_x: shape.position_x,
-          position_y: shape.position_y,
-          filled: shape.filled,
-          rounded: shape.rounded})
+  def handle_in("new_component", component, socket) do
+    case Design.create_component(component) do
+      {:ok, component} ->
+        broadcast!(socket, "new_component", %{
+          id: component.id,
+          document_id: component.document_id,
+          height: component.height,
+          width: component.width,
+          position_x: component.position_x,
+          position_y: component.position_y,
+          filled: component.filled,
+          rounded: component.rounded})
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
     end
   end
 
-  def handle_in("update_shape", shape, socket) do
-    updateShape = Design.get_shape!(shape["id"])
-    case Design.update_shape(updateShape, %{
-      height: shape["height"],
-      width: shape["width"],
-      position_x: shape["position_x"],
-      position_y: shape["position_y"]})
+  def handle_in("update_component", component, socket) do
+    updateComponent = Design.get_component!(component["id"])
+    case Design.update_component(updateComponent, %{
+      height: component["height"],
+      width: component["width"],
+      position_x: component["position_x"],
+      position_y: component["position_y"]})
     do
-      {:ok, shape} ->
-        broadcast_from!(socket, "update_shape", %{
-          id: shape.id,
-          document_id: shape.document_id,
-          height: shape.height,
-          width: shape.width,
-          position_x: shape.position_x,
-          position_y: shape.position_y})
+      {:ok, component} ->
+        broadcast_from!(socket, "update_component", %{
+          id: component.id,
+          document_id: component.document_id,
+          height: component.height,
+          width: component.width,
+          position_x: component.position_x,
+          position_y: component.position_y})
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
     end

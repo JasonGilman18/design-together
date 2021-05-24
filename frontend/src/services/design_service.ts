@@ -41,6 +41,7 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     });
 }
 
+/*
 export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     mouseDown: string,
     mouseMoveX: number,
@@ -130,6 +131,7 @@ export function mouseMoveOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
         });
     }
 }
+*/
 
 export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
     canvasWidth: number, canvasHeight: number) {

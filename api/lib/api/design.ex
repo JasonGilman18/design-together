@@ -6,99 +6,99 @@ defmodule Api.Design do
   import Ecto.Query, warn: false
   alias Api.Repo
 
-  alias Api.Design.Shape
+  alias Api.Design.Component
 
   @doc """
-  Returns the list of shapes.
+  Returns the list of components.
 
   ## Examples
 
-      iex> list_shapes()
-      [%Shape{}, ...]
+      iex> list_components()
+      [%Component{}, ...]
 
   """
-  def list_shapes do
-    Repo.all(Shape)
+  def list_components do
+    Repo.all(Component)
   end
 
   @doc """
-  Gets a single shape.
+  Gets a single component.
 
-  Raises `Ecto.NoResultsError` if the Shape does not exist.
+  Raises `Ecto.NoResultsError` if the Component does not exist.
 
   ## Examples
 
-      iex> get_shape!(123)
+      iex> get_component!(123)
       %Shape{}
 
-      iex> get_shape!(456)
+      iex> get_component!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_shape!(id), do: Repo.get!(Shape, id)
+  def get_component!(id), do: Repo.get!(Component, id)
 
   @doc """
-  Creates a shape.
+  Creates a component.
 
   ## Examples
 
-      iex> create_shape(%{field: value})
-      {:ok, %Shape{}}
+      iex> create_component(%{field: value})
+      {:ok, %Component{}}
 
-      iex> create_shape(%{field: bad_value})
+      iex> create_component(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_shape(attrs \\ %{}) do
-    %Shape{}
-    |> Shape.changeset(attrs)
+  def create_component(attrs \\ %{}) do
+    %Component{}
+    |> Component.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a shape.
+  Updates a component.
 
   ## Examples
 
-      iex> update_shape(shape, %{field: new_value})
-      {:ok, %Shape{}}
+      iex> update_component(component, %{field: new_value})
+      {:ok, %Component{}}
 
-      iex> update_shape(shape, %{field: bad_value})
+      iex> update_component(component, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_shape(%Shape{} = shape, attrs) do
-    shape
-    |> Shape.changeset(attrs)
+  def update_component(%Component{} = component, attrs) do
+    component
+    |> Component.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a shape.
+  Deletes a component.
 
   ## Examples
 
-      iex> delete_shape(shape)
-      {:ok, %Shape{}}
+      iex> delete_shape(component)
+      {:ok, %Component{}}
 
-      iex> delete_shape(shape)
+      iex> delete_component(component)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_shape(%Shape{} = shape) do
-    Repo.delete(shape)
+  def delete_component(%Component{} = component) do
+    Repo.delete(component)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking shape changes.
+  Returns an `%Ecto.Changeset{}` for tracking component changes.
 
   ## Examples
 
-      iex> change_shape(shape)
-      %Ecto.Changeset{data: %Shape{}}
+      iex> change_component(component)
+      %Ecto.Changeset{data: %Component{}}
 
   """
-  def change_shape(%Shape{} = shape, attrs \\ %{}) do
-    Shape.changeset(shape, attrs)
+  def change_component(%Component{} = component, attrs \\ %{}) do
+    Component.changeset(component, attrs)
   end
 end

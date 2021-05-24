@@ -1,10 +1,10 @@
-defmodule Api.Design.Shape do
+defmodule Api.Design.Component do
   use Ecto.Schema
   import Ecto.Changeset
 
   @derive {Jason.Encoder, only: [:document_id, :height, :width, :position_x, :position_y, :filled, :rounded]}
 
-  schema "shapes" do
+  schema "component" do
     field :height, :integer
     field :width, :integer
     field :position_x, :integer
@@ -17,8 +17,8 @@ defmodule Api.Design.Shape do
   end
 
   @doc false
-  def changeset(shape, attrs) do
-    shape
+  def changeset(component, attrs) do
+    component
     |> cast(attrs, [:height, :width, :position_x, :position_y, :filled, :rounded, :document_id])
     |> validate_required([:height, :width, :position_x, :position_y, :filled, :rounded, :document_id])
   end

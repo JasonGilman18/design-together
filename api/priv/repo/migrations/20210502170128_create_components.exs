@@ -1,8 +1,8 @@
-defmodule Api.Repo.Migrations.CreateShapes do
+defmodule Api.Repo.Migrations.CreateComponents do
   use Ecto.Migration
 
   def change do
-    create table(:shapes) do
+    create table(:components) do
       add :height, :integer
       add :width, :integer
       add :position_x, :integer
@@ -14,6 +14,6 @@ defmodule Api.Repo.Migrations.CreateShapes do
       timestamps()
     end
 
-    create index(:shapes, [:document_id])
+    create index(:components, [:document_id])
   end
 end
