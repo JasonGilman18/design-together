@@ -59,9 +59,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
             drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            components.forEach((component) => {
-                displayComponentsOnCanvas(canvas, component);
-            });
+            displayComponentsOnCanvas(canvas, components);
         }
     }, [loading, components, canvasHeight, canvasWidth]);
 

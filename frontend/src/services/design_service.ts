@@ -1,14 +1,21 @@
-import { Channel } from "phoenix";
 import React from "react";
 import Component from "../classes/Component";
 
-export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, component: Component) {
-    if(component.selected) {
-        drawComponentOnCanvas(canvas, component);
-        drawSelectionOnCanvas(canvas, component);
-    }
-    else
-        drawComponentOnCanvas(canvas, component);
+export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, components: Component[]) {
+    const updatedComponents: Component[] = [];
+    components.forEach((component) => {
+        const updatedPos = getNextAvailiblePosition(updatedComponents, component.width, component.height, 
+            canvas.current?.width, canvas.current?.height);
+        component.position_x = updatedPos.x;
+        component.position_y = updatedPos.y;
+        updatedComponents.push(component);
+        if(component.selected) {
+            drawComponentOnCanvas(canvas, component);
+            drawSelectionOnCanvas(canvas, component);
+        }
+        else
+            drawComponentOnCanvas(canvas, component);
+    });
 }
 
 export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
@@ -66,24 +73,25 @@ export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
 }
 
 export function getNextAvailiblePosition(components: Component[], width: number, height: number, 
-    canvasWidth: number, canvasHeight: number
+    canvasWidth: number | undefined, canvasHeight: number | undefined
 ): {x: number, y: number} {
-    var x;
-    var y;
-    if(components.length > 0) {
-        const lastComponentBounds = components[components.length-1].getComponentBounds();
-        if(lastComponentBounds.bottomRight.x + width > canvasWidth) {
-            x = 0;
-            y = lastComponentBounds.bottomRight.y;
-        }
-        else {
-            x = lastComponentBounds.bottomRight.x;
-            y = lastComponentBounds.topRight.y;
-        }
-    }
+    var x, y;
+    if(canvasWidth == undefined || canvasHeight == undefined)
+        x = y = 0;
     else {
-        x = 0;
-        y = 0;
+        if(components.length > 0) {
+            const lastComponentBounds = components[components.length-1].getComponentBounds();
+            if(lastComponentBounds.bottomRight.x + width > canvasWidth) {
+                x = 0;
+                y = lastComponentBounds.bottomRight.y;
+            }
+            else {
+                x = lastComponentBounds.bottomRight.x;
+                y = lastComponentBounds.topRight.y;
+            }
+        }
+        else
+            x = y = 0;
     }
     return {x: x, y: y};
 }
