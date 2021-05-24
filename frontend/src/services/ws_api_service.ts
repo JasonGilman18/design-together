@@ -22,7 +22,7 @@ export function disconnectFromDocumentChannel(channel: Channel | undefined, sock
 export function newComponentFromChannel(channel: Channel | undefined, 
     setComponents: React.Dispatch<React.SetStateAction<Component[]>>
 ) {
-    channel?.on("new_shape", (responseComponent: Component) => {
+    channel?.on("new_component", (responseComponent: Component) => {
         const newComponent = new Component(responseComponent.id, responseComponent.document_id, responseComponent.position_x, 
             responseComponent.position_y, responseComponent.height, responseComponent.width, responseComponent.filled, 
             responseComponent.rounded);
@@ -34,14 +34,14 @@ export function newComponentToChannel(channel: Channel | undefined, documentId: 
     position_x: number, position_y: number, filled: boolean, rounded: number
 ) {
     
-    channel?.push("new_shape", {document_id: documentId, height: height, width: width, position_x: position_x, 
+    channel?.push("new_component", {document_id: documentId, height: height, width: width, position_x: position_x, 
         position_y: position_y, filled: filled, rounded: rounded}, 10000);
 }
 
 export function updateComponentFromChannel(channel: Channel | undefined, 
     setComponents: React.Dispatch<React.SetStateAction<Component[]>>
 ) {
-    channel?.on("update_shape", (responseComponent: Component) => {
+    channel?.on("update_component", (responseComponent: Component) => {
         setComponents(prevComponents => {
             const componentsCopyVal = [...prevComponents];
             componentsCopyVal.forEach((component) => {
@@ -58,6 +58,6 @@ export function updateComponentFromChannel(channel: Channel | undefined,
 }
 
 export function updateComponentToChannel(channel: Channel | undefined, component: Component) {
-    channel?.push("update_shape", {id: component.id, document_id: component.document_id, height: component.height, 
+    channel?.push("update_component", {id: component.id, document_id: component.document_id, height: component.height, 
         width: component.width, position_x: component.position_x, position_y: component.position_y});
 }

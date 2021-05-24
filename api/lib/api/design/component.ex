@@ -4,7 +4,7 @@ defmodule Api.Design.Component do
 
   @derive {Jason.Encoder, only: [:document_id, :height, :width, :position_x, :position_y, :filled, :rounded]}
 
-  schema "component" do
+  schema "components" do
     field :height, :integer
     field :width, :integer
     field :position_x, :integer
