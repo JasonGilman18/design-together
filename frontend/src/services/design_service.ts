@@ -9,12 +9,7 @@ export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCan
         component.position_x = updatedPos.x;
         component.position_y = updatedPos.y;
         updatedComponents.push(component);
-        if(component.selected) {
-            drawComponentOnCanvas(canvas, component);
-            drawSelectionOnCanvas(canvas, component);
-        }
-        else
-            drawComponentOnCanvas(canvas, component);
+        drawComponentOnCanvas(canvas, component);
     });
 }
 
@@ -118,50 +113,47 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
     const context = canvas.current?.getContext("2d");
     if(context !== null && context !== undefined) {
         context.beginPath();
-        context.strokeStyle = "black";
-        context.fillStyle = "black";
-        if(component.rounded == 0)
-            context.rect(component.position_x, component.position_y, component.width, component.height);
-        else {
-            const bounds = component.getComponentBounds();
-            context.moveTo(bounds.topLeft.x, bounds.topLeft.y+component.rounded);
-            context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-component.rounded);
-            context.arcTo(bounds.bottomLeft.x, bounds.bottomLeft.y,
-                bounds.bottomRight.x, bounds.bottomRight.y, component.rounded);
-            context.lineTo(bounds.bottomRight.x-component.rounded, bounds.bottomRight.y);
-            context.arcTo(bounds.bottomRight.x, bounds.bottomRight.y, 
-                bounds.topRight.x, bounds.topRight.y, component.rounded);
-            context.lineTo(bounds.topRight.x, bounds.topRight.y+component.rounded);
-            context.arcTo(bounds.topRight.x, bounds.topRight.y,
-                bounds.topLeft.x, bounds.topLeft.y, component.rounded);
-            context.lineTo(bounds.topLeft.x+component.rounded, bounds.topLeft.y);
-            context.arcTo(bounds.topLeft.x, bounds.topLeft.y,
-                bounds.bottomLeft.x, bounds.bottomLeft.y, component.rounded);
+        draw(context, component);
+        if(component.filled) {
+            context.fillStyle = "black";
+            context.fill();
+            context.closePath();
+            if(component.selected) {
+                context.beginPath();
+                context.strokeStyle = "green";
+                context.lineWidth = 3;
+                draw(context, component);
+                context.stroke();
+            }
         }
-        component.filled ? context.fill() : context.stroke();
+        else {
+            context.strokeStyle = component.selected ? "green" : "black";
+            context.lineWidth = component.selected ? 3 : 1;
+            context.stroke();
+        }
         context.closePath();
     }
 }
 
-function drawSelectionOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
-    component: Component
-) {
-    const bounds = component.getComponentBounds();
-    const context = canvas.current?.getContext('2d');
-    const bubbleRadius = 5;
-
-    context?.beginPath();
-    context?.arc(bounds.topLeft.x, bounds.topLeft.y, bubbleRadius, 0, 2*Math.PI);
-    context?.stroke();
-    context?.beginPath();
-    context?.arc(bounds.topRight.x, bounds.topRight.y, bubbleRadius, 0, 2*Math.PI);
-    context?.stroke();
-    context?.beginPath();
-    context?.arc(bounds.bottomLeft.x, bounds.bottomLeft.y, bubbleRadius, 0, 2*Math.PI);
-    context?.stroke();
-    context?.beginPath();
-    context?.arc(bounds.bottomRight.x, bounds.bottomRight.y, bubbleRadius, 0, 2*Math.PI);
-    context?.stroke();
+function draw(context: CanvasRenderingContext2D, component: Component) {
+    if(component.rounded == 0)
+        context.rect(component.position_x, component.position_y, component.width, component.height);
+    else {
+        const bounds = component.getComponentBounds();
+        context.moveTo(bounds.topLeft.x, bounds.topLeft.y+component.rounded);
+        context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-component.rounded);
+        context.arcTo(bounds.bottomLeft.x, bounds.bottomLeft.y,
+            bounds.bottomRight.x, bounds.bottomRight.y, component.rounded);
+        context.lineTo(bounds.bottomRight.x-component.rounded, bounds.bottomRight.y);
+        context.arcTo(bounds.bottomRight.x, bounds.bottomRight.y, 
+            bounds.topRight.x, bounds.topRight.y, component.rounded);
+        context.lineTo(bounds.topRight.x, bounds.topRight.y+component.rounded);
+        context.arcTo(bounds.topRight.x, bounds.topRight.y,
+            bounds.topLeft.x, bounds.topLeft.y, component.rounded);
+        context.lineTo(bounds.topLeft.x+component.rounded, bounds.topLeft.y);
+        context.arcTo(bounds.topLeft.x, bounds.topLeft.y,
+            bounds.bottomLeft.x, bounds.bottomLeft.y, component.rounded);
+    }
 }
 
 /*
