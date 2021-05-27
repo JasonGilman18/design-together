@@ -1,35 +1,51 @@
-type Bounds = {topLeft: {x: number, y: number}, topRight: {x: number, y: number}, bottomLeft: {x: number, y: number}, bottomRight: {x: number, y: number}};
-type ResizeBounds = {topLeftResize: Bounds, topRightResize: Bounds, bottomLeftResize: Bounds, bottomRightResize: Bounds};
-
 export default class Component {
     id: number;
     document_id: number;
-    position_x: number;
-    position_y: number;
-    height: number;
-    width: number;
-    filled: boolean;
-    rounded: number;
-    selected: boolean;
+    style: ComponentStyle;
+    node: {
+        parent: Component | null,
+        children: Component[]
+    };
 
-    public constructor(componentId: number, documentId: number, positionX: number, positionY: number, height: number, width: number, filled: boolean, rounded: number) {
+    public constructor(componentId: number, documentId: number, positionX: number, positionY: number, 
+        height: number, width: number, filled: boolean, rounded: number
+    ) {
         this.id = componentId;
         this.document_id = documentId;
-        this.position_x = positionX;
-        this.position_y = positionY;
-        this.height = height;
-        this.width = width;
-        this.filled = filled;
-        this.rounded = rounded;
-        this.selected = false;
+        this.node = {
+            parent: null,
+            children: []
+        };
+        this.style = {
+            position_x: positionX,
+            position_y: positionY,
+            height: height,
+            width: width,
+            filled: filled,
+            rounded: rounded,
+            selected: false
+        };
+    }
+
+    public addChildComponent(component: Component) {
+        component.node.parent = this;
+        this.node.children.push(component);
+    }
+
+    public removeChildComponent(component: Component) {
+        this.node.children.forEach((c, index) => {
+            if(component.id == c.id) {
+                this.node.children.splice(index);
+            }
+        });
     }
 
     public getComponentBounds(): Bounds {
         return {
-            topLeft: {x: this.position_x, y: this.position_y},
-            topRight: {x: this.position_x + this.width, y: this.position_y},
-            bottomLeft: {x: this.position_x, y: this.position_y + this.height},
-            bottomRight: {x: this.position_x + this.width, y: this.position_y + this.height}
+            topLeft: {x: this.style.position_x, y: this.style.position_y},
+            topRight: {x: this.style.position_x + this.style.width, y: this.style.position_y},
+            bottomLeft: {x: this.style.position_x, y: this.style.position_y + this.style.height},
+            bottomRight: {x: this.style.position_x + this.style.width, y: this.style.position_y + this.style.height}
         }
     }
 
@@ -95,4 +111,26 @@ export default class Component {
             ? (bounds.bottomRight.x >= mouseX && bounds.bottomRight.y >= mouseY)
             : false;
     }
+}
+
+type Bounds = {
+    topLeft: {x: number, y: number}, 
+    topRight: {x: number, y: number}, 
+    bottomLeft: {x: number, y: number}, 
+    bottomRight: {x: number, y: number}
+};
+type ResizeBounds = {
+    topLeftResize: Bounds, 
+    topRightResize: Bounds, 
+    bottomLeftResize: Bounds, 
+    bottomRightResize: Bounds
+};
+type ComponentStyle = {
+    position_x: number,
+    position_y: number,
+    height: number,
+    width: number,
+    filled: boolean,
+    rounded: number,
+    selected: boolean
 }

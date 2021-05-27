@@ -4,10 +4,10 @@ import Component from "../classes/Component";
 export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, components: Component[]) {
     const updatedComponents: Component[] = [];
     components.forEach((component) => {
-        const updatedPos = getNextAvailiblePosition(updatedComponents, component.width, component.height, 
+        const updatedPos = getNextAvailiblePosition(updatedComponents, component.style.width, component.style.height, 
             canvas.current?.width, canvas.current?.height);
-        component.position_x = updatedPos.x;
-        component.position_y = updatedPos.y;
+        component.style.position_x = updatedPos.x;
+        component.style.position_y = updatedPos.y;
         updatedComponents.push(component);
         drawComponentOnCanvas(canvas, component);
     });
@@ -23,16 +23,16 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     setComponents(prevComponents => {
         const componentValCopy = [...prevComponents];
         componentValCopy.forEach((component) => {
-            component.selected = false;
+            component.style.selected = false;
         });
         componentValCopy.forEach((component, index) => {
             const withinResize = component.withinResizeBounds(mousePos.x, mousePos.y);
             if(withinResize != "") {
-                component.selected = true;
+                component.style.selected = true;
                 setMouseDown("resize");
             }
             else if(component.withinComponentBounds(mousePos.x, mousePos.y)) {
-                component.selected = true;
+                component.style.selected = true;
                 setMouseDown("component");
                 setSelectedComponentIndex(index);
             }
@@ -114,11 +114,11 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
     if(context !== null && context !== undefined) {
         context.beginPath();
         draw(context, component);
-        if(component.filled) {
+        if(component.style.filled) {
             context.fillStyle = "black";
             context.fill();
             context.closePath();
-            if(component.selected) {
+            if(component.style.selected) {
                 context.beginPath();
                 context.strokeStyle = "green";
                 context.lineWidth = 3;
@@ -127,8 +127,8 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
             }
         }
         else {
-            context.strokeStyle = component.selected ? "green" : "black";
-            context.lineWidth = component.selected ? 3 : 1;
+            context.strokeStyle = component.style.selected ? "green" : "black";
+            context.lineWidth = component.style.selected ? 3 : 1;
             context.stroke();
         }
         context.closePath();
@@ -136,23 +136,23 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
 }
 
 function draw(context: CanvasRenderingContext2D, component: Component) {
-    if(component.rounded == 0)
-        context.rect(component.position_x, component.position_y, component.width, component.height);
+    if(component.style.rounded == 0)
+        context.rect(component.style.position_x, component.style.position_y, component.style.width, component.style.height);
     else {
         const bounds = component.getComponentBounds();
-        context.moveTo(bounds.topLeft.x, bounds.topLeft.y+component.rounded);
-        context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-component.rounded);
+        context.moveTo(bounds.topLeft.x, bounds.topLeft.y+component.style.rounded);
+        context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-component.style.rounded);
         context.arcTo(bounds.bottomLeft.x, bounds.bottomLeft.y,
-            bounds.bottomRight.x, bounds.bottomRight.y, component.rounded);
-        context.lineTo(bounds.bottomRight.x-component.rounded, bounds.bottomRight.y);
+            bounds.bottomRight.x, bounds.bottomRight.y, component.style.rounded);
+        context.lineTo(bounds.bottomRight.x-component.style.rounded, bounds.bottomRight.y);
         context.arcTo(bounds.bottomRight.x, bounds.bottomRight.y, 
-            bounds.topRight.x, bounds.topRight.y, component.rounded);
-        context.lineTo(bounds.topRight.x, bounds.topRight.y+component.rounded);
+            bounds.topRight.x, bounds.topRight.y, component.style.rounded);
+        context.lineTo(bounds.topRight.x, bounds.topRight.y+component.style.rounded);
         context.arcTo(bounds.topRight.x, bounds.topRight.y,
-            bounds.topLeft.x, bounds.topLeft.y, component.rounded);
-        context.lineTo(bounds.topLeft.x+component.rounded, bounds.topLeft.y);
+            bounds.topLeft.x, bounds.topLeft.y, component.style.rounded);
+        context.lineTo(bounds.topLeft.x+component.style.rounded, bounds.topLeft.y);
         context.arcTo(bounds.topLeft.x, bounds.topLeft.y,
-            bounds.bottomLeft.x, bounds.bottomLeft.y, component.rounded);
+            bounds.bottomLeft.x, bounds.bottomLeft.y, component.style.rounded);
     }
 }
 
