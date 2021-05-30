@@ -140,9 +140,11 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 break;
         }
         if(addComponent) {
-            const availPos = getNextAvailiblePosition(componentTree.components, width, height, canvasWidth, canvasHeight);
+            const availPos = getNextAvailiblePosition(componentTree.find(selectedComponentId), null, width, height, canvasWidth, 
+                canvasHeight
+            );
             newComponentToChannel(channel, docId, selectedComponentId, height, width, availPos.x, availPos.y, filled, rounded);
-        }   
+        }
     }
 
     return (

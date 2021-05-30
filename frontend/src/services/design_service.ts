@@ -6,16 +6,16 @@ export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCan
     component: Component | null
 ) {
     if(component) {
-        var updatedComponents: Component[] = []; 
+        var updatedComponents: Component[] = [];
         if(component.node.parent === null)
             drawComponentOnCanvas(canvas, component);
         component.node.children.forEach((child) => {
-            const updatedPos = getNextAvailiblePosition(updatedComponents, child.style.width, child.style.height, 
+            const updatedPos = getNextAvailiblePosition(component, child, child.style.width, child.style.height, 
                 canvas.current?.width, canvas.current?.height);
             child.style.position_x = updatedPos.x;
             child.style.position_y = updatedPos.y;
-            updatedComponents.push(child);
             drawComponentOnCanvas(canvas, child);
+            updatedComponents.push(child);
             if(component.node.children.length > 0)
                 displayComponentsOnCanvas(canvas, child);
         });
@@ -71,32 +71,42 @@ export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
     ctx?.stroke();
 }
 
-export function getNextAvailiblePosition(components: Component[], width: number, height: number, 
-    canvasWidth: number | undefined, canvasHeight: number | undefined
+export function getNextAvailiblePosition(parent: Component | null, excludeComponent: Component | null, width: number, 
+    height: number, canvasWidth: number | undefined, canvasHeight: number | undefined
 ): {x: number, y: number} {
-    var x, y;
-    if(canvasWidth == undefined || canvasHeight == undefined)
-        x = y = 0;
-    else {
-        if(components.length > 0) {
-            const lastComponentBounds = components[components.length-1].getComponentBounds();
-            if(lastComponentBounds.bottomRight.x + width > canvasWidth) {
-                x = 0;
-                y = lastComponentBounds.bottomRight.y;
-                for(var i=components.length-1;i>=0;i--) {
-                    const component = components[i];
-                    const componentBounds = component.getComponentBounds();
-                    if(componentBounds.bottomRight.y >= y)
-                        y = component.getComponentBounds().bottomRight.y;       
+    var x = 0;
+    var y = 0;
+    if(canvasWidth !== undefined && canvasHeight !== undefined) {
+        if(parent) {
+            const components = [...parent.node.children];
+            if(excludeComponent) {
+                components.forEach((component, index) => {
+                    if(component.id === excludeComponent.id)
+                        components.splice(index);
+                });
+            }
+            if(components.length > 0) {
+                const lastComponentBounds = components[components.length-1].getComponentBounds();
+                if(lastComponentBounds.bottomRight.x + width > parent.getComponentBounds().bottomRight.x) {
+                    x = parent.getComponentBounds().topLeft.x;
+                    y = lastComponentBounds.bottomRight.y;
+                    for(var i=components.length-1;i>=0;i--) {
+                        const component = components[i];
+                        const componentBounds = component.getComponentBounds();
+                        if(componentBounds.bottomRight.y >= y)
+                            y = component.getComponentBounds().bottomRight.y;       
+                    }
+                }
+                else {
+                    x = lastComponentBounds.bottomRight.x;
+                    y = lastComponentBounds.topRight.y;
                 }
             }
             else {
-                x = lastComponentBounds.bottomRight.x;
-                y = lastComponentBounds.topRight.y;
+                x = parent.getComponentBounds().topLeft.x;
+                y = parent.getComponentBounds().topLeft.y;   
             }
         }
-        else
-            x = y = 0;
     }
     return {x: x, y: y};
 }

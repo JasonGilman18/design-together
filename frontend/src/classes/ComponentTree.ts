@@ -33,7 +33,7 @@ export default class ComponentTree {
         component?.node.parent?.removeChild(component);
         this.components.forEach((cmp, index) => {
             if(cmp.id === id)
-                this.components.slice(index);
+                this.components.splice(index);
         });
     }
 
