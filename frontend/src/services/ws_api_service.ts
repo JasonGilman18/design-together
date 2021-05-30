@@ -1,6 +1,7 @@
 import {Channel, Socket} from 'phoenix';
 import React from 'react';
 import Component from '../classes/Component';
+import ComponentTree from '../classes/ComponentTree';
 
 export function connectToDocumentChannel(authToken: string, doc_id: number, 
     setChannel: React.Dispatch<React.SetStateAction<Channel | undefined>>, 
@@ -20,43 +21,44 @@ export function disconnectFromDocumentChannel(channel: Channel | undefined, sock
 }
 
 export function newComponentFromChannel(channel: Channel | undefined, 
-    setComponents: React.Dispatch<React.SetStateAction<Component[]>>
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 ) {
-    channel?.on("new_component", (responseComponent: Component) => {
-        const newComponent = new Component(responseComponent.id, responseComponent.document_id, responseComponent.position_x, 
-            responseComponent.position_y, responseComponent.height, responseComponent.width, responseComponent.filled, 
-            responseComponent.rounded);
-        setComponents(prevComponents => [...prevComponents, newComponent]);
+    channel?.on("new_component", (responseComponent: any) => {
+        setComponentTree(prevTree => {
+            const newComponent = new Component(responseComponent.id, responseComponent.document_id, 
+                prevTree.find(responseComponent.parent_id), responseComponent.position_x, 
+                responseComponent.position_y, responseComponent.height, responseComponent.width, 
+                responseComponent.filled, responseComponent.rounded);
+            prevTree.insert(newComponent);
+            return prevTree.copy();
+        });
     });
 }
 
-export function newComponentToChannel(channel: Channel | undefined, documentId: number, height: number, width: number, 
-    position_x: number, position_y: number, filled: boolean, rounded: number
+export function newComponentToChannel(channel: Channel | undefined, documentId: number, parentId: number | null, 
+    height: number, width: number, position_x: number, position_y: number, filled: boolean, rounded: number
 ) {
-    channel?.push("new_component", {document_id: documentId, height: height, width: width, position_x: position_x, 
-        position_y: position_y, filled: filled, rounded: rounded}, 10000);
+    channel?.push("new_component", {document_id: documentId, parent_id: parentId, height: height, 
+        width: width, position_x: position_x, position_y: position_y, filled: filled, rounded: rounded}, 10000);
 }
 
 export function updateComponentFromChannel(channel: Channel | undefined, 
-    setComponents: React.Dispatch<React.SetStateAction<Component[]>>
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 ) {
     channel?.on("update_component", (responseComponent: Component) => {
-        setComponents(prevComponents => {
-            const componentsCopyVal = [...prevComponents];
-            componentsCopyVal.forEach((component) => {
-                if(component.id === responseComponent.id) {
-                    component.height = responseComponent.height;
-                    component.width = responseComponent.width;
-                    component.position_x = responseComponent.position_x;
-                    component.position_y = responseComponent.position_y;
-                }
-            });
-            return componentsCopyVal;
+        setComponentTree(prevTree => {
+            const componentToUpdate = prevTree.find(responseComponent.id);
+            if(componentToUpdate) {
+                componentToUpdate.style = responseComponent.style;
+                return prevTree.copy();
+            }
+            return prevTree;
         });
     });
 }
 
 export function updateComponentToChannel(channel: Channel | undefined, component: Component) {
-    channel?.push("update_component", {id: component.id, document_id: component.document_id, height: component.height, 
-        width: component.width, position_x: component.position_x, position_y: component.position_y});
+    channel?.push("update_component", {id: component.id, document_id: component.document_id,
+        height: component.style.height, width: component.style.width, 
+        position_x: component.style.position_x, position_y: component.style.position_y});
 }

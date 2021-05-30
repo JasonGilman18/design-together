@@ -18,6 +18,7 @@ defmodule ApiWeb.DesignChannel do
         broadcast!(socket, "new_component", %{
           id: component.id,
           document_id: component.document_id,
+          parent_id: component.parent_id,
           height: component.height,
           width: component.width,
           position_x: component.position_x,
@@ -35,16 +36,27 @@ defmodule ApiWeb.DesignChannel do
       height: component["height"],
       width: component["width"],
       position_x: component["position_x"],
-      position_y: component["position_y"]})
+      position_y: component["position_y"],
+      filled: component["filled"],
+      rounded: component["rounded"]})
     do
       {:ok, component} ->
         broadcast_from!(socket, "update_component", %{
           id: component.id,
           document_id: component.document_id,
-          height: component.height,
-          width: component.width,
-          position_x: component.position_x,
-          position_y: component.position_y})
+          node: %{
+            parent: nil,
+            children: []
+          },
+          style: %{
+            height: component.height,
+            width: component.width,
+            position_x: component.position_x,
+            position_y: component.position_y,
+            filled: component.filled,
+            rounded: component.rounded
+          }
+        })
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
     end

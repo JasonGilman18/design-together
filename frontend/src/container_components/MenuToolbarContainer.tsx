@@ -1,33 +1,40 @@
+import { useEffect } from "react";
 import Component from "../classes/Component";
+import ComponentTree from "../classes/ComponentTree";
 import { MenuToolbar } from "../presentation_components/MenuToolbar";
 
 export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
 
     function updateComponentWidth(width: number) {
-        props.setComponents(prevComponents => {
-            const componentsCopy = [...prevComponents];
-            componentsCopy[props.selectedComponentIndex].width = width;
-            return componentsCopy;
-        });
+        props.setComponentTree(prevTree => {
+            const component = prevTree.find(props.selectedComponentId);
+            if(component) {
+                component.style.width = width;
+                return prevTree.copy();
+            }
+            return prevTree;
+        }); 
     }
 
     function updateComponentHeight(height: number) {
-        props.setComponents(prevComponents => {
-            const componentsCopy = [...prevComponents];
-            componentsCopy[props.selectedComponentIndex].height = height;
-            return componentsCopy;
+        props.setComponentTree(prevTree => {
+            const component = prevTree.find(props.selectedComponentId);
+            if(component) {
+                component.style.height = height;
+                return prevTree.copy();
+            }
+            return prevTree;
         });
     }
 
     return (
         <MenuToolbar
-            components={props.components}
-            selectedComponentIndex={props.selectedComponentIndex}
+            componentTree={props.componentTree}
+            selectedComponentId={props.selectedComponentId}
             componentToolbarWidth={props.componentToolbarWidth}
             menuToolbarHeight={props.menuToolbarHeight}
             canvasHeight={props.canvasHeight}
             canvasWidth={props.canvasWidth}
-            setComponents={props.setComponents}
             setAuthenticated={props.setAuthenticated}
             setCanvasWidth={props.setCanvasWidth}
             setCanvasHeight={props.setCanvasHeight}
@@ -38,14 +45,14 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
 };
 
 interface MenuToolbarContainerProps {
-    components: Array<Component>,
-    selectedComponentIndex: number,
+    componentTree: ComponentTree,
+    selectedComponentId: number | null,
     componentToolbarWidth: number,
     menuToolbarHeight: number,
     canvasHeight: number,
     canvasWidth: number,
-    setComponents: React.Dispatch<React.SetStateAction<Component[]>>,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
-    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>
+    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 }

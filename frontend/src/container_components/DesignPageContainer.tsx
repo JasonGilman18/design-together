@@ -1,6 +1,7 @@
 import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import Component from "../classes/Component";
+import ComponentTree from "../classes/ComponentTree";
 import {DesignPage} from "../presentation_components/DesignPage";
 import {
     displayComponentsOnCanvas,
@@ -22,8 +23,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const [channel, setChannel] = useState<Channel>();
     const [socket, setSocket] = useState<Socket>();
     const [loading, setLoading] = useState<boolean>(true);
-    const [components, setComponents] = useState<Array<Component>>([]);
-    const [selectedComponentIndex, setSelectedComponentIndex] = useState<number>(-1);
+    const [componentTree, setComponentTree] = useState<ComponentTree>(new ComponentTree());
+    const [selectedComponentId, setSelectedComponentId] = useState<number>(-1);
     const [mouseDown, setMouseDown] = useState<string>("");
     const [mouseMoveX, setMouseMoveX] = useState<number>(0);
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
@@ -59,16 +60,20 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
             drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            displayComponentsOnCanvas(canvas, components);
+            displayComponentsOnCanvas(canvas, componentTree.root);
         }
-    }, [loading, components, canvasHeight, canvasWidth]);
+    }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth]);
 
     useEffect(() => {
         if(channel !== undefined) {
-            newComponentFromChannel(channel, setComponents);
-            updateComponentFromChannel(channel, setComponents);
+            newComponentFromChannel(channel, setComponentTree);
+            updateComponentFromChannel(channel, setComponentTree);
         }
     }, [channel]);
+
+    useEffect(() => {
+        console.log(selectedComponentId);
+    }, [selectedComponentId]);
 
     function newComponent(type: string) {
         const docId = props.location.state.doc_id;
@@ -135,34 +140,34 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 break;
         }
         if(addComponent) {
-            const availPos = getNextAvailiblePosition(components, width, height, canvasWidth, canvasHeight);
-            newComponentToChannel(channel, docId, height, width, availPos.x, availPos.y, filled, rounded);
+            const availPos = getNextAvailiblePosition(componentTree.components, width, height, canvasWidth, canvasHeight);
+            newComponentToChannel(channel, docId, selectedComponentId, height, width, availPos.x, availPos.y, filled, rounded);
         }   
     }
 
     return (
         <DesignPage
             loading={loading}
-            components={components}
+            componentTree={componentTree}
             mouseMoveX={mouseMoveX}
             mouseMoveY={mouseMoveY}
             channel={channel}
             canvas={canvas}
             mouseDown={mouseDown}
-            selectedComponentIndex={selectedComponentIndex}
+            selectedComponentId={selectedComponentId}
             componentToolbarWidth={componentToolbarWidth}
             menuToolbarHeight={menuToolbarHeight}
             canvasHeight={canvasHeight}
             canvasWidth={canvasWidth}
             docId={props.location.state.doc_id}
-            setSelectedComponentIndex={setSelectedComponentIndex}
-            setComponents={setComponents}
+            setSelectedComponentId={setSelectedComponentId}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}
             setMouseMoveY={setMouseMoveY}
             setMouseDown={setMouseDown}
             setCanvasWidth={setCanvasWidth}
             setCanvasHeight={setCanvasHeight}
+            setComponentTree={setComponentTree}
             newComponent={newComponent}
         />
     );

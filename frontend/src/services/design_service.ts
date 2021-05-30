@@ -1,45 +1,49 @@
 import React from "react";
 import Component from "../classes/Component";
+import ComponentTree from "../classes/ComponentTree";
 
-export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, components: Component[]) {
-    const updatedComponents: Component[] = [];
-    components.forEach((component) => {
-        const updatedPos = getNextAvailiblePosition(updatedComponents, component.style.width, component.style.height, 
-            canvas.current?.width, canvas.current?.height);
-        component.style.position_x = updatedPos.x;
-        component.style.position_y = updatedPos.y;
-        updatedComponents.push(component);
-        drawComponentOnCanvas(canvas, component);
-    });
+export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
+    component: Component | null
+) {
+    if(component) {
+        var updatedComponents: Component[] = []; 
+        if(component.node.parent === null)
+            drawComponentOnCanvas(canvas, component);
+        component.node.children.forEach((child) => {
+            const updatedPos = getNextAvailiblePosition(updatedComponents, child.style.width, child.style.height, 
+                canvas.current?.width, canvas.current?.height);
+            child.style.position_x = updatedPos.x;
+            child.style.position_y = updatedPos.y;
+            updatedComponents.push(child);
+            drawComponentOnCanvas(canvas, child);
+            if(component.node.children.length > 0)
+                displayComponentsOnCanvas(canvas, child);
+        });
+    }
 }
 
 export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
-    setComponents: React.Dispatch<React.SetStateAction<Component[]>>,
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
     setMouseDown: React.Dispatch<React.SetStateAction<string>>,
-    setSelectedComponentIndex: React.Dispatch<React.SetStateAction<number>>
+    setSelectedComponentId: React.Dispatch<React.SetStateAction<number>>
 ) {
     const mousePos = getMouseCoordinates(e);
-    setComponents(prevComponents => {
-        const componentValCopy = [...prevComponents];
-        componentValCopy.forEach((component) => {
+    setComponentTree(prevTree => {
+        prevTree.components.forEach((component) => {
             component.style.selected = false;
-        });
-        componentValCopy.forEach((component, index) => {
-            const withinResize = component.withinResizeBounds(mousePos.x, mousePos.y);
-            if(withinResize != "") {
-                component.style.selected = true;
-                setMouseDown("resize");
-            }
-            else if(component.withinComponentBounds(mousePos.x, mousePos.y)) {
+            if(component.withinComponentBounds(mousePos.x, mousePos.y)) {
                 component.style.selected = true;
                 setMouseDown("component");
-                setSelectedComponentIndex(index);
+                setSelectedComponentId(component.id);
             }
-            else
+            else {
+                console.log("canvas");
                 setMouseDown("canvas");
+                setSelectedComponentId(-1);
+            }
         });
-        return componentValCopy;
+        return prevTree.copy();
     });
 }
 

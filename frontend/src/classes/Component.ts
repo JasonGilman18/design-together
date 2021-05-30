@@ -7,13 +7,13 @@ export default class Component {
         children: Component[]
     };
 
-    public constructor(componentId: number, documentId: number, positionX: number, positionY: number, 
-        height: number, width: number, filled: boolean, rounded: number
+    public constructor(componentId: number, documentId: number, parent: Component | null, positionX: number, 
+        positionY: number, height: number, width: number, filled: boolean, rounded: number
     ) {
         this.id = componentId;
         this.document_id = documentId;
         this.node = {
-            parent: null,
+            parent: parent,
             children: []
         };
         this.style = {
@@ -27,12 +27,12 @@ export default class Component {
         };
     }
 
-    public addChildComponent(component: Component) {
+    public addChild(component: Component) {
         component.node.parent = this;
         this.node.children.push(component);
     }
 
-    public removeChildComponent(component: Component) {
+    public removeChild(component: Component) {
         this.node.children.forEach((c, index) => {
             if(component.id == c.id) {
                 this.node.children.splice(index);

@@ -3,6 +3,7 @@ defmodule Api.Repo.Migrations.CreateComponents do
 
   def change do
     create table(:components) do
+      add :parent_id, :integer
       add :height, :integer
       add :width, :integer
       add :position_x, :integer

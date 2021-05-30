@@ -1,6 +1,7 @@
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import Component from '../classes/Component';
+import ComponentTree from '../classes/ComponentTree';
 import {logout} from "../services/http_api_service";
 
 export const MenuToolbar = (props: MenuToolbarProps) => (
@@ -26,15 +27,15 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
             onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
         />
         {
-            props.selectedComponentIndex !== -1
+            props.selectedComponentId !== -1
                 ? (
                     <>
                         <input type="number" 
-                            value={props.components[props.selectedComponentIndex].width}
+                            value={props.componentTree.find(props.selectedComponentId)?.style.width}
                             onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
                         />
                         <input type="number"
-                            value={props.components[props.selectedComponentIndex].height}
+                            value={props.componentTree.find(props.selectedComponentId)?.style.height}
                             onChange={(e) => props.updateComponentHeight(parseInt(e.target.value))}
                         />
                     </>
@@ -52,15 +53,14 @@ const ToolbarContainer = styled.div`
 `;
 
 interface MenuToolbarProps {
-    components: Array<Component>,
-    selectedComponentIndex: number,
+    componentTree: ComponentTree,
+    selectedComponentId: number | null,
     componentToolbarWidth: number,
     menuToolbarHeight: number,
     canvasHeight: number,
     canvasWidth: number,
     updateComponentWidth: (width: number) => void,
     updateComponentHeight: (height: number) => void,
-    setComponents: React.Dispatch<React.SetStateAction<Component[]>>,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>
