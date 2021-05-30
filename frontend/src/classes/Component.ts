@@ -1,40 +1,56 @@
-type Bounds = {topLeft: {x: number, y: number}, topRight: {x: number, y: number}, bottomLeft: {x: number, y: number}, bottomRight: {x: number, y: number}};
-type ResizeBounds = {topLeftResize: Bounds, topRightResize: Bounds, bottomLeftResize: Bounds, bottomRightResize: Bounds};
-
-export default class Shape {
+export default class Component {
     id: number;
     document_id: number;
-    position_x: number;
-    position_y: number;
-    height: number;
-    width: number;
-    filled: boolean;
-    rounded: number;
-    selected: boolean;
+    style: ComponentStyle;
+    node: {
+        parent: Component | null,
+        children: Component[]
+    };
 
-    public constructor(shapeId: number, documentId: number, positionX: number, positionY: number, height: number, width: number, filled: boolean, rounded: number) {
-        this.id = shapeId;
+    public constructor(componentId: number, documentId: number, parent: Component | null, positionX: number, 
+        positionY: number, height: number, width: number, filled: boolean, rounded: number
+    ) {
+        this.id = componentId;
         this.document_id = documentId;
-        this.position_x = positionX;
-        this.position_y = positionY;
-        this.height = height;
-        this.width = width;
-        this.filled = filled;
-        this.rounded = rounded;
-        this.selected = false;
+        this.node = {
+            parent: parent,
+            children: []
+        };
+        this.style = {
+            position_x: positionX,
+            position_y: positionY,
+            height: height,
+            width: width,
+            filled: filled,
+            rounded: rounded,
+            selected: false
+        };
     }
 
-    public getShapeBounds(): Bounds {
+    public addChild(component: Component) {
+        component.node.parent = this;
+        this.node.children.push(component);
+    }
+
+    public removeChild(component: Component) {
+        this.node.children.forEach((c, index) => {
+            if(component.id == c.id) {
+                this.node.children.splice(index);
+            }
+        });
+    }
+
+    public getComponentBounds(): Bounds {
         return {
-            topLeft: {x: this.position_x, y: this.position_y},
-            topRight: {x: this.position_x + this.width, y: this.position_y},
-            bottomLeft: {x: this.position_x, y: this.position_y + this.height},
-            bottomRight: {x: this.position_x + this.width, y: this.position_y + this.height}
+            topLeft: {x: this.style.position_x, y: this.style.position_y},
+            topRight: {x: this.style.position_x + this.style.width, y: this.style.position_y},
+            bottomLeft: {x: this.style.position_x, y: this.style.position_y + this.style.height},
+            bottomRight: {x: this.style.position_x + this.style.width, y: this.style.position_y + this.style.height}
         }
     }
 
     public getResizeBounds(): ResizeBounds {
-        const shapeBounds = this.getShapeBounds();
+        const shapeBounds = this.getComponentBounds();
         const radius = 5;
         return {
             topLeftResize: {
@@ -64,8 +80,8 @@ export default class Shape {
         };
     }
 
-    public withinShapeBounds(mouseX: number, mouseY: number): boolean {
-        const bounds = this.getShapeBounds();
+    public withinComponentBounds(mouseX: number, mouseY: number): boolean {
+        const bounds = this.getComponentBounds();
         return this.withinBounds(bounds, mouseX, mouseY);
     }
 
@@ -82,9 +98,39 @@ export default class Shape {
             : "";
     }
 
+    public overlapping(component: Component): boolean {
+        const thisBounds = this.getComponentBounds();
+        const bounds = component.getComponentBounds();
+        const colOverlap = !(thisBounds.topLeft.x > bounds.bottomRight.x || thisBounds.bottomRight.x < bounds.topLeft.x);
+        const rowOverlap = !(thisBounds.topLeft.y > bounds.bottomRight.y || thisBounds.bottomRight.y < bounds.topLeft.y);
+        return colOverlap || rowOverlap;
+    }
+
     private withinBounds(bounds: Bounds, mouseX: number, mouseY: number): boolean {
         return (bounds.topLeft.x <= mouseX && bounds.topLeft.y <= mouseY)
             ? (bounds.bottomRight.x >= mouseX && bounds.bottomRight.y >= mouseY)
             : false;
     }
+}
+
+type Bounds = {
+    topLeft: {x: number, y: number}, 
+    topRight: {x: number, y: number}, 
+    bottomLeft: {x: number, y: number}, 
+    bottomRight: {x: number, y: number}
+};
+type ResizeBounds = {
+    topLeftResize: Bounds, 
+    topRightResize: Bounds, 
+    bottomLeftResize: Bounds, 
+    bottomRightResize: Bounds
+};
+type ComponentStyle = {
+    position_x: number,
+    position_y: number,
+    height: number,
+    width: number,
+    filled: boolean,
+    rounded: number,
+    selected: boolean
 }

@@ -1,17 +1,18 @@
 import {Channel, Socket} from 'phoenix';
 import React from 'react';
-import Shape from '../classes/shape';
+import Component from '../classes/Component';
+import ComponentTree from '../classes/ComponentTree';
 
 export function connectToDocumentChannel(authToken: string, doc_id: number, 
-    ok_fn_channel: React.Dispatch<React.SetStateAction<Channel | undefined>>, 
-    ok_fn_socket: React.Dispatch<React.SetStateAction<Socket | undefined>>
+    setChannel: React.Dispatch<React.SetStateAction<Channel | undefined>>, 
+    setSocket: React.Dispatch<React.SetStateAction<Socket | undefined>>
 ) {
     var socket = new Socket('ws://localhost:4000/socket', {params: {authToken: authToken}});
     socket.connect();
     var new_channel = socket.channel('document:'+doc_id, {authToken: authToken});
     new_channel.join();
-    ok_fn_channel(new_channel);
-    ok_fn_socket(socket);
+    setChannel(new_channel);
+    setSocket(socket);
 }
 
 export function disconnectFromDocumentChannel(channel: Channel | undefined, socket: Socket | undefined) {
@@ -19,44 +20,45 @@ export function disconnectFromDocumentChannel(channel: Channel | undefined, sock
     socket?.disconnect();
 }
 
-export function newShapeFromChannel(channel: Channel | undefined, 
-    ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>
+export function newComponentFromChannel(channel: Channel | undefined, 
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 ) {
-    channel?.on("new_shape", (responseShape: Shape) => {
-        const newShape = new Shape(responseShape.id, responseShape.document_id, responseShape.position_x, 
-            responseShape.position_y, responseShape.height, responseShape.width, responseShape.filled, 
-            responseShape.rounded);
-        ok_fn(prevShapes => [...prevShapes, newShape]);
-    });
-}
-
-export function newShapeToChannel(channel: Channel | undefined, documentId: number, height: number, width: number, 
-    position_x: number, position_y: number, filled: boolean, rounded: number
-) {
-    channel?.push("new_shape", {document_id: documentId, height: height, width: width, position_x: position_x, 
-        position_y: position_y, filled: filled, rounded: rounded}, 10000);
-}
-
-export function updateShapeFromChannel(channel: Channel | undefined, 
-    ok_fn: React.Dispatch<React.SetStateAction<Shape[]>>
-) {
-    channel?.on("update_shape", (responseShape: Shape) => {
-        ok_fn(prevShapes => {
-            const shapesCopyVal = [...prevShapes];
-            shapesCopyVal.forEach((shape) => {
-                if(shape.id === responseShape.id) {
-                    shape.height = responseShape.height;
-                    shape.width = responseShape.width;
-                    shape.position_x = responseShape.position_x;
-                    shape.position_y = responseShape.position_y;
-                }
-            });
-            return shapesCopyVal;
+    channel?.on("new_component", (responseComponent: any) => {
+        setComponentTree(prevTree => {
+            const newComponent = new Component(responseComponent.id, responseComponent.document_id, 
+                prevTree.find(responseComponent.parent_id), responseComponent.position_x, 
+                responseComponent.position_y, responseComponent.height, responseComponent.width, 
+                responseComponent.filled, responseComponent.rounded);
+            prevTree.insert(newComponent);
+            return prevTree.copy();
         });
     });
 }
 
-export function updateShapeToChannel(channel: Channel | undefined, shape: Shape) {
-    channel?.push("update_shape", {id: shape.id, document_id: shape.document_id, height: shape.height, 
-        width: shape.width, position_x: shape.position_x, position_y: shape.position_y});
+export function newComponentToChannel(channel: Channel | undefined, documentId: number, parentId: number | null, 
+    height: number, width: number, position_x: number, position_y: number, filled: boolean, rounded: number
+) {
+    channel?.push("new_component", {document_id: documentId, parent_id: parentId, height: height, 
+        width: width, position_x: position_x, position_y: position_y, filled: filled, rounded: rounded}, 10000);
+}
+
+export function updateComponentFromChannel(channel: Channel | undefined, 
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
+) {
+    channel?.on("update_component", (responseComponent: Component) => {
+        setComponentTree(prevTree => {
+            const componentToUpdate = prevTree.find(responseComponent.id);
+            if(componentToUpdate) {
+                componentToUpdate.style = responseComponent.style;
+                return prevTree.copy();
+            }
+            return prevTree;
+        });
+    });
+}
+
+export function updateComponentToChannel(channel: Channel | undefined, component: Component) {
+    channel?.push("update_component", {id: component.id, document_id: component.document_id,
+        height: component.style.height, width: component.style.width, 
+        position_x: component.style.position_x, position_y: component.style.position_y});
 }
