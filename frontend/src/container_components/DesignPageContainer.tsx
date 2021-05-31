@@ -71,10 +71,6 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         }
     }, [channel]);
 
-    useEffect(() => {
-        console.log(selectedComponentId);
-    }, [selectedComponentId]);
-
     function newComponent(type: string) {
         const docId = props.location.state.doc_id;
         var height: number;

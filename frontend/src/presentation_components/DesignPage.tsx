@@ -36,7 +36,7 @@ export const DesignPage = (props: DesignPageProps) => (
                         ref={props.canvas}
                         style={{backgroundColor: "#ffffff", boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}}
                         onMouseDown={(e) => {
-                            mouseDownOnCanvas(e, props.canvas, props.setComponentTree, props.setMouseDown, props.setSelectedComponentId);
+                            mouseDownOnCanvas(e, props.canvas, props.setComponentTree, props.componentTree, props.setMouseDown, props.setSelectedComponentId);
                         }}
                         onMouseUp={(e) => {
                             props.setMouseDown("");
