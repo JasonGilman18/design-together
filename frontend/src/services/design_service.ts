@@ -1,6 +1,7 @@
 import React from "react";
 import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
+import Stack from "../classes/Stack";
 
 export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
     component: Component | null
@@ -25,26 +26,42 @@ export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCan
 export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
+    componentTree: ComponentTree,
     setMouseDown: React.Dispatch<React.SetStateAction<string>>,
     setSelectedComponentId: React.Dispatch<React.SetStateAction<number>>
 ) {
     const mousePos = getMouseCoordinates(e);
+    const id = findSelectedComponentId(componentTree, mousePos);
+    setSelectedComponentId(id);
     setComponentTree(prevTree => {
         prevTree.components.forEach((component) => {
             component.style.selected = false;
-            if(component.withinComponentBounds(mousePos.x, mousePos.y)) {
-                component.style.selected = true;
-                setMouseDown("component");
-                setSelectedComponentId(component.id);
-            }
-            else {
-                console.log("canvas");
-                setMouseDown("canvas");
-                setSelectedComponentId(-1);
-            }
         });
+        const selected = prevTree.find(id);
+        if(selected) selected.style.selected = true;
         return prevTree.copy();
     });
+}
+
+function findSelectedComponentId(componentTree: ComponentTree, mousePos: {x: number, y: number}): number {
+    if(componentTree.root === null)
+        return -1;
+    var stack = new Stack<Component>();
+    stack.push(componentTree.root);
+    var id = -1;
+    while(stack.empty() === false) {
+        const component = stack.peek();
+        if(component.withinComponentBounds(mousePos.x, mousePos.y)) {
+            id = component.id;
+            stack.pop();
+            component.node.children.forEach((child) => {
+                stack.push(child);
+            });
+        }
+        else
+            stack.pop();
+    }
+    return id;
 }
 
 export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
