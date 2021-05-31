@@ -23,6 +23,7 @@ export const DesignPage = (props: DesignPageProps) => (
                     menuToolbarHeight={props.menuToolbarHeight}
                     canvasHeight={props.canvasHeight}
                     canvasWidth={props.canvasWidth}
+                    channel={props.channel}
                     setAuthenticated={props.setAuthenticated}
                     setCanvasWidth={props.setCanvasWidth}
                     setCanvasHeight={props.setCanvasHeight}

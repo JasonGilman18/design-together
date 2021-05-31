@@ -1,7 +1,9 @@
+import { Channel } from "phoenix";
 import { useEffect } from "react";
 import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import { MenuToolbar } from "../presentation_components/MenuToolbar";
+import { updateComponentToChannel } from "../services/ws_api_service";
 
 export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
 
@@ -10,6 +12,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             const component = prevTree.find(props.selectedComponentId);
             if(component) {
                 component.style.width = width;
+                updateComponentToChannel(props.channel, component);
                 return prevTree.copy();
             }
             return prevTree;
@@ -21,6 +24,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             const component = prevTree.find(props.selectedComponentId);
             if(component) {
                 component.style.height = height;
+                updateComponentToChannel(props.channel, component);
                 return prevTree.copy();
             }
             return prevTree;
@@ -51,6 +55,7 @@ interface MenuToolbarContainerProps {
     menuToolbarHeight: number,
     canvasHeight: number,
     canvasWidth: number,
+    channel: Channel | undefined,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,

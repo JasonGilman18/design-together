@@ -46,6 +46,7 @@ export function updateComponentFromChannel(channel: Channel | undefined,
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 ) {
     channel?.on("update_component", (responseComponent: Component) => {
+        console.log("here");
         setComponentTree(prevTree => {
             const componentToUpdate = prevTree.find(responseComponent.id);
             if(componentToUpdate) {
@@ -59,6 +60,5 @@ export function updateComponentFromChannel(channel: Channel | undefined,
 
 export function updateComponentToChannel(channel: Channel | undefined, component: Component) {
     channel?.push("update_component", {id: component.id, document_id: component.document_id,
-        height: component.style.height, width: component.style.width, 
-        position_x: component.style.position_x, position_y: component.style.position_y});
+        style: component.style});
 }

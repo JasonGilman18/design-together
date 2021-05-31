@@ -33,12 +33,12 @@ defmodule ApiWeb.DesignChannel do
   def handle_in("update_component", component, socket) do
     updateComponent = Design.get_component!(component["id"])
     case Design.update_component(updateComponent, %{
-      height: component["height"],
-      width: component["width"],
-      position_x: component["position_x"],
-      position_y: component["position_y"],
-      filled: component["filled"],
-      rounded: component["rounded"]})
+      height: component["style"]["height"],
+      width: component["style"]["width"],
+      position_x: component["style"]["position_x"],
+      position_y: component["style"]["position_y"],
+      filled: component["style"]["filled"],
+      rounded: component["style"]["rounded"]})
     do
       {:ok, component} ->
         broadcast_from!(socket, "update_component", %{
