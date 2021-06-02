@@ -30,7 +30,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
     const canvas = useRef<HTMLCanvasElement>(null);
     const componentToolbarWidth = 200;
-    const menuToolbarHeight = 50;
+    const menuToolbarHeight = 125;
     const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - componentToolbarWidth-100);
     const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - menuToolbarHeight-100);
 
@@ -158,6 +158,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvasHeight={canvasHeight}
             canvasWidth={canvasWidth}
             docId={props.location.state.doc_id}
+            docName={props.location.state.doc_name}
             setSelectedComponentId={setSelectedComponentId}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}

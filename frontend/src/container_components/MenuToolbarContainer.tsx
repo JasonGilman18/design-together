@@ -1,6 +1,4 @@
 import { Channel } from "phoenix";
-import { useEffect } from "react";
-import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import { MenuToolbar } from "../presentation_components/MenuToolbar";
 import { updateComponentToChannel } from "../services/ws_api_service";
@@ -37,6 +35,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             selectedComponentId={props.selectedComponentId}
             componentToolbarWidth={props.componentToolbarWidth}
             menuToolbarHeight={props.menuToolbarHeight}
+            docName={props.docName}
             canvasHeight={props.canvasHeight}
             canvasWidth={props.canvasWidth}
             setAuthenticated={props.setAuthenticated}
@@ -53,6 +52,7 @@ interface MenuToolbarContainerProps {
     selectedComponentId: number | null,
     componentToolbarWidth: number,
     menuToolbarHeight: number,
+    docName: string,
     canvasHeight: number,
     canvasWidth: number,
     channel: Channel | undefined,

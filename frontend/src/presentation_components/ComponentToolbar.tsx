@@ -62,7 +62,8 @@ const ToolbarContainer = styled.div`
     align-items: center;
     background-color: #fbfbfb;
     border: solid 1px #dcdcdc;
-    border-top: transparent;
+    border-top: none;
+    border-left: none;
 `;
 
 const ToolbarType = styled.div`
@@ -78,7 +79,8 @@ const TypeLabel = styled.div`
     height: 35px;
     width: 100%;
     border: solid 1px #dcdcdc;
-    border-top: transparent;
+    border-top: none;
+    border-left: none;
     display: flex;
     justify-content: center;
     align-items: center;
