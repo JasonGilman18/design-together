@@ -30,6 +30,7 @@ export const DesignPage = (props: DesignPageProps) => (
                     setCanvasWidth={props.setCanvasWidth}
                     setCanvasHeight={props.setCanvasHeight}
                     setComponentTree={props.setComponentTree}
+                    setShowGridlines={props.setShowGridlines}
                 />
                 <ComponentToolbarContainer 
                     newComponent={props.newComponent}
@@ -93,5 +94,6 @@ interface DesignPageProps {
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
-    newComponent: (type: string) => void
+    newComponent: (type: string) => void,
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
 }

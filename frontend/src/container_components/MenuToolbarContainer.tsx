@@ -27,7 +27,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             }
             return prevTree;
         });
-    }
+    } 
 
     return (
         <MenuToolbar
@@ -43,6 +43,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             setCanvasHeight={props.setCanvasHeight}
             updateComponentWidth={updateComponentWidth}
             updateComponentHeight={updateComponentHeight}
+            setShowGridlines={props.setShowGridlines}
         />
     );
 };
@@ -59,5 +60,6 @@ interface MenuToolbarContainerProps {
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
-    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
 }

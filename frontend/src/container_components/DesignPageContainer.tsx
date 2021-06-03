@@ -1,6 +1,5 @@
 import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
-import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import {DesignPage} from "../presentation_components/DesignPage";
 import {
@@ -33,6 +32,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const menuToolbarHeight = 125;
     const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - componentToolbarWidth-100);
     const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - menuToolbarHeight-100);
+    const [showGridlines, setShowGridlines] = useState<boolean>(false);
 
     useEffect(() => {
         reqAuthToken(props.location.state.doc_id, setAuthToken);
@@ -59,10 +59,10 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
-            drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
+            if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
             displayComponentsOnCanvas(canvas, componentTree.root);
         }
-    }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth]);
+    }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
 
     useEffect(() => {
         if(channel !== undefined) {
@@ -168,6 +168,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             setCanvasHeight={setCanvasHeight}
             setComponentTree={setComponentTree}
             newComponent={newComponent}
+            setShowGridlines={setShowGridlines}
         />
     );
 }

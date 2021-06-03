@@ -1,10 +1,9 @@
-import { type } from 'os';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import ComponentTree from '../classes/ComponentTree';
 import {ReactComponent as MaximizeIcon} from '../icons/maximize.svg';
-import {logout} from "../services/http_api_service";
 import { SlideCheckbox } from './SlideCheckbox';
+import {ReactComponent as DesktopIcon} from '../icons/desktop.svg';
 
 export const MenuToolbar = (props: MenuToolbarProps) => (
     <ToolbarContainer componentToolbarWidth={props.componentToolbarWidth}>
@@ -20,16 +19,26 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
         </TopSection>
         <WindowSection>
             <SectionLabel>Window</SectionLabel>
-            <WindowTop>
-                <MaximizeButton onClick={(e) => {
-                        props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
-                        props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
-                    }}
-                >
-                    <MaximizeIcon width="15px" height="15px"/>
-                </MaximizeButton>
-                <SlideCheckbox/>
-            </WindowTop>
+            <MaximizeButton onClick={(e) => {
+                    props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
+                    props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
+                }}
+            >
+                <MaximizeIcon width="15px" height="15px"/>
+            </MaximizeButton>
+            <SlideCheckbox setShowGridlines={props.setShowGridlines}/>
+            <SizeButton>
+                <DesktopIcon width="15px" height="15px"/>
+            </SizeButton>
+            <WindowInputContainer>
+                <WindowInput type="number" value={props.canvasWidth} 
+                    onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
+                />
+                <h3 style={{margin: "0px 5px 0px 5px"}}>x</h3>
+                <WindowInput type="number" value={props.canvasHeight} 
+                    onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
+                />
+            </WindowInputContainer>
         </WindowSection>
         <LayoutSection>
             <SectionLabel>Layout</SectionLabel>
@@ -104,26 +113,14 @@ const DocumentName = styled.h3`
 `;
 
 const SectionLabel = styled.h5`
-    margin: 5px auto 5px auto;
+    grid-column: 1/4;
+    grid-row: 1/2;
+    margin: auto;
     width: fit-content;
 `;
 
-const WindowSection = styled.div`
-    grid-column: 1/2;
-    grid-row: 2/3;
-    border-right: solid 1px #dcdcdc;
-`;
-
-const WindowTop = styled.span`
-    display: flex;
-    width: 100%;
-    height: max-content;
-`;
-
-const MaximizeButton = styled.button`
+const Button = styled.button`
     background-color: azure;
-    background-image: none;
-    background-color: "blue";
     box-shadow: 0px 0px 0px transparent;
     border: solid 1px #dfdfdf;
     height: 30px;
@@ -133,6 +130,40 @@ const MaximizeButton = styled.button`
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    border-radius: 12px;
+`;
+
+const WindowSection = styled.div`
+    grid-column: 1/2;
+    grid-row: 2/3;
+    border-right: solid 1px #dcdcdc;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: 25px repeat(2, minmax(0, 1fr));
+    justify-items: center;
+    align-items: center;
+`;
+
+const MaximizeButton = styled(Button)`
+    grid-column: 1/2;
+    grid-row: 2/3;
+`;
+
+const SizeButton = styled(Button)`
+    grid-column: 3/4;
+    grid-row: 2/3;
+`;
+
+const WindowInputContainer = styled.span`
+    grid-column: 1/4;
+    grid-row: 3/4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const WindowInput = styled.input`
+    width: 25%;
 `;
 
 const LayoutSection = styled.div`
@@ -165,5 +196,6 @@ interface MenuToolbarProps {
     updateComponentHeight: (height: number) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
-    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>
+    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
 }
