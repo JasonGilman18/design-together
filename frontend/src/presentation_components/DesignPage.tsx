@@ -69,6 +69,7 @@ const CanvasContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: scroll;
 `;
 
 interface DesignPageProps {

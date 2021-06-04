@@ -7,14 +7,19 @@ import {ReactComponent as RectangleSVG} from '../svg/rectangle.svg';
 import {ReactComponent as RectangleFillSVG} from '../svg/rectangle-fill.svg';
 import {ReactComponent as RectangleRoundedSVG} from '../svg/rectangle-rounded.svg';
 import {ReactComponent as RectangleFillRoundedSVG} from '../svg/rectangle-fill-rounded.svg';
+import {ReactComponent as ChevronSVG} from '../svg/chevron.svg';
 
 export const ComponentToolbar = (props: ComponentToolbarProps) => (
 
     <ToolbarContainer>
         <ToolbarType>
             <TypeLabel>
-                <h5>Containers</h5>
-                <h5 onClick={() => props.closeTypeContainer(0)}>X</h5>
+                <ChevronSVG onClick={() => props.closeTypeContainer(0)} 
+                    style={{height: "15px", width: "15px", transition: ".6s", cursor: "pointer",
+                        transform: !props.containerOpen[0]?"rotate(-90deg)":"none",
+                        position: "absolute", left: "20px"}}
+                />
+                <h5 style={{userSelect: "none"}}>Containers</h5>
             </TypeLabel>
             <TypeButtonContainer 
                 style={
@@ -76,6 +81,7 @@ const ToolbarType = styled.div`
 `;
 
 const TypeLabel = styled.div`
+    position: relative;
     height: 35px;
     width: 100%;
     border: solid 1px #dcdcdc;

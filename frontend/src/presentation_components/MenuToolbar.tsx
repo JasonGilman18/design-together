@@ -33,7 +33,7 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
                 <WindowInput type="number" value={props.canvasWidth} 
                     onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
                 />
-                <h3 style={{margin: "0px 5px 0px 5px"}}>x</h3>
+                <h3 style={{margin: "0px 5px 0px 5px", userSelect: "none"}}>x</h3>
                 <WindowInput type="number" value={props.canvasHeight} 
                     onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
                 />
@@ -46,7 +46,7 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
             <SectionLabel>Size</SectionLabel>
         </SizeSection>
         <StyleSection>
-            <SectionLabel>Section</SectionLabel>
+            <SectionLabel>Style</SectionLabel>
         </StyleSection>
     </ToolbarContainer>
 );
@@ -91,6 +91,7 @@ const SectionLabel = styled.h5`
     grid-row: 1/2;
     margin: auto;
     width: fit-content;
+    user-select: "none";
 `;
 
 const WindowSection = styled.div`

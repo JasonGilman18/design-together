@@ -1,14 +1,32 @@
+import { ReactNode, useEffect, useRef } from "react";
 import styled from "styled-components";
 import {ReactComponent as DropdownMenuIcon} from "../svg/DropdownMenu.svg";
 
-export const DropdownMenu = (props: any) => (
-    <Container>
-        <DropdownMenuIcon style={{height: "150px", width: "200px", position: "absolute"}}/>
-        <Content>
-            {props.children}
-        </Content>
-    </Container>
-);
+export const DropdownMenu = (props: DropdownMenuProps) => {
+    
+    const menuRef = useRef<HTMLSpanElement>(null);
+    useEffect(() => {
+        window.addEventListener("click", (e) => openCloseMenu(e));
+    }, []);
+
+    function openCloseMenu(e: MouseEvent) {
+        const menuBounds = menuRef.current?.getBoundingClientRect();
+        if(menuBounds) {
+            const horozontal = e.x >= menuBounds.left && e.x <= menuBounds?.right;
+            const vertical = e.y >= menuBounds.top && e.y <= menuBounds.bottom;
+            props.setMenu(horozontal && vertical);
+        }
+    }
+
+    return (
+        <Container ref={menuRef}>
+            <DropdownMenuIcon style={{height: "150px", width: "200px", position: "absolute"}}/>
+            <Content>
+                {props.children}
+            </Content>
+        </Container>
+    );
+};
 
 const Container = styled.span`
     position: absolute;
@@ -16,6 +34,7 @@ const Container = styled.span`
     margin-left: -100px;
     height: 150px;
     width: 200px;
+    z-index: 99;
 `;
 
 const Content = styled.span`
@@ -31,3 +50,8 @@ const Content = styled.span`
     justify-items: center;
     align-items: center;
 `;
+
+interface DropdownMenuProps {
+    children: ReactNode;
+    setMenu: React.Dispatch<React.SetStateAction<boolean>>
+}

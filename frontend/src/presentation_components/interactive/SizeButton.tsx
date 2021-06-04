@@ -17,7 +17,7 @@ export const SizeButton = (props: SizeButtonProps) => {
             </SizeBtn>
             {
                 showDropdown
-                    ? <DropdownMenu>
+                    ? <DropdownMenu setMenu={setShowDropdown}>
                         <Button onClick={() => props.setCanvasWidth(320)}>
                             <MobileIcon style={{height: "20px", width: "20px", color: "white"}}/>
                         </Button>
