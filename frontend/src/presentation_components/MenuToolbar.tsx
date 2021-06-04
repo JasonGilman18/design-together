@@ -1,9 +1,10 @@
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import ComponentTree from '../classes/ComponentTree';
-import {ReactComponent as MaximizeIcon} from '../icons/maximize.svg';
+import {ReactComponent as MaximizeIcon} from '../svg/maximize.svg';
 import { SlideCheckbox } from './SlideCheckbox';
-import {ReactComponent as DesktopIcon} from '../icons/desktop.svg';
+import { SizeButton } from './interactive/SizeButton';
+import {ReactComponent as DesktopIcon} from '../svg/desktop.svg';
 
 export const MenuToolbar = (props: MenuToolbarProps) => (
     <ToolbarContainer componentToolbarWidth={props.componentToolbarWidth}>
@@ -19,17 +20,15 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
         </TopSection>
         <WindowSection>
             <SectionLabel>Window</SectionLabel>
-            <MaximizeButton onClick={(e) => {
+            <MaximizeButton onClick={(e: any) => {
                     props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
                     props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
                 }}
             >
-                <MaximizeIcon width="15px" height="15px"/>
+                <MaximizeIcon width="20px" height="20px"/>
             </MaximizeButton>
             <SlideCheckbox setShowGridlines={props.setShowGridlines}/>
-            <SizeButton>
-                <DesktopIcon width="15px" height="15px"/>
-            </SizeButton>
+            <SizeButton setCanvasWidth={props.setCanvasWidth}/>
             <WindowInputContainer>
                 <WindowInput type="number" value={props.canvasWidth} 
                     onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
@@ -49,44 +48,6 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
         <StyleSection>
             <SectionLabel>Section</SectionLabel>
         </StyleSection>
-        {/*
-            <Link
-                to={{
-                    pathname: "/dashboard"
-                }}
-            >
-                Dashboard
-            </Link>
-            <button onClick={(e) => logout(props.setAuthenticated)}>Logout</button>
-            <button onClick={(e) => {
-                props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
-                props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
-            }}>
-                Resize to Window
-            </button>
-            <input type="number" value={props.canvasWidth} 
-                onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
-            />
-            <input type="number" value={props.canvasHeight} 
-                onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
-            />
-            {
-                props.selectedComponentId !== -1
-                    ? (
-                        <>
-                            <input type="number" 
-                                value={props.componentTree.find(props.selectedComponentId)?.style.width}
-                                onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
-                            />
-                            <input type="number"
-                                value={props.componentTree.find(props.selectedComponentId)?.style.height}
-                                onChange={(e) => props.updateComponentHeight(parseInt(e.target.value))}
-                            />
-                        </>
-                    )
-                    : null
-            }
-        */}
     </ToolbarContainer>
 );
 
@@ -99,6 +60,19 @@ const ToolbarContainer = styled.div<{componentToolbarWidth: number}>`
     grid-template-columns: ${props => props.componentToolbarWidth-1 + "px"} ${props => props.componentToolbarWidth-1 + "px"}
         ${props => props.componentToolbarWidth-1 + "px"} ${props => props.componentToolbarWidth-1 + "px"} auto;
     grid-template-rows: 30% 70%;
+`;
+
+const Button = styled.button`
+    background-color: transparent;
+    box-shadow: 0px 0px 0px transparent;
+    border: none;
+    height: 30px;
+    width: 30px;
+    padding: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
 `;
 
 const TopSection = styled.div`
@@ -119,20 +93,6 @@ const SectionLabel = styled.h5`
     width: fit-content;
 `;
 
-const Button = styled.button`
-    background-color: azure;
-    box-shadow: 0px 0px 0px transparent;
-    border: solid 1px #dfdfdf;
-    height: 30px;
-    width: 30px;
-    padding: 0px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    border-radius: 12px;
-`;
-
 const WindowSection = styled.div`
     grid-column: 1/2;
     grid-row: 2/3;
@@ -146,11 +106,6 @@ const WindowSection = styled.div`
 
 const MaximizeButton = styled(Button)`
     grid-column: 1/2;
-    grid-row: 2/3;
-`;
-
-const SizeButton = styled(Button)`
-    grid-column: 3/4;
     grid-row: 2/3;
 `;
 

@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import {ReactComponent as SquareSVG} from '../icons/square.svg';
-import {ReactComponent as SquareFillSVG} from '../icons/square-fill.svg';
-import {ReactComponent as SquareRoundedSVG} from '../icons/square-rounded.svg';
-import {ReactComponent as SquareFillRoundedSVG} from '../icons/square-fill-rounded.svg';
-import {ReactComponent as RectangleSVG} from '../icons/rectangle.svg';
-import {ReactComponent as RectangleFillSVG} from '../icons/rectangle-fill.svg';
-import {ReactComponent as RectangleRoundedSVG} from '../icons/rectangle-rounded.svg';
-import {ReactComponent as RectangleFillRoundedSVG} from '../icons/rectangle-fill-rounded.svg';
+import {ReactComponent as SquareSVG} from '../svg/square.svg';
+import {ReactComponent as SquareFillSVG} from '../svg/square-fill.svg';
+import {ReactComponent as SquareRoundedSVG} from '../svg/square-rounded.svg';
+import {ReactComponent as SquareFillRoundedSVG} from '../svg/square-fill-rounded.svg';
+import {ReactComponent as RectangleSVG} from '../svg/rectangle.svg';
+import {ReactComponent as RectangleFillSVG} from '../svg/rectangle-fill.svg';
+import {ReactComponent as RectangleRoundedSVG} from '../svg/rectangle-rounded.svg';
+import {ReactComponent as RectangleFillRoundedSVG} from '../svg/rectangle-fill-rounded.svg';
 
 export const ComponentToolbar = (props: ComponentToolbarProps) => (
 
