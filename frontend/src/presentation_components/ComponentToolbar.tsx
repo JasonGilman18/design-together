@@ -13,11 +13,10 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => (
 
     <ToolbarContainer>
         <ToolbarType>
-            <TypeLabel>
-                <ChevronSVG onClick={() => props.closeTypeContainer(0)} 
-                    style={{height: "15px", width: "15px", transition: ".6s", cursor: "pointer",
-                        transform: !props.containerOpen[0]?"rotate(-90deg)":"none",
-                        position: "absolute", left: "20px"}}
+            <TypeLabel onClick={() => props.closeTypeContainer(0)}>
+                <ChevronSVG style={{height: "15px", width: "15px", transition: ".6s", 
+                    transform: !props.containerOpen[0]?"rotate(-90deg)":"none",
+                    position: "absolute", left: "20px"}}
                 />
                 <h5 style={{userSelect: "none"}}>Containers</h5>
             </TypeLabel>

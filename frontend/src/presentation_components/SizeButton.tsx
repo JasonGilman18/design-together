@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styled from "styled-components";
-import {DropdownMenu} from "../DropdownMenu";
-import {ReactComponent as DesktopIcon} from "../../svg/desktop.svg";
-import {ReactComponent as MobileIcon} from "../../svg/mobile.svg";
-import {ReactComponent as TabletIcon} from "../../svg/tablet.svg";
-import {ReactComponent as LaptopIcon} from "../../svg/laptop.svg";
+import {DropdownMenu} from "./DropdownMenu";
+import {ReactComponent as DesktopIcon} from "../svg/desktop.svg";
+import {ReactComponent as MobileIcon} from "../svg/mobile.svg";
+import {ReactComponent as TabletIcon} from "../svg/tablet.svg";
+import {ReactComponent as LaptopIcon} from "../svg/laptop.svg";
 
 export const SizeButton = (props: SizeButtonProps) => {
     
