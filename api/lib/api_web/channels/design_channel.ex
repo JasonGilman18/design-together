@@ -38,7 +38,10 @@ defmodule ApiWeb.DesignChannel do
       position_x: component["style"]["position_x"],
       position_y: component["style"]["position_y"],
       filled: component["style"]["filled"],
-      rounded: component["style"]["rounded"]})
+      rounded: component["style"]["rounded"],
+      align_horizontal: component["style"]["align_horizontal"],
+      align_vertical: component["style"]["align_vertical"]
+    })
     do
       {:ok, component} ->
         broadcast_from!(socket, "update_component", %{
@@ -54,7 +57,9 @@ defmodule ApiWeb.DesignChannel do
             position_x: component.position_x,
             position_y: component.position_y,
             filled: component.filled,
-            rounded: component.rounded
+            rounded: component.rounded,
+            align_horizontal: component.align_horizontal,
+            align_vertical: component.align_vertical
           }
         })
         {:noreply, socket}

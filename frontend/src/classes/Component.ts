@@ -23,7 +23,9 @@ export default class Component {
             width: width,
             filled: filled,
             rounded: rounded,
-            selected: false
+            selected: false,
+            align_horizontal: "start",
+            align_vertical: "start"
         };
     }
 
@@ -132,5 +134,7 @@ type ComponentStyle = {
     width: number,
     filled: boolean,
     rounded: number,
-    selected: boolean
+    selected: boolean,
+    align_horizontal: string,
+    align_vertical: string
 }
