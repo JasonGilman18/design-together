@@ -13,25 +13,25 @@ export const SizeButton = (props: SizeButtonProps) => {
     return (
         <Container>
             <SizeBtn onClick={(e) => setShowDropdown(val => !val)}>
-                <DesktopIcon style={{height: "20px", width: "20px"}}/>
+                <DesktopIcon style={{height: "18px", width: "18px"}}/>
             </SizeBtn>
             {
                 showDropdown
                     ? <DropdownMenu setMenu={setShowDropdown}>
                         <Button onClick={() => props.setCanvasWidth(320)}>
-                            <MobileIcon style={{height: "20px", width: "20px", color: "white"}}/>
+                            <MobileIcon style={{height: "18px", width: "18px", color: "white"}}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(480)}>
-                            <MobileIcon style={{height: "20px", width: "20px", transform: "rotate(90deg)", color: "white"}}/>
+                            <MobileIcon style={{height: "18px", width: "18px", transform: "rotate(90deg)", color: "white"}}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(769)}>
-                            <TabletIcon style={{height: "20px", width: "20px", color: "white"}}/>
+                            <TabletIcon style={{height: "18px", width: "18px", color: "white"}}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(1279)}>
-                            <LaptopIcon style={{height: "20px", width: "20px", color: "white"}}/>
+                            <LaptopIcon style={{height: "18px", width: "18px", color: "white"}}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(1440)}>
-                            <DesktopIcon style={{height: "20px", width: "20px", color: "white"}}/>
+                            <DesktopIcon style={{height: "18px", width: "18px", color: "white"}}/>
                         </Button>
                       </DropdownMenu>
                     : null

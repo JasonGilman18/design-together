@@ -11,7 +11,7 @@ export const WindowSection = (props: WindowSectionProps) => (
                 props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
             }}
         >
-            <MaximizeIcon width="20px" height="20px"/>
+            <MaximizeIcon width="18px" height="18px"/>
         </MaximizeButton>
         <SlideCheckbox setShowGridlines={props.setShowGridlines}/>
         <SizeButton setCanvasWidth={props.setCanvasWidth}/>
