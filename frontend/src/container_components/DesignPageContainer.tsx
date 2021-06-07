@@ -5,7 +5,8 @@ import {DesignPage} from "../presentation_components/DesignPage";
 import {
     displayComponentsOnCanvas,
     drawGridlinesOnCanvas,
-    getNextAvailiblePosition
+    getNextAvailiblePosition,
+    updateComponents
 } from '../services/design_service';
 import {reqAuthToken} from "../services/http_api_service";
 import {
@@ -60,6 +61,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
             if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
+            updateComponents(channel, componentTree.root, canvasWidth);
             displayComponentsOnCanvas(canvas, componentTree.root);
         }
     }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
@@ -136,10 +138,11 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 break;
         }
         if(addComponent) {
+            /*
             const availPos = getNextAvailiblePosition(componentTree.find(selectedComponentId), null, width, height, canvasWidth, 
                 canvasHeight
-            );
-            newComponentToChannel(channel, docId, selectedComponentId, height, width, availPos.x, availPos.y, filled, rounded);
+            );*/
+            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, filled, rounded);
         }
     }
 

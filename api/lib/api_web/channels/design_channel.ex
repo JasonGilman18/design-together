@@ -32,7 +32,7 @@ defmodule ApiWeb.DesignChannel do
 
   def handle_in("update_component", component, socket) do
     updateComponent = Design.get_component!(component["id"])
-    case Design.update_component(updateComponent, %{
+    incomingData = %{
       height: component["style"]["height"],
       width: component["style"]["width"],
       position_x: component["style"]["position_x"],
@@ -41,29 +41,34 @@ defmodule ApiWeb.DesignChannel do
       rounded: component["style"]["rounded"],
       align_horizontal: component["style"]["align_horizontal"],
       align_vertical: component["style"]["align_vertical"]
-    })
-    do
-      {:ok, component} ->
-        broadcast_from!(socket, "update_component", %{
-          id: component.id,
-          document_id: component.document_id,
-          node: %{
-            parent: nil,
-            children: []
-          },
-          style: %{
-            height: component.height,
-            width: component.width,
-            position_x: component.position_x,
-            position_y: component.position_y,
-            filled: component.filled,
-            rounded: component.rounded,
-            align_horizontal: component.align_horizontal,
-            align_vertical: component.align_vertical
-          }
-        })
-        {:noreply, socket}
-      {:error, _errors} -> {:noreply, socket}
+    }
+    case Design.compare_components(updateComponent, incomingData) do
+      :different ->
+        case Design.update_component(updateComponent, incomingData)
+        do
+          {:ok, component} ->
+            broadcast_from!(socket, "update_component", %{
+              id: component.id,
+              document_id: component.document_id,
+              node: %{
+                parent: nil,
+                children: []
+              },
+              style: %{
+                height: component.height,
+                width: component.width,
+                position_x: component.position_x,
+                position_y: component.position_y,
+                filled: component.filled,
+                rounded: component.rounded,
+                align_horizontal: component.align_horizontal,
+                align_vertical: component.align_vertical
+              }
+            })
+            {:noreply, socket}
+          {:error, _errors} -> {:noreply, socket}
+        end
+      :same -> {:noreply, socket}
     end
   end
 

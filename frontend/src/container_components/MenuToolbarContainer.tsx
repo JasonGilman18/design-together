@@ -10,7 +10,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             const component = prevTree.find(props.selectedComponentId);
             if(component) {
                 component.style.width = width;
-                updateComponentToChannel(props.channel, component);
+                //updateComponentToChannel(props.channel, component);
                 return prevTree.copy();
             }
             return prevTree;
@@ -22,7 +22,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             const component = prevTree.find(props.selectedComponentId);
             if(component) {
                 component.style.height = height;
-                updateComponentToChannel(props.channel, component);
+                //updateComponentToChannel(props.channel, component);
                 return prevTree.copy();
             }
             return prevTree;

@@ -1,24 +1,36 @@
+import { Channel } from "phoenix";
 import React from "react";
 import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import Stack from "../classes/Stack";
+import { updateComponentToChannel } from "./ws_api_service";
 
 export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
     component: Component | null
 ) {
     if(component) {
-        var updatedComponents: Component[] = [];
         if(component.node.parent === null)
             drawComponentOnCanvas(canvas, component);
         component.node.children.forEach((child) => {
-            const updatedPos = getNextAvailiblePosition(component, child, child.style.width, child.style.height, 
-                canvas.current?.width, canvas.current?.height);
-            child.style.position_x = updatedPos.x;
-            child.style.position_y = updatedPos.y;
             drawComponentOnCanvas(canvas, child);
-            updatedComponents.push(child);
             if(component.node.children.length > 0)
                 displayComponentsOnCanvas(canvas, child);
+        });
+    }
+}
+
+export function updateComponents(channel: Channel | undefined, component: Component | null, canvasWidth: number) {
+    if(component) {
+        if(component.node.parent === null)
+            updateComponentToChannel(channel, component);
+        component.node.children.forEach((child) => {
+            const updatedPos = getNextAvailiblePosition(component, child, child.style.width, child.style.height, 
+                canvasWidth);
+            child.style.position_x = updatedPos.x;
+            child.style.position_y = updatedPos.y;
+            updateComponentToChannel(channel, child);
+            if(component.node.children.length > 0)
+                updateComponents(channel, child, canvasWidth);
         });
     }
 }
@@ -89,44 +101,41 @@ export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
 }
 
 export function getNextAvailiblePosition(parent: Component | null, excludeComponent: Component | null, 
-    componentWidth: number, componentHeight: number, canvasWidth: number | undefined, 
-    canvasHeight: number | undefined
+    componentWidth: number, componentHeight: number, canvasWidth: number
 ): {x: number, y: number} {
     var x = 0;
     var y = 0;
-    if(canvasWidth !== undefined && canvasHeight !== undefined) {
-        if(parent) {
-            const components = [...parent.node.children];
-            if(excludeComponent) {
-                components.forEach((component, index) => {
-                    if(component.id === excludeComponent.id)
-                        components.splice(index);
-                });
-            }
-
-            //based on type of align change the algo
-            x = parent.style.align_horizontal === "start"
-                ? alignHorizontalStart(parent, components, componentWidth)
-                : parent.style.align_horizontal === "center"
-                ? alignHorizontalCenter(parent, components, componentWidth)
-                : parent.style.align_horizontal === "end"
-                ? alignHorizontalEnd(parent, components, componentWidth)
-                : 0; 
-                
-            y = parent.style.align_vertical === "start"
-                ? alignVerticalStart(parent, components, componentWidth)
-                : parent.style.align_vertical === "center"
-                ? alignVerticalCenter(parent, components, componentHeight)
-                : parent.style.align_vertical === "end"
-                ? alignVerticalEnd(parent, components, componentHeight)
-                : 0;
+    if(parent) {
+        const components = [...parent.node.children];
+        if(excludeComponent) {
+            components.forEach((component, index) => {
+                if(component.id === excludeComponent.id)
+                    components.splice(index);
+            });
         }
+
+        //based on type of align change the algo
+        x = parent.style.align_horizontal === "start"
+            ? alignHorizontalStart(parent, components, componentWidth)
+            : parent.style.align_horizontal === "center"
+            ? alignHorizontalCenter(parent, components, componentWidth)
+            : parent.style.align_horizontal === "end"
+            ? alignHorizontalEnd(parent, components, componentWidth)
+            : 0; 
+            
+        y = parent.style.align_vertical === "start"
+            ? alignVerticalStart(parent, components, componentWidth)
+            : parent.style.align_vertical === "center"
+            ? alignVerticalCenter(parent, components, componentHeight)
+            : parent.style.align_vertical === "end"
+            ? alignVerticalEnd(parent, components, componentHeight)
+            : 0;
     }
     return {x: x, y: y};
 }
 
 function alignHorizontalStart(parent: Component, siblings: Component[], componentWidth: number) {
-    var x = 0;
+    var x;
     if(siblings.length > 0) {
         //potentially a problem with drawing all components again. each component is positioned relative to last added sibling.
         const lastComponentBounds = siblings[siblings.length-1].getComponentBounds();
@@ -141,7 +150,21 @@ function alignHorizontalStart(parent: Component, siblings: Component[], componen
 }
 
 function alignHorizontalCenter(parent: Component, siblings: Component[], componentWidth: number) {
-    return 0;
+    /*
+    var x;
+    if(siblings.length === 0)
+        x = (parent.style.width / 2) - (componentWidth / 2);
+    else if(siblings.length % 2 === 1) {
+        //odd num siblings
+        //find middle sibling and 
+        //need to find which child this is, first, middle, last
+    }
+    else {
+        //even num siblings
+    }
+    return x;
+    */
+   return 0;
 }
 
 function alignHorizontalEnd(parent: Component, siblings: Component[], componentWidth: number) {
@@ -149,7 +172,7 @@ function alignHorizontalEnd(parent: Component, siblings: Component[], componentW
 }
 
 function alignVerticalStart(parent: Component, siblings: Component[], componentWidth: number) {
-    var y = 0;
+    var y;
     if(siblings.length > 0) {
         const lastComponentBounds = siblings[siblings.length-1].getComponentBounds();
         if(lastComponentBounds.bottomRight.x + componentWidth > parent.getComponentBounds().bottomRight.x) {
