@@ -21,14 +21,15 @@ export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCan
 
 export function updateComponents(channel: Channel | undefined, component: Component | null, canvasWidth: number) {
     if(component) {
-        if(component.node.parent === null)
+        if(component.node.parent === null && component.updateRequired)
             updateComponentToChannel(channel, component);
         component.node.children.forEach((child) => {
             const updatedPos = getNextAvailiblePosition(component, child, child.style.width, child.style.height, 
                 canvasWidth);
-            child.style.position_x = updatedPos.x;
-            child.style.position_y = updatedPos.y;
-            updateComponentToChannel(channel, child);
+            child.updatePositionX(updatedPos.x);
+            child.updatePositionY(updatedPos.y);
+            if(child.updateRequired)
+                updateComponentToChannel(channel, child);
             if(component.node.children.length > 0)
                 updateComponents(channel, child, canvasWidth);
         });

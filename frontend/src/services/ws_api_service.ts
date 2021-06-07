@@ -58,6 +58,7 @@ export function updateComponentFromChannel(channel: Channel | undefined,
 }
 
 export function updateComponentToChannel(channel: Channel | undefined, component: Component) {
+    component.updateRequired = false;
     channel?.push("update_component", {id: component.id, document_id: component.document_id,
         style: component.style});
 }
