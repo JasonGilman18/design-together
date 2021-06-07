@@ -88,8 +88,9 @@ export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
     ctx?.stroke();
 }
 
-export function getNextAvailiblePosition(parent: Component | null, excludeComponent: Component | null, width: number, 
-    height: number, canvasWidth: number | undefined, canvasHeight: number | undefined
+export function getNextAvailiblePosition(parent: Component | null, excludeComponent: Component | null, 
+    componentWidth: number, componentHeight: number, canvasWidth: number | undefined, 
+    canvasHeight: number | undefined
 ): {x: number, y: number} {
     var x = 0;
     var y = 0;
@@ -102,30 +103,78 @@ export function getNextAvailiblePosition(parent: Component | null, excludeCompon
                         components.splice(index);
                 });
             }
-            if(components.length > 0) {
-                const lastComponentBounds = components[components.length-1].getComponentBounds();
-                if(lastComponentBounds.bottomRight.x + width > parent.getComponentBounds().bottomRight.x) {
-                    x = parent.getComponentBounds().topLeft.x;
-                    y = lastComponentBounds.bottomRight.y;
-                    for(var i=components.length-1;i>=0;i--) {
-                        const component = components[i];
-                        const componentBounds = component.getComponentBounds();
-                        if(componentBounds.bottomRight.y >= y)
-                            y = component.getComponentBounds().bottomRight.y;       
-                    }
-                }
-                else {
-                    x = lastComponentBounds.bottomRight.x;
-                    y = lastComponentBounds.topRight.y;
-                }
-            }
-            else {
-                x = parent.getComponentBounds().topLeft.x;
-                y = parent.getComponentBounds().topLeft.y;   
-            }
+
+            //based on type of align change the algo
+            x = parent.style.align_horizontal === "start"
+                ? alignHorizontalStart(parent, components, componentWidth)
+                : parent.style.align_horizontal === "center"
+                ? alignHorizontalCenter(parent, components, componentWidth)
+                : parent.style.align_horizontal === "end"
+                ? alignHorizontalEnd(parent, components, componentWidth)
+                : 0; 
+                
+            y = parent.style.align_vertical === "start"
+                ? alignVerticalStart(parent, components, componentWidth)
+                : parent.style.align_vertical === "center"
+                ? alignVerticalCenter(parent, components, componentHeight)
+                : parent.style.align_vertical === "end"
+                ? alignVerticalEnd(parent, components, componentHeight)
+                : 0;
         }
     }
     return {x: x, y: y};
+}
+
+function alignHorizontalStart(parent: Component, siblings: Component[], componentWidth: number) {
+    var x = 0;
+    if(siblings.length > 0) {
+        //potentially a problem with drawing all components again. each component is positioned relative to last added sibling.
+        const lastComponentBounds = siblings[siblings.length-1].getComponentBounds();
+        if(lastComponentBounds.bottomRight.x + componentWidth > parent.getComponentBounds().bottomRight.x)
+            x = parent.getComponentBounds().topLeft.x;
+        else
+            x = lastComponentBounds.bottomRight.x;
+    }
+    else
+        x = parent.getComponentBounds().topLeft.x;
+    return x;
+}
+
+function alignHorizontalCenter(parent: Component, siblings: Component[], componentWidth: number) {
+    return 0;
+}
+
+function alignHorizontalEnd(parent: Component, siblings: Component[], componentWidth: number) {
+    return 0;
+}
+
+function alignVerticalStart(parent: Component, siblings: Component[], componentWidth: number) {
+    var y = 0;
+    if(siblings.length > 0) {
+        const lastComponentBounds = siblings[siblings.length-1].getComponentBounds();
+        if(lastComponentBounds.bottomRight.x + componentWidth > parent.getComponentBounds().bottomRight.x) {
+            y = lastComponentBounds.bottomRight.y;
+            for(var i=siblings.length-1;i>=0;i--) {
+                const component = siblings[i];
+                const componentBounds = component.getComponentBounds();
+                if(componentBounds.bottomRight.y >= y)
+                    y = component.getComponentBounds().bottomRight.y;       
+            }
+        }
+        else
+            y = lastComponentBounds.topRight.y; 
+    }
+    else
+        y = parent.getComponentBounds().topLeft.y;
+    return y;
+}
+
+function alignVerticalCenter(parent: Component, siblings: Component[], componentWidth: number) {
+    return 0;
+}
+
+function alignVerticalEnd(parent: Component, siblings: Component[], componentWidth: number) {
+    return 0;
 }
 
 function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
