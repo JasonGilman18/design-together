@@ -24,19 +24,8 @@ export function updateComponents(channel: Channel | undefined, component: Compon
     if(component) {
         if(component.node.parent === null && component.updateRequired)
             updateComponentToChannel(channel, component);
-        /*
-        var sumChildrenWidth = 0;
-        var sumChildrenHeight = 0;
-        component.node.children.forEach((child) => {
-            sumChildrenWidth += child.style.width;
-            sumChildrenHeight += child.style.height;
-        });
-        */
         setChildPositions(component, canvasWidth);
         component.node.children.forEach((child) => {
-            //const updatedPos = getNextAvailiblePosition(component, child, sumChildrenWidth, sumChildrenHeight, canvasWidth);
-            //child.updatePositionX(updatedPos.x);
-            //child.updatePositionY(updatedPos.y);
             if(child.updateRequired)
                 updateComponentToChannel(channel, child);
             if(component.node.children.length > 0)
@@ -204,22 +193,36 @@ function alignVerticalStart(parent: Component) {
 }
 
 function alignVerticalCenter(parent: Component) {
-    /*
-    var y;
-    if(sumChildrenWidth > parent.style.width) {
-        y = parent.getComponentBounds().topLeft.y + (parent.style.width / 2);
-    }
-    else {
-        //loop through and sum width, once it is greater than parent width
-            //find the greatest height of the first row and add to sum
-            //maybe add component indexs to a map
-            //then continue looping and adding width
-            
-        //once done organizing rows, add to
-    }  
-    //return y;
-    return 0;
-    */
+    var sumWidth = 0;
+    var greatestHeight = 0;
+    var rows: {greatestHeight: number, components: Component[]}[] = [];
+    var row: Component[] = [];
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
+            rows.push({greatestHeight: greatestHeight, components: row});
+            sumWidth = child.style.width;
+            greatestHeight = child.style.height;
+            row = [child];
+        }
+        else {
+            row.push(child);
+            greatestHeight = child.style.height > greatestHeight ? child.style.height : greatestHeight;
+        }
+    });
+    rows.push({greatestHeight: greatestHeight, components: row});
+    var sumHeight = 0;
+    rows.forEach((rowObject) => {
+        sumHeight += rowObject.greatestHeight;
+    });
+    const startOffset = ((parent.style.height) - sumHeight) / 2;
+    sumHeight = 0;
+    rows.forEach((rowObject) => {
+        rowObject.components.forEach((c) => {
+            c.updatePositionY(parent.getComponentBounds().topLeft.y + startOffset + sumHeight);
+        });
+        sumHeight += rowObject.greatestHeight;
+    });
 }
 
 function alignVerticalEnd(parent: Component) {
