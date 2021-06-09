@@ -1,7 +1,6 @@
 import { Channel } from "phoenix";
 import ComponentTree from "../classes/ComponentTree";
 import { MenuToolbar } from "../presentation_components/MenuToolbar";
-import { updateComponentToChannel } from "../services/ws_api_service";
 
 export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
 
@@ -27,6 +26,28 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
         });
     }
 
+    function updateComponentAlignHorizontal(align: string) {
+        props.setComponentTree(prevTree => {
+            const component = prevTree.find(props.selectedComponentId);
+            if(component) {
+                component.updateAlignHorizontal(align);
+                return prevTree.copy();
+            }
+            return prevTree;
+        });
+    }
+
+    function updateComponentAlignVertical(align: string) {
+        props.setComponentTree(prevTree => {
+            const component = prevTree.find(props.selectedComponentId);
+            if(component) {
+                component.updateAlignVertical(align);
+                return prevTree.copy();
+            }
+            return prevTree;
+        });
+    }
+
     return (
         <MenuToolbar
             componentTree={props.componentTree}
@@ -41,6 +62,8 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             setCanvasHeight={props.setCanvasHeight}
             updateComponentWidth={updateComponentWidth}
             updateComponentHeight={updateComponentHeight}
+            updateComponentAlignHorizontal={updateComponentAlignHorizontal}
+            updateComponentAlignVertical={updateComponentAlignVertical}
             setShowGridlines={props.setShowGridlines}
         />
     );

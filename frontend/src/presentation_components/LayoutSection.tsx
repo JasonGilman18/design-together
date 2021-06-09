@@ -10,22 +10,34 @@ import {ReactComponent as TableIcon} from '../svg/table.svg';
 export const LayoutSection = (props: LayoutSectionProps) => (
     <Section>
         <SectionLabel>Layout</SectionLabel>
-        <AlignHorozontalStartButton>
+        <AlignHorozontalStartButton 
+            onClick={() => props.updateComponentAlignHorizontal("start")}
+        >
             <AlignHorozontalStartIcon style={{height: "25px", width: "25px"}}/>
         </AlignHorozontalStartButton>
-        <AlignHorozontalCenterButton>
+        <AlignHorozontalCenterButton
+            onClick={() => props.updateComponentAlignHorizontal("center")}
+        >
             <AlignHorozontalCenterIcon style={{height: "25px", width: "25px"}}/>
         </AlignHorozontalCenterButton>
-        <AlignHorozontalEndButton>
+        <AlignHorozontalEndButton
+            onClick={() => props.updateComponentAlignHorizontal("end")}
+        >
             <AlignHorozontalEndIcon style={{height: "25px", width: "25px"}}/> 
         </AlignHorozontalEndButton>
-        <AlignVerticalStartButton>
+        <AlignVerticalStartButton
+            onClick={() => props.updateComponentAlignVertical("start")}
+        >
             <AlignVerticalStartIcon style={{height: "25px", width: "25px"}}/>
         </AlignVerticalStartButton>
-        <AlignVerticalCenterButton>
+        <AlignVerticalCenterButton
+            onClick={() => props.updateComponentAlignVertical("center")}
+        >
             <AlignVerticalCenterIcon style={{height: "25px", width: "25px"}}/>
         </AlignVerticalCenterButton>
-        <AlignVerticalEndButton>
+        <AlignVerticalEndButton
+            onClick={() => props.updateComponentAlignVertical("end")}
+        >
             <AlignVerticalEndIcon style={{height: "25px", width: "25px"}}/> 
         </AlignVerticalEndButton>
         <TableButton>
@@ -102,5 +114,6 @@ const TableButton = styled(Button)`
 `;
 
 interface LayoutSectionProps {
-
+    updateComponentAlignHorizontal: (align: string) => void,
+    updateComponentAlignVertical: (align: string) => void
 };

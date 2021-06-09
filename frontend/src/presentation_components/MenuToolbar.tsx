@@ -26,7 +26,10 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
             canvasWidth={props.canvasWidth}
             canvasHeight={props.canvasHeight}
         />
-        <LayoutSection/>
+        <LayoutSection
+            updateComponentAlignHorizontal={props.updateComponentAlignHorizontal}
+            updateComponentAlignVertical={props.updateComponentAlignVertical}
+        />
         <SizeSection
             updateComponentWidth={props.updateComponentWidth}
             updateComponentHeight={props.updateComponentHeight}
@@ -85,6 +88,8 @@ interface MenuToolbarProps {
     canvasWidth: number,
     updateComponentWidth: (width: number) => void,
     updateComponentHeight: (height: number) => void,
+    updateComponentAlignHorizontal: (align: string) => void,
+    updateComponentAlignVertical: (align: string) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
