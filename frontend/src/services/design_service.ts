@@ -24,13 +24,19 @@ export function updateComponents(channel: Channel | undefined, component: Compon
     if(component) {
         if(component.node.parent === null && component.updateRequired)
             updateComponentToChannel(channel, component);
-        var childrenWidth = 0;
-        component.node.children.forEach((child) => {childrenWidth += child.style.width});
+        /*
+        var sumChildrenWidth = 0;
+        var sumChildrenHeight = 0;
         component.node.children.forEach((child) => {
-            const updatedPos = getNextAvailiblePosition(component, child, childrenWidth, child.style.width, child.style.height, 
-                canvasWidth);
-            child.updatePositionX(updatedPos.x);
-            child.updatePositionY(updatedPos.y);
+            sumChildrenWidth += child.style.width;
+            sumChildrenHeight += child.style.height;
+        });
+        */
+        setChildPositions(component, canvasWidth);
+        component.node.children.forEach((child) => {
+            //const updatedPos = getNextAvailiblePosition(component, child, sumChildrenWidth, sumChildrenHeight, canvasWidth);
+            //child.updatePositionX(updatedPos.x);
+            //child.updatePositionY(updatedPos.y);
             if(child.updateRequired)
                 updateComponentToChannel(channel, child);
             if(component.node.children.length > 0)
@@ -104,91 +110,119 @@ export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
     ctx?.stroke();
 }
 
-export function getNextAvailiblePosition(parent: Component | null, component: Component, childrenWidth: number,
-    componentWidth: number, componentHeight: number, canvasWidth: number
-): {x: number, y: number} {
-    var x = 0;
-    var y = 0;
+export function setChildPositions(parent: Component | null, canvasWidth: number
+) {
     if(parent) {
-        const components = [...parent.node.children];
-        components.forEach((cmp, index) => {
-            if(cmp.id === component.id)
-                components.splice(index);
-        });
-
-        //based on type of align change the algo
-        x = parent.style.align_horizontal === "start"
-            ? alignHorizontalStart(parent, components, componentWidth)
-            : parent.style.align_horizontal === "center"
-            ? alignHorizontalCenter(parent, component, childrenWidth)
-            : parent.style.align_horizontal === "end"
-            ? alignHorizontalEnd(parent, components, componentWidth)
-            : 0;
-            
-        y = parent.style.align_vertical === "start"
-            ? alignVerticalStart(parent, components, componentWidth)
-            : parent.style.align_vertical === "center"
-            ? alignVerticalCenter(parent, components, componentHeight)
-            : parent.style.align_vertical === "end"
-            ? alignVerticalEnd(parent, components, componentHeight)
-            : 0;
-    }
-    return {x: x, y: y};
-}
-
-function alignHorizontalStart(parent: Component, siblings: Component[], componentWidth: number) {
-    var x;
-    if(siblings.length > 0) {
-        const lastComponentBounds = siblings[siblings.length-1].getComponentBounds();
-        if(lastComponentBounds.bottomRight.x + componentWidth > parent.getComponentBounds().bottomRight.x)
-            x = parent.getComponentBounds().topLeft.x;
-        else
-            x = lastComponentBounds.bottomRight.x;
-    }
-    else
-        x = parent.getComponentBounds().topLeft.x;
-    return x;
-}
-
-function alignHorizontalCenter(parent: Component, component: Component, childrenWidth: number) {
-    var widthSum = 0;
-    const componentIndex = findSiblingIndex(parent.node.children, component);
-    const startOffset = ((parent.style.width) - childrenWidth) / 2;
-    for(var i=0;i<componentIndex;i++)
-        widthSum += parent.node.children[i].style.width;
-    return parent.getComponentBounds().topLeft.x + startOffset + widthSum;
-}
-
-function alignHorizontalEnd(parent: Component, siblings: Component[], componentWidth: number) {
-    return 0;
-}
-
-function alignVerticalStart(parent: Component, siblings: Component[], componentWidth: number) {
-    var y;
-    if(siblings.length > 0) {
-        const lastComponentBounds = siblings[siblings.length-1].getComponentBounds();
-        if(lastComponentBounds.bottomRight.x + componentWidth > parent.getComponentBounds().bottomRight.x) {
-            y = lastComponentBounds.bottomRight.y;
-            for(var i=siblings.length-1;i>=0;i--) {
-                const component = siblings[i];
-                const componentBounds = component.getComponentBounds();
-                if(componentBounds.bottomRight.y >= y)
-                    y = component.getComponentBounds().bottomRight.y;       
-            }
+        switch(parent.style.align_horizontal) {
+            case "start":
+                alignHorizontalStart(parent);
+                break;
+            case "center":
+                alignHorizontalCenter(parent);
+                break;
+            case "end":
+                alignHorizontalEnd(parent);
+                break;
         }
-        else
-            y = lastComponentBounds.topRight.y; 
+        switch(parent.style.align_vertical) {
+            case "start":
+                alignVerticalStart(parent);
+                break;
+            case "center":
+                alignVerticalCenter(parent);
+                break;
+            case "end":
+                alignVerticalEnd(parent);
+                break;
+        }
     }
-    else
-        y = parent.getComponentBounds().topLeft.y;
-    return y;
 }
 
-function alignVerticalCenter(parent: Component, siblings: Component[], componentWidth: number) {
+function alignHorizontalStart(parent: Component) {
+    var sumWidth = 0;
+    parent.node.children.forEach((child) => {
+        const checkOverflow = parent.getComponentBounds().topLeft.x + child.style.width + sumWidth;
+        if(checkOverflow <= parent.getComponentBounds().topRight.x) {
+            child.updatePositionX(checkOverflow - child.style.width);
+            sumWidth += child.style.width;
+        }
+        else {
+            child.updatePositionX(parent.getComponentBounds().topLeft.x);
+            sumWidth = child.style.width;
+        }
+    });
+}
+
+function alignHorizontalCenter(parent: Component) {
+    var sumWidth = 0;
+    var rows: {startOffset: number, components: Component[]}[] = [];
+    var row: Component[] = [];
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
+            var startOffset = ((parent.style.width) - sumWidth + child.style.width) / 2;
+            rows.push({startOffset: startOffset, components: row});
+            sumWidth = child.style.width;
+            row = [child];
+        }
+        else {
+            row.push(child);
+        }
+    });
+    var startOffset = ((parent.style.width) - sumWidth) / 2;
+    rows.push({startOffset: startOffset, components: row});
+    rows.forEach((rowObject) => {
+        sumWidth = 0;
+        rowObject.components.forEach((child) => {
+            child.updatePositionX(parent.getComponentBounds().topLeft.x + rowObject.startOffset + sumWidth);
+            sumWidth += child.style.width;
+        });
+    });
+}
+
+function alignHorizontalEnd(parent: Component) {
     return 0;
 }
 
-function alignVerticalEnd(parent: Component, siblings: Component[], componentWidth: number) {
+function alignVerticalStart(parent: Component) {
+    var sumWidth = 0;
+    var currentHeight = 0;
+    var greatestHeight = 0;
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
+            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + greatestHeight);
+            sumWidth = child.style.width;
+            currentHeight += greatestHeight;
+            greatestHeight = child.style.height;
+        }
+        else {
+            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight);
+            greatestHeight = child.style.height > greatestHeight ? child.style.height : greatestHeight;
+        }
+    });
+}
+
+function alignVerticalCenter(parent: Component) {
+    /*
+    var y;
+    if(sumChildrenWidth > parent.style.width) {
+        y = parent.getComponentBounds().topLeft.y + (parent.style.width / 2);
+    }
+    else {
+        //loop through and sum width, once it is greater than parent width
+            //find the greatest height of the first row and add to sum
+            //maybe add component indexs to a map
+            //then continue looping and adding width
+            
+        //once done organizing rows, add to
+    }  
+    //return y;
+    return 0;
+    */
+}
+
+function alignVerticalEnd(parent: Component) {
     return 0;
 }
 

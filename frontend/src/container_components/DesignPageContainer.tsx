@@ -5,7 +5,6 @@ import {DesignPage} from "../presentation_components/DesignPage";
 import {
     displayComponentsOnCanvas,
     drawGridlinesOnCanvas,
-    getNextAvailiblePosition,
     updateComponents
 } from '../services/design_service';
 import {reqAuthToken} from "../services/http_api_service";
