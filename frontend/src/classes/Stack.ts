@@ -14,7 +14,7 @@ export default class Stack<T> {
     }
 
     public pop() {
-        const element = this.items.splice(this.items.length-1);
+        const element = this.items.splice(this.items.length-1)[0];
         return element;
     }
 

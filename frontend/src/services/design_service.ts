@@ -170,14 +170,26 @@ function alignHorizontalCenter(parent: Component) {
 
 function alignHorizontalEnd(parent: Component) {
     var sumWidth = 0;
-    for(var i=parent.node.children.length-1;i>=0;i--) {
-        sumWidth += parent.node.children[i].style.width;
-        if(parent.getComponentBounds().topRight.x - sumWidth >= parent.getComponentBounds().topLeft.x)
-            parent.node.children[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
-        else {
-            sumWidth = parent.node.children[i].style.width;
-            parent.node.children[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
-        }
+    var row: Component[] = [];
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topRight.x - sumWidth < parent.getComponentBounds().topLeft.x) {
+            sumWidth = 0;
+            for(var i=row.length-1;i>=0;i--) {
+               sumWidth += row[i].style.width;
+               row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+            }
+            row = [child];
+            sumWidth = child.style.width;
+            child.updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+        }   
+        else
+            row.push(child);
+    });
+    sumWidth = 0;
+    for(var i=row.length-1;i>=0;i--) {
+        sumWidth += row[i].style.width;
+        row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
     }
 }
 
@@ -185,9 +197,6 @@ function alignVerticalStart(parent: Component) {
     var sumWidth = 0;
     var currentHeight = 0;
     var greatestHeight = 0;
-
-    //issue with horizontal end align need different algo for that
-
     parent.node.children.forEach((child) => {
         sumWidth += child.style.width;
         if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
@@ -237,7 +246,33 @@ function alignVerticalCenter(parent: Component) {
 }
 
 function alignVerticalEnd(parent: Component) {
-    return 0;
+    
+    var sumWidth = 0;
+    var greatestHeight = 0;
+    var currentHeight = 0;
+    var row: Component[] = [];
+    var stack = new Stack<{greatestHeight: number, components: Component[]}>();
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topRight.x - sumWidth < parent.getComponentBounds().topLeft.x) {
+            stack.push({greatestHeight: greatestHeight, components: row});
+            row = [child];
+            sumWidth = child.style.width;
+            greatestHeight = 0;
+        }
+        else
+            row.push(child);
+        greatestHeight = greatestHeight < child.style.height ? child.style.height : greatestHeight;
+    });
+    stack.push({greatestHeight: greatestHeight, components: row});
+    var currentRow: {greatestHeight: number, components: Component[]};
+    while(!stack.empty()) {
+        currentRow = stack.pop();
+        currentRow.components.forEach((component) => {
+            component.updatePositionY(parent.getComponentBounds().bottomRight.y - currentHeight - component.style.height);
+        });
+        currentHeight += currentRow.greatestHeight;
+    }
 }
 
 function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
