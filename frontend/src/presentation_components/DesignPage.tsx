@@ -6,7 +6,6 @@ import {ComponentToolbarContainer} from '../container_components/ComponentToolba
 import {mouseDownOnCanvas} from '../services/design_service';
 import {MenuToolbarContainer} from '../container_components/MenuToolbarContainer';
 import ComponentTree from '../classes/ComponentTree';
-import { type } from 'os';
 
 export const DesignPage = (props: DesignPageProps) => (
 

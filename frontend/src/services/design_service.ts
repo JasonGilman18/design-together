@@ -1,6 +1,5 @@
 import { Channel } from "phoenix";
 import React from "react";
-import { start } from "repl";
 import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import Stack from "../classes/Stack";
@@ -170,13 +169,25 @@ function alignHorizontalCenter(parent: Component) {
 }
 
 function alignHorizontalEnd(parent: Component) {
-    return 0;
+    var sumWidth = 0;
+    for(var i=parent.node.children.length-1;i>=0;i--) {
+        sumWidth += parent.node.children[i].style.width;
+        if(parent.getComponentBounds().topRight.x - sumWidth >= parent.getComponentBounds().topLeft.x)
+            parent.node.children[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+        else {
+            sumWidth = parent.node.children[i].style.width;
+            parent.node.children[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+        }
+    }
 }
 
 function alignVerticalStart(parent: Component) {
     var sumWidth = 0;
     var currentHeight = 0;
     var greatestHeight = 0;
+
+    //issue with horizontal end align need different algo for that
+
     parent.node.children.forEach((child) => {
         sumWidth += child.style.width;
         if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
@@ -227,15 +238,6 @@ function alignVerticalCenter(parent: Component) {
 
 function alignVerticalEnd(parent: Component) {
     return 0;
-}
-
-function findSiblingIndex(children: Component[], component: Component) {
-    var i = -1;
-    children.forEach((child, index) => {
-        if(child.id === component.id)
-            i = index;
-    });
-    return i;
 }
 
 function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {

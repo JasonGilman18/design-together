@@ -29,6 +29,8 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
         <LayoutSection
             updateComponentAlignHorizontal={props.updateComponentAlignHorizontal}
             updateComponentAlignVertical={props.updateComponentAlignVertical}
+            selectedComponentId={props.selectedComponentId}
+            componentTree={props.componentTree}
         />
         <SizeSection
             updateComponentWidth={props.updateComponentWidth}

@@ -30,6 +30,10 @@ export const WindowSection = (props: WindowSectionProps) => (
 const Button = styled.button`
     background-color: transparent;
     box-shadow: 0px 0px 0px transparent;
+    border-radius: 3px;
+    &:hover {
+        background-color:#e6e6e6;
+    }
     border: none;
     height: 30px;
     width: 30px;
