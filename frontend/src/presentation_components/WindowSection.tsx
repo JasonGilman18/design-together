@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {SlideCheckbox} from './SlideCheckbox';
 import {SizeButton} from './SizeButton';
 import {ReactComponent as MaximizeIcon} from '../svg/maximize.svg';
+import {ReactComponent as GridShowIcon} from '../svg/GridShowIcon.svg';
 
 export const WindowSection = (props: WindowSectionProps) => (
     <Section>
@@ -13,16 +14,25 @@ export const WindowSection = (props: WindowSectionProps) => (
         >
             <MaximizeIcon width="18px" height="18px"/>
         </MaximizeButton>
-        <SlideCheckbox setShowGridlines={props.setShowGridlines}/>
+        <GridButton>
+            <GridShowIcon style={{width: "20px", height: "20px"}}/>
+        </GridButton>
         <SizeButton setCanvasWidth={props.setCanvasWidth}/>
         <WindowInputContainer>
-            <WindowInput type="number" value={props.canvasWidth} 
-                onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
-            />
-            <h3 style={{margin: "0px 5px 0px 5px", userSelect: "none"}}>x</h3>
-            <WindowInput type="number" value={props.canvasHeight} 
-                onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
-            />
+            <span style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                <WindowInputLabel>W:</WindowInputLabel>
+                <WindowInput type="text" value={props.canvasWidth}
+                    maxLength={4} size={4}
+                    onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
+                />
+            </span>
+            <span style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
+                <WindowInputLabel>H:</WindowInputLabel>
+                <WindowInput type="text" value={props.canvasHeight}
+                    maxLength={4} size={4}
+                    onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
+                />
+            </span> 
         </WindowInputContainer>
     </Section>
 );
@@ -68,16 +78,39 @@ const MaximizeButton = styled(Button)`
     grid-row: 2/3;
 `;
 
+const GridButton = styled(Button)`
+    grid-column: 3/4;
+    grid-row: 2/3;
+`;
+
 const WindowInputContainer = styled.span`
     grid-column: 1/4;
     grid-row: 3/4;
+    width: 100%;
+    height: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
+    align-items: center;
+`;
+
+const WindowInputLabel = styled.h3`
+    user-select: none;
+    font-size: small;
+    margin: 0px 5px 0px 0px;
+    display: flex;
     align-items: center;
 `;
 
 const WindowInput = styled.input`
-    width: 25%;
+    height: 100%;
+    padding: 3px;
+    border-radius: 5px 0px 0px 5px;
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+    background-color: whitesmoke;
+    &:focus {
+        outline: none;
+    }
 `;
 
 interface WindowSectionProps {

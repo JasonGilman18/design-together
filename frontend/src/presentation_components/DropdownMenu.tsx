@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useRef } from "react";
 import styled from "styled-components";
-import {ReactComponent as DropdownMenuIcon} from "../svg/DropdownMenu.svg";
+import {ReactComponent as DropdownMenuIcon} from "../svg/DropdownMenuIcon.svg";
 
 export const DropdownMenu = (props: DropdownMenuProps) => {
     
@@ -43,7 +43,7 @@ const Content = styled.span`
     left: 0px;
     right: 0px;
     bottom: 0px;
-    padding: 40px 20px 10px 20px;
+    padding: 40px 25px 20px 20px;
     display: grid;
     grid-template-columns: auto auto auto auto;
     grid-template-rows: auto auto auto;
