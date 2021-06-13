@@ -16,7 +16,9 @@ defmodule Api.Design do
       recorded.position_x != incomingData.position_x ||
       recorded.position_y != incomingData.position_y ||
       recorded.filled != incomingData.filled ||
-      recorded.rounded != incomingData.rounded
+      recorded.rounded != incomingData.rounded ||
+      recorded.align_horizontal != incomingData.align_horizontal ||
+      recorded.align_vertical != incomingData.align_vertical
     do
       :different
     else
