@@ -1,24 +1,34 @@
+import { Channel } from "phoenix";
 import React from "react";
 import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import Stack from "../classes/Stack";
+import { updateComponentToChannel } from "./ws_api_service";
 
 export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
     component: Component | null
 ) {
     if(component) {
-        var updatedComponents: Component[] = [];
         if(component.node.parent === null)
             drawComponentOnCanvas(canvas, component);
         component.node.children.forEach((child) => {
-            const updatedPos = getNextAvailiblePosition(component, child, child.style.width, child.style.height, 
-                canvas.current?.width, canvas.current?.height);
-            child.style.position_x = updatedPos.x;
-            child.style.position_y = updatedPos.y;
             drawComponentOnCanvas(canvas, child);
-            updatedComponents.push(child);
             if(component.node.children.length > 0)
                 displayComponentsOnCanvas(canvas, child);
+        });
+    }
+}
+
+export function updateComponents(channel: Channel | undefined, component: Component | null, canvasWidth: number) {
+    if(component) {
+        if(component.node.parent === null && component.updateRequired)
+            updateComponentToChannel(channel, component);
+        setChildPositions(component, canvasWidth);
+        component.node.children.forEach((child) => {
+            if(child.updateRequired)
+                updateComponentToChannel(channel, child);
+            if(component.node.children.length > 0)
+                updateComponents(channel, child, canvasWidth);
         });
     }
 }
@@ -88,44 +98,181 @@ export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
     ctx?.stroke();
 }
 
-export function getNextAvailiblePosition(parent: Component | null, excludeComponent: Component | null, width: number, 
-    height: number, canvasWidth: number | undefined, canvasHeight: number | undefined
-): {x: number, y: number} {
-    var x = 0;
-    var y = 0;
-    if(canvasWidth !== undefined && canvasHeight !== undefined) {
-        if(parent) {
-            const components = [...parent.node.children];
-            if(excludeComponent) {
-                components.forEach((component, index) => {
-                    if(component.id === excludeComponent.id)
-                        components.splice(index);
-                });
-            }
-            if(components.length > 0) {
-                const lastComponentBounds = components[components.length-1].getComponentBounds();
-                if(lastComponentBounds.bottomRight.x + width > parent.getComponentBounds().bottomRight.x) {
-                    x = parent.getComponentBounds().topLeft.x;
-                    y = lastComponentBounds.bottomRight.y;
-                    for(var i=components.length-1;i>=0;i--) {
-                        const component = components[i];
-                        const componentBounds = component.getComponentBounds();
-                        if(componentBounds.bottomRight.y >= y)
-                            y = component.getComponentBounds().bottomRight.y;       
-                    }
-                }
-                else {
-                    x = lastComponentBounds.bottomRight.x;
-                    y = lastComponentBounds.topRight.y;
-                }
-            }
-            else {
-                x = parent.getComponentBounds().topLeft.x;
-                y = parent.getComponentBounds().topLeft.y;   
-            }
+export function setChildPositions(parent: Component | null, canvasWidth: number
+) {
+    if(parent) {
+        switch(parent.style.align_horizontal) {
+            case "start":
+                alignHorizontalStart(parent);
+                break;
+            case "center":
+                alignHorizontalCenter(parent);
+                break;
+            case "end":
+                alignHorizontalEnd(parent);
+                break;
+        }
+        switch(parent.style.align_vertical) {
+            case "start":
+                alignVerticalStart(parent);
+                break;
+            case "center":
+                alignVerticalCenter(parent);
+                break;
+            case "end":
+                alignVerticalEnd(parent);
+                break;
         }
     }
-    return {x: x, y: y};
+}
+
+function alignHorizontalStart(parent: Component) {
+    var sumWidth = 0;
+    parent.node.children.forEach((child) => {
+        const checkOverflow = parent.getComponentBounds().topLeft.x + child.style.width + sumWidth;
+        if(checkOverflow <= parent.getComponentBounds().topRight.x) {
+            child.updatePositionX(checkOverflow - child.style.width);
+            sumWidth += child.style.width;
+        }
+        else {
+            child.updatePositionX(parent.getComponentBounds().topLeft.x);
+            sumWidth = child.style.width;
+        }
+    });
+}
+
+function alignHorizontalCenter(parent: Component) {
+    var sumWidth = 0;
+    var rows: {startOffset: number, components: Component[]}[] = [];
+    var row: Component[] = [];
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
+            var startOffset = ((parent.style.width) - sumWidth + child.style.width) / 2;
+            rows.push({startOffset: startOffset, components: row});
+            sumWidth = child.style.width;
+            row = [child];
+        }
+        else {
+            row.push(child);
+        }
+    });
+    var startOffset = ((parent.style.width) - sumWidth) / 2;
+    rows.push({startOffset: startOffset, components: row});
+    rows.forEach((rowObject) => {
+        sumWidth = 0;
+        rowObject.components.forEach((child) => {
+            child.updatePositionX(parent.getComponentBounds().topLeft.x + rowObject.startOffset + sumWidth);
+            sumWidth += child.style.width;
+        });
+    });
+}
+
+function alignHorizontalEnd(parent: Component) {
+    var sumWidth = 0;
+    var row: Component[] = [];
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topRight.x - sumWidth < parent.getComponentBounds().topLeft.x) {
+            sumWidth = 0;
+            for(var i=row.length-1;i>=0;i--) {
+               sumWidth += row[i].style.width;
+               row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+            }
+            row = [child];
+            sumWidth = child.style.width;
+            child.updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+        }   
+        else
+            row.push(child);
+    });
+    sumWidth = 0;
+    for(var i=row.length-1;i>=0;i--) {
+        sumWidth += row[i].style.width;
+        row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+    }
+}
+
+function alignVerticalStart(parent: Component) {
+    var sumWidth = 0;
+    var currentHeight = 0;
+    var greatestHeight = 0;
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
+            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + greatestHeight);
+            sumWidth = child.style.width;
+            currentHeight += greatestHeight;
+            greatestHeight = child.style.height;
+        }
+        else {
+            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight);
+            greatestHeight = child.style.height > greatestHeight ? child.style.height : greatestHeight;
+        }
+    });
+}
+
+function alignVerticalCenter(parent: Component) {
+    var sumWidth = 0;
+    var greatestHeight = 0;
+    var rows: {greatestHeight: number, components: Component[]}[] = [];
+    var row: Component[] = [];
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
+            rows.push({greatestHeight: greatestHeight, components: row});
+            sumWidth = child.style.width;
+            greatestHeight = child.style.height;
+            row = [child];
+        }
+        else {
+            row.push(child);
+            greatestHeight = child.style.height > greatestHeight ? child.style.height : greatestHeight;
+        }
+    });
+    rows.push({greatestHeight: greatestHeight, components: row});
+    var sumHeight = 0;
+    rows.forEach((rowObject) => {
+        sumHeight += rowObject.greatestHeight;
+    });
+    const startOffset = ((parent.style.height) - sumHeight) / 2;
+    sumHeight = 0;
+    rows.forEach((rowObject) => {
+        rowObject.components.forEach((c) => {
+            c.updatePositionY(parent.getComponentBounds().topLeft.y + startOffset + sumHeight);
+        });
+        sumHeight += rowObject.greatestHeight;
+    });
+}
+
+function alignVerticalEnd(parent: Component) {
+    
+    var sumWidth = 0;
+    var greatestHeight = 0;
+    var currentHeight = 0;
+    var row: Component[] = [];
+    var stack = new Stack<{greatestHeight: number, components: Component[]}>();
+    parent.node.children.forEach((child) => {
+        sumWidth += child.style.width;
+        if(parent.getComponentBounds().topRight.x - sumWidth < parent.getComponentBounds().topLeft.x) {
+            stack.push({greatestHeight: greatestHeight, components: row});
+            row = [child];
+            sumWidth = child.style.width;
+            greatestHeight = 0;
+        }
+        else
+            row.push(child);
+        greatestHeight = greatestHeight < child.style.height ? child.style.height : greatestHeight;
+    });
+    stack.push({greatestHeight: greatestHeight, components: row});
+    var currentRow: {greatestHeight: number, components: Component[]};
+    while(!stack.empty()) {
+        currentRow = stack.pop();
+        currentRow.components.forEach((component) => {
+            component.updatePositionY(parent.getComponentBounds().bottomRight.y - currentHeight - component.style.height);
+        });
+        currentHeight += currentRow.greatestHeight;
+    }
 }
 
 function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {

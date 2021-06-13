@@ -1,55 +1,83 @@
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import Component from '../classes/Component';
 import ComponentTree from '../classes/ComponentTree';
-import {logout} from "../services/http_api_service";
+import {WindowSection} from './WindowSection';
+import {LayoutSection} from './LayoutSection';
+import {SizeSection} from './SizeSection';
 
 export const MenuToolbar = (props: MenuToolbarProps) => (
-    <ToolbarContainer>
-        <Link
-            to={{
-                pathname: "/dashboard"
-            }}
-        >
-            Dashboard
-        </Link>
-        <button onClick={(e) => logout(props.setAuthenticated)}>Logout</button>
-        <button onClick={(e) => {
-            props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
-            props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
-        }}>
-            Resize to Window
-        </button>
-        <input type="number" value={props.canvasWidth} 
-            onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
+    <ToolbarContainer componentToolbarWidth={props.componentToolbarWidth}>
+        <TopSection>
+            <Link
+                to={{
+                    pathname: "/dashboard"
+                }}
+            >
+                Dashboard
+            </Link>
+            <DocumentName>{props.docName}</DocumentName>
+        </TopSection>
+        <WindowSection 
+            setCanvasWidth={props.setCanvasWidth}
+            setCanvasHeight={props.setCanvasHeight}
+            setShowGridlines={props.setShowGridlines}
+            componentToolbarWidth={props.componentToolbarWidth}
+            menuToolbarHeight={props.menuToolbarHeight}
+            canvasWidth={props.canvasWidth}
+            canvasHeight={props.canvasHeight}
         />
-        <input type="number" value={props.canvasHeight} 
-            onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
+        <LayoutSection
+            updateComponentAlignHorizontal={props.updateComponentAlignHorizontal}
+            updateComponentAlignVertical={props.updateComponentAlignVertical}
+            selectedComponentId={props.selectedComponentId}
+            componentTree={props.componentTree}
         />
-        {
-            props.selectedComponentId !== -1
-                ? (
-                    <>
-                        <input type="number" 
-                            value={props.componentTree.find(props.selectedComponentId)?.style.width}
-                            onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
-                        />
-                        <input type="number"
-                            value={props.componentTree.find(props.selectedComponentId)?.style.height}
-                            onChange={(e) => props.updateComponentHeight(parseInt(e.target.value))}
-                        />
-                    </>
-                )
-                : null
-        }
+        <SizeSection
+            updateComponentWidth={props.updateComponentWidth}
+            updateComponentHeight={props.updateComponentHeight}
+            selectedComponentId={props.selectedComponentId}
+            componentTree={props.componentTree}
+        />
+        <StyleSection>
+            <SectionLabel>Style</SectionLabel>
+        </StyleSection>
     </ToolbarContainer>
 );
 
-const ToolbarContainer = styled.div`
+const ToolbarContainer = styled.div<{componentToolbarWidth: number}>`
     grid-column: 1/3;
     grid-row: 1/2;
     background-color: #fbfbfb;
     border: solid 1px #dcdcdc;
+    display: grid;
+    grid-template-columns: ${props => props.componentToolbarWidth-1 + "px"} ${props => props.componentToolbarWidth-1 + "px"}
+        ${props => props.componentToolbarWidth-1 + "px"} ${props => props.componentToolbarWidth-1 + "px"} auto;
+    grid-template-rows: 30% 70%;
+`;
+
+const SectionLabel = styled.h5`
+    grid-column: 1/4;
+    grid-row: 1/2;
+    margin: auto;
+    width: fit-content;
+    user-select: "none";
+`;
+
+const TopSection = styled.div`
+    grid-column: 1/6;
+    grid-row: 1/2;
+    border-bottom: solid 1px #dcdcdc;
+`;
+
+const DocumentName = styled.h3`
+    margin: 0;
+    display: inline-block;
+`;
+
+const StyleSection = styled.div`
+    grid-column: 4/5;
+    grid-row: 2/3;
+    border-right: solid 1px #dcdcdc;
 `;
 
 interface MenuToolbarProps {
@@ -57,11 +85,15 @@ interface MenuToolbarProps {
     selectedComponentId: number | null,
     componentToolbarWidth: number,
     menuToolbarHeight: number,
+    docName: string,
     canvasHeight: number,
     canvasWidth: number,
     updateComponentWidth: (width: number) => void,
     updateComponentHeight: (height: number) => void,
+    updateComponentAlignHorizontal: (align: string) => void,
+    updateComponentAlignVertical: (align: string) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
-    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>
+    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
 }

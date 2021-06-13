@@ -15,18 +15,21 @@ export const DesignPage = (props: DesignPageProps) => (
                 <LoadingMessage>Design Page Loading</LoadingMessage>
             </>
         :
-            <DesignPageContainer>
+            <DesignPageContainer componentToolbarWidth={props.componentToolbarWidth} menuToolbarHeight={props.menuToolbarHeight}>
                 <MenuToolbarContainer
                     componentTree={props.componentTree}
                     selectedComponentId={props.selectedComponentId}
                     componentToolbarWidth={props.componentToolbarWidth}
                     menuToolbarHeight={props.menuToolbarHeight}
+                    docName={props.docName}
                     canvasHeight={props.canvasHeight}
                     canvasWidth={props.canvasWidth}
+                    channel={props.channel}
                     setAuthenticated={props.setAuthenticated}
                     setCanvasWidth={props.setCanvasWidth}
                     setCanvasHeight={props.setCanvasHeight}
                     setComponentTree={props.setComponentTree}
+                    setShowGridlines={props.setShowGridlines}
                 />
                 <ComponentToolbarContainer 
                     newComponent={props.newComponent}
@@ -50,12 +53,12 @@ const LoadingMessage = styled.h1`
     color: red;
 `;
 
-const DesignPageContainer = styled.div`
+const DesignPageContainer = styled.div<{componentToolbarWidth: number, menuToolbarHeight: number}>`
     display: grid;
     height: 100vh;
     width: 100vw;
-    grid-template-columns: 200px auto;
-    grid-template-rows: 50px auto;
+    grid-template-columns: ${props => props.componentToolbarWidth + "px"} auto;
+    grid-template-rows: ${props => props.menuToolbarHeight + "px"} auto;
     background-color: #f8f9fa;
 `;
 
@@ -65,6 +68,7 @@ const CanvasContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: scroll;
 `;
 
 interface DesignPageProps {
@@ -74,6 +78,7 @@ interface DesignPageProps {
     mouseMoveX: number,
     mouseMoveY: number,
     docId: number,
+    docName: string,
     mouseDown: string,
     selectedComponentId: number,
     componentToolbarWidth: number,
@@ -89,5 +94,6 @@ interface DesignPageProps {
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
-    newComponent: (type: string) => void
+    newComponent: (type: string) => void,
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
 }

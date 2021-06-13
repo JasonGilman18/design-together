@@ -14,7 +14,8 @@ export const DashboardPage = (props: DashboardPageProps) => (
                     to={{
                         pathname: "/design",
                         state: {
-                            doc_id: doc.doc_id
+                            doc_id: doc.doc_id,
+                            doc_name: doc.doc_name
                         }
                     }}
                 >

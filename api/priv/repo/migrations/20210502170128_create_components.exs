@@ -10,6 +10,8 @@ defmodule Api.Repo.Migrations.CreateComponents do
       add :position_y, :integer
       add :filled, :boolean
       add :rounded, :integer
+      add :align_horizontal, :string, default: "start"
+      add :align_vertical, :string, default: "start"
       add :document_id, references(:documents, on_delete: :nothing)
 
       timestamps()

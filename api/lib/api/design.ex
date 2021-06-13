@@ -8,6 +8,24 @@ defmodule Api.Design do
 
   alias Api.Design.Component
 
+
+
+  def compare_components(recorded, incomingData) do
+    if recorded.height != incomingData.height ||
+      recorded.width != incomingData.width||
+      recorded.position_x != incomingData.position_x ||
+      recorded.position_y != incomingData.position_y ||
+      recorded.filled != incomingData.filled ||
+      recorded.rounded != incomingData.rounded ||
+      recorded.align_horizontal != incomingData.align_horizontal ||
+      recorded.align_vertical != incomingData.align_vertical
+    do
+      :different
+    else
+      :same
+    end
+  end
+
   @doc """
   Returns the list of components.
 

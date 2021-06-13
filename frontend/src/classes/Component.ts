@@ -1,6 +1,7 @@
 export default class Component {
     id: number;
     document_id: number;
+    updateRequired: boolean;
     style: ComponentStyle;
     node: {
         parent: Component | null,
@@ -12,6 +13,7 @@ export default class Component {
     ) {
         this.id = componentId;
         this.document_id = documentId;
+        this.updateRequired = true;
         this.node = {
             parent: parent,
             children: []
@@ -23,8 +25,66 @@ export default class Component {
             width: width,
             filled: filled,
             rounded: rounded,
-            selected: false
+            selected: false,
+            align_horizontal: "start",
+            align_vertical: "start"
         };
+    }
+
+    public updatePositionX(position_x: number) {
+        if(this.style.position_x !== position_x) {
+            this.style.position_x = position_x;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePositionY(position_y: number) {
+        if(this.style.position_y !== position_y) {
+            this.style.position_y = position_y;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateHeight(height: number) {
+        if(this.style.height !== height) {
+            this.style.height = height;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateWidth(width: number) {
+        if(this.style.width !== width) {
+            this.style.width = width;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateFilled(filled: boolean) {
+        if(this.style.filled !== filled) {
+            this.style.filled = filled;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateRounded(rounded: number) {
+        if(this.style.rounded !== rounded) {
+            this.style.rounded = rounded;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateAlignHorizontal(align_horizontal: string) {
+        if(this.style.align_horizontal !== align_horizontal) {
+            this.style.align_horizontal = align_horizontal;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateAlignVertical(align_vertical: string) {
+        if(this.style.align_vertical !== align_vertical) {
+            this.style.align_vertical = align_vertical;
+            this.updateRequired = true;
+        }
     }
 
     public addChild(component: Component) {
@@ -132,5 +192,7 @@ type ComponentStyle = {
     width: number,
     filled: boolean,
     rounded: number,
-    selected: boolean
+    selected: boolean,
+    align_horizontal: string,
+    align_vertical: string
 }

@@ -1,12 +1,11 @@
 import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
-import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import {DesignPage} from "../presentation_components/DesignPage";
 import {
     displayComponentsOnCanvas,
     drawGridlinesOnCanvas,
-    getNextAvailiblePosition
+    updateComponents
 } from '../services/design_service';
 import {reqAuthToken} from "../services/http_api_service";
 import {
@@ -30,9 +29,10 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
     const canvas = useRef<HTMLCanvasElement>(null);
     const componentToolbarWidth = 200;
-    const menuToolbarHeight = 50;
+    const menuToolbarHeight = 125;
     const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - componentToolbarWidth-100);
     const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - menuToolbarHeight-100);
+    const [showGridlines, setShowGridlines] = useState<boolean>(false);
 
     useEffect(() => {
         reqAuthToken(props.location.state.doc_id, setAuthToken);
@@ -59,10 +59,11 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
-            drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
+            if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
+            updateComponents(channel, componentTree.root, canvasWidth);
             displayComponentsOnCanvas(canvas, componentTree.root);
         }
-    }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth]);
+    }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
 
     useEffect(() => {
         if(channel !== undefined) {
@@ -136,10 +137,11 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 break;
         }
         if(addComponent) {
+            /*
             const availPos = getNextAvailiblePosition(componentTree.find(selectedComponentId), null, width, height, canvasWidth, 
                 canvasHeight
-            );
-            newComponentToChannel(channel, docId, selectedComponentId, height, width, availPos.x, availPos.y, filled, rounded);
+            );*/
+            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, filled, rounded);
         }
     }
 
@@ -158,6 +160,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvasHeight={canvasHeight}
             canvasWidth={canvasWidth}
             docId={props.location.state.doc_id}
+            docName={props.location.state.doc_name}
             setSelectedComponentId={setSelectedComponentId}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}
@@ -167,6 +170,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             setCanvasHeight={setCanvasHeight}
             setComponentTree={setComponentTree}
             newComponent={newComponent}
+            setShowGridlines={setShowGridlines}
         />
     );
 }

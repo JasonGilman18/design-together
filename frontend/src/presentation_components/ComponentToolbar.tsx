@@ -1,20 +1,24 @@
 import styled from 'styled-components';
-import {ReactComponent as SquareSVG} from '../icons/square.svg';
-import {ReactComponent as SquareFillSVG} from '../icons/square-fill.svg';
-import {ReactComponent as SquareRoundedSVG} from '../icons/square-rounded.svg';
-import {ReactComponent as SquareFillRoundedSVG} from '../icons/square-fill-rounded.svg';
-import {ReactComponent as RectangleSVG} from '../icons/rectangle.svg';
-import {ReactComponent as RectangleFillSVG} from '../icons/rectangle-fill.svg';
-import {ReactComponent as RectangleRoundedSVG} from '../icons/rectangle-rounded.svg';
-import {ReactComponent as RectangleFillRoundedSVG} from '../icons/rectangle-fill-rounded.svg';
+import {ReactComponent as SquareSVG} from '../svg/square.svg';
+import {ReactComponent as SquareFillSVG} from '../svg/square-fill.svg';
+import {ReactComponent as SquareRoundedSVG} from '../svg/square-rounded.svg';
+import {ReactComponent as SquareFillRoundedSVG} from '../svg/square-fill-rounded.svg';
+import {ReactComponent as RectangleSVG} from '../svg/rectangle.svg';
+import {ReactComponent as RectangleFillSVG} from '../svg/rectangle-fill.svg';
+import {ReactComponent as RectangleRoundedSVG} from '../svg/rectangle-rounded.svg';
+import {ReactComponent as RectangleFillRoundedSVG} from '../svg/rectangle-fill-rounded.svg';
+import {ReactComponent as ChevronSVG} from '../svg/chevron.svg';
 
 export const ComponentToolbar = (props: ComponentToolbarProps) => (
 
     <ToolbarContainer>
         <ToolbarType>
-            <TypeLabel>
-                <h5>Containers</h5>
-                <h5 onClick={() => props.closeTypeContainer(0)}>X</h5>
+            <TypeLabel onClick={() => props.closeTypeContainer(0)}>
+                <ChevronSVG style={{height: "15px", width: "15px", transition: ".6s", 
+                    transform: !props.containerOpen[0]?"rotate(-90deg)":"none",
+                    position: "absolute", left: "20px"}}
+                />
+                <h5 style={{userSelect: "none"}}>Containers</h5>
             </TypeLabel>
             <TypeButtonContainer 
                 style={
@@ -62,7 +66,8 @@ const ToolbarContainer = styled.div`
     align-items: center;
     background-color: #fbfbfb;
     border: solid 1px #dcdcdc;
-    border-top: transparent;
+    border-top: none;
+    border-left: none;
 `;
 
 const ToolbarType = styled.div`
@@ -75,10 +80,12 @@ const ToolbarType = styled.div`
 `;
 
 const TypeLabel = styled.div`
+    position: relative;
     height: 35px;
     width: 100%;
     border: solid 1px #dcdcdc;
-    border-top: transparent;
+    border-top: none;
+    border-left: none;
     display: flex;
     justify-content: center;
     align-items: center;
