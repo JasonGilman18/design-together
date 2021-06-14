@@ -59,8 +59,9 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
+            console.log(componentTree.components);
             if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            updateComponents(channel, componentTree.root, canvasWidth);
+            updateComponents(channel, componentTree.root, canvasWidth, canvasHeight);
             displayComponentsOnCanvas(canvas, componentTree.root);
         }
     }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
@@ -69,6 +70,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
+            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, false, 0);
         }
     }, [channel]);
 

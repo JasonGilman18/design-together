@@ -18,7 +18,7 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => (
                     transform: !props.containerOpen[0]?"rotate(-90deg)":"none",
                     position: "absolute", left: "20px"}}
                 />
-                <h5 style={{userSelect: "none"}}>Containers</h5>
+                <h5 style={{userSelect: "none"}}>Components</h5>
             </TypeLabel>
             <TypeButtonContainer 
                 style={
