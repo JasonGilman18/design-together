@@ -19,20 +19,18 @@ export const WindowSection = (props: WindowSectionProps) => (
         </GridButton>
         <SizeButton setCanvasWidth={props.setCanvasWidth}/>
         <WindowInputContainer>
-            <span style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-                <WindowInputLabel>W:</WindowInputLabel>
-                <WindowInput type="text" value={props.canvasWidth}
-                    maxLength={4} size={4}
-                    onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
-                />
-            </span>
-            <span style={{display:"flex", justifyContent:"center", alignContent:"center"}}>
-                <WindowInputLabel>H:</WindowInputLabel>
-                <WindowInput type="text" value={props.canvasHeight}
-                    maxLength={4} size={4}
-                    onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
-                />
-            </span> 
+            <WindowInputLabel>W:</WindowInputLabel>
+            <WindowInput type="text" value={props.canvasWidth}
+                maxLength={4} size={6}
+                onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
+            />
+            <WindowInputLabel>px</WindowInputLabel>
+            <WindowInputLabel>H:</WindowInputLabel>
+            <WindowInput type="text" value={props.canvasHeight}
+                maxLength={4} size={6}
+                onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
+            />
+            <WindowInputLabel>px</WindowInputLabel>
         </WindowInputContainer>
     </Section>
 );
@@ -89,24 +87,28 @@ const WindowInputContainer = styled.span`
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
 `;
 
 const WindowInputLabel = styled.h3`
     user-select: none;
     font-size: small;
-    margin: 0px 5px 0px 0px;
+    margin: 0px 5px 0px 2px;
     display: flex;
     align-items: center;
+    &:nth-of-type(2), &:nth-of-type(4) {
+        font-weight: 400;
+        position: relative;
+        left: -20px;
+    }  
 `;
 
 const WindowInput = styled.input`
-    height: 100%;
     padding: 3px;
-    border-radius: 5px 0px 0px 5px;
+    border-radius: 5px;
     border: none;
-    box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 4px 0px inset;
     background-color: whitesmoke;
     &:focus {
         outline: none;

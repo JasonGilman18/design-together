@@ -1,26 +1,31 @@
 import styled from "styled-components";
 import ComponentTree from "../classes/ComponentTree";
+import { DimensionSelect } from "./DimensionSelect";
 
 export const SizeSection = (props: SizeSectionProps) => (
     <Section>
         <SectionLabel>Size</SectionLabel>
-        <SizeSelect>
-            <option>Pixel</option>
-            <option>Percentage</option>
-            <option>Viewport</option>
-        </SizeSelect>
         <SizeInputContainer>
-            <SizeInput type="text" value={props.selectedComponentId==-1
-                ? ""
-                : props.componentTree.find(props.selectedComponentId)?.style.width}
-                onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
-            />
-            <h3 style={{margin: "0px 5px 0px 5px", userSelect: "none"}}>x</h3>
-            <SizeInput type="text" value={props.selectedComponentId==-1
-                ? "" 
-                : props.componentTree.find(props.selectedComponentId)?.style.height}
-                onChange={(e) => props.updateComponentHeight(parseInt(e.target.value))}
-            />
+            <span style={{display: "flex", marginBottom: "5px"}}>
+                <SizeInputLabel>W:</SizeInputLabel>
+                <SizeInput type="text" value={props.selectedComponentId==-1
+                    ? ""
+                    : props.componentTree.find(props.selectedComponentId)?.style.width}
+                    maxLength={4} size={4}
+                    onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
+                />
+                <DimensionSelect/>
+            </span>
+            <span style={{display:"flex"}}>
+                <SizeInputLabel>H:</SizeInputLabel>
+                <SizeInput type="text" value={props.selectedComponentId==-1
+                    ? "" 
+                    : props.componentTree.find(props.selectedComponentId)?.style.height}
+                    maxLength={4} size={4}
+                    onChange={(e) => props.updateComponentHeight(parseInt(e.target.value))}
+                />
+                <DimensionSelect/>
+            </span>
         </SizeInputContainer>
     </Section>
 );
@@ -44,21 +49,33 @@ const SectionLabel = styled.h5`
     user-select: "none";
 `;
 
-const SizeSelect = styled.select`
-    grid-column: 1/4;
-    grid-row: 2/3;
-`;
-
 const SizeInputContainer = styled.span`
     grid-column: 1/4;
-    grid-row: 3/4;
+    grid-row: 2/4;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
+`;
+
+const SizeInputLabel = styled.h3`
+    user-select: none;
+    font-size: small;
+    margin: 0px 5px 0px 0px;
+    display: flex;
     align-items: center;
+    min-width: 20px;
 `;
 
 const SizeInput = styled.input`
-    width: 25%;
+    padding: 3px;
+    border-radius: 5px;
+    margin-right: 5px;
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 4px 0px inset;
+    background-color: whitesmoke;
+    &:focus {
+        outline: none;
+    }
 `;
 
 interface SizeSectionProps {
