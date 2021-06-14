@@ -62,8 +62,7 @@ const Container = styled.span`
 `;
 
 const SizeBtn = styled(Button)`
-    grid-column: 2/3;
-    grid-row: 2/3;
+    
 `;
 
 interface SizeButtonProps {

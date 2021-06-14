@@ -17,30 +17,43 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
             </Link>
             <DocumentName>{props.docName}</DocumentName>
         </TopSection>
-        <WindowSection 
-            setCanvasWidth={props.setCanvasWidth}
-            setCanvasHeight={props.setCanvasHeight}
-            setShowGridlines={props.setShowGridlines}
-            componentToolbarWidth={props.componentToolbarWidth}
-            menuToolbarHeight={props.menuToolbarHeight}
-            canvasWidth={props.canvasWidth}
-            canvasHeight={props.canvasHeight}
-        />
-        <LayoutSection
-            updateComponentAlignHorizontal={props.updateComponentAlignHorizontal}
-            updateComponentAlignVertical={props.updateComponentAlignVertical}
-            selectedComponentId={props.selectedComponentId}
-            componentTree={props.componentTree}
-        />
-        <SizeSection
-            updateComponentWidth={props.updateComponentWidth}
-            updateComponentHeight={props.updateComponentHeight}
-            selectedComponentId={props.selectedComponentId}
-            componentTree={props.componentTree}
-        />
-        <StyleSection>
-            <SectionLabel>Style</SectionLabel>
-        </StyleSection>
+        <BottomSection componentToolbarWidth={props.componentToolbarWidth}>
+        <   WindowSection 
+                setCanvasWidth={props.setCanvasWidth}
+                setCanvasHeight={props.setCanvasHeight}
+                setShowGridlines={props.setShowGridlines}
+                componentToolbarWidth={props.componentToolbarWidth}
+                menuToolbarHeight={props.menuToolbarHeight}
+                canvasWidth={props.canvasWidth}
+                canvasHeight={props.canvasHeight}
+            />
+        </BottomSection>
+        {/*
+            <WindowSection 
+                setCanvasWidth={props.setCanvasWidth}
+                setCanvasHeight={props.setCanvasHeight}
+                setShowGridlines={props.setShowGridlines}
+                componentToolbarWidth={props.componentToolbarWidth}
+                menuToolbarHeight={props.menuToolbarHeight}
+                canvasWidth={props.canvasWidth}
+                canvasHeight={props.canvasHeight}
+            />
+            <LayoutSection
+                updateComponentAlignHorizontal={props.updateComponentAlignHorizontal}
+                updateComponentAlignVertical={props.updateComponentAlignVertical}
+                selectedComponentId={props.selectedComponentId}
+                componentTree={props.componentTree}
+            />
+            <SizeSection
+                updateComponentWidth={props.updateComponentWidth}
+                updateComponentHeight={props.updateComponentHeight}
+                selectedComponentId={props.selectedComponentId}
+                componentTree={props.componentTree}
+            />
+            <StyleSection>
+                <SectionLabel>Style</SectionLabel>
+            </StyleSection>
+        */}
     </ToolbarContainer>
 );
 
@@ -52,15 +65,7 @@ const ToolbarContainer = styled.div<{componentToolbarWidth: number}>`
     display: grid;
     grid-template-columns: ${props => props.componentToolbarWidth-1 + "px"} ${props => props.componentToolbarWidth-1 + "px"}
         ${props => props.componentToolbarWidth-1 + "px"} ${props => props.componentToolbarWidth-1 + "px"} auto;
-    grid-template-rows: 30% 70%;
-`;
-
-const SectionLabel = styled.h5`
-    grid-column: 1/4;
-    grid-row: 1/2;
-    margin: auto;
-    width: fit-content;
-    user-select: "none";
+    grid-template-rows: 50% 50%;
 `;
 
 const TopSection = styled.div`
@@ -72,6 +77,25 @@ const TopSection = styled.div`
 const DocumentName = styled.h3`
     margin: 0;
     display: inline-block;
+`;
+
+const BottomSection = styled.div<{componentToolbarWidth: number}>`
+    grid-column: 1/6;
+    grid-row: 2/3;
+    display: grid;
+    grid-template-columns: ${props => props.componentToolbarWidth-1 + "px"} auto;
+    grid-template-rows: 100%;
+`;
+
+
+
+
+const SectionLabel = styled.h5`
+    grid-column: 1/4;
+    grid-row: 1/2;
+    margin: auto;
+    width: fit-content;
+    user-select: "none";
 `;
 
 const StyleSection = styled.div`

@@ -5,8 +5,22 @@ import {ReactComponent as MaximizeIcon} from '../svg/maximize.svg';
 import {ReactComponent as GridShowIcon} from '../svg/GridShowIcon.svg';
 
 export const WindowSection = (props: WindowSectionProps) => (
+    
     <Section>
-        <SectionLabel>Window</SectionLabel>
+        <WindowInputContainer>
+            <WindowInput type="text" value={props.canvasWidth}
+                maxLength={4} size={6}
+                onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
+            />
+            <WindowInputLabel style={{right: "66px"}}>px</WindowInputLabel>
+            <WindowInputLabel>x</WindowInputLabel>
+            <WindowInput type="text" value={props.canvasHeight}
+                maxLength={4} size={6}
+                onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
+            />
+            <WindowInputLabel style={{right: "1px"}}>px</WindowInputLabel>
+        </WindowInputContainer>
+        <SizeButton setCanvasWidth={props.setCanvasWidth}/>
         <MaximizeButton onClick={(e: any) => {
                 props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
                 props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
@@ -17,21 +31,6 @@ export const WindowSection = (props: WindowSectionProps) => (
         <GridButton>
             <GridShowIcon style={{width: "20px", height: "20px"}}/>
         </GridButton>
-        <SizeButton setCanvasWidth={props.setCanvasWidth}/>
-        <WindowInputContainer>
-            <WindowInputLabel>W:</WindowInputLabel>
-            <WindowInput type="text" value={props.canvasWidth}
-                maxLength={4} size={6}
-                onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
-            />
-            <WindowInputLabel>px</WindowInputLabel>
-            <WindowInputLabel>H:</WindowInputLabel>
-            <WindowInput type="text" value={props.canvasHeight}
-                maxLength={4} size={6}
-                onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
-            />
-            <WindowInputLabel>px</WindowInputLabel>
-        </WindowInputContainer>
     </Section>
 );
 
@@ -52,55 +51,35 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
-const SectionLabel = styled.h5`
-    grid-column: 1/4;
-    grid-row: 1/2;
-    margin: auto;
-    width: fit-content;
-    user-select: "none";
-`;
-
 const Section = styled.div`
     grid-column: 1/2;
-    grid-row: 2/3;
+    grid-row: 1/2;
     border-right: solid 1px #dcdcdc;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: 25px repeat(2, minmax(0, 1fr));
-    justify-items: center;
+    display: flex;
+    justify-content: space-around;
     align-items: center;
 `;
 
-const MaximizeButton = styled(Button)`
-    grid-column: 1/2;
-    grid-row: 2/3;
-`;
+const MaximizeButton = styled(Button)``;
 
-const GridButton = styled(Button)`
-    grid-column: 3/4;
-    grid-row: 2/3;
-`;
+const GridButton = styled(Button)``;
 
 const WindowInputContainer = styled.span`
-    grid-column: 1/4;
-    grid-row: 3/4;
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 `;
 
 const WindowInputLabel = styled.h3`
     user-select: none;
     font-size: small;
-    margin: 0px 5px 0px 2px;
+    margin: 0px 2px 0px 2px;
     display: flex;
     align-items: center;
-    &:nth-of-type(2), &:nth-of-type(4) {
+    &:nth-of-type(1), &:nth-of-type(3) {
         font-weight: 400;
-        position: relative;
-        left: -20px;
+        position: absolute;
     }  
 `;
 

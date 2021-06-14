@@ -28,8 +28,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const [mouseMoveX, setMouseMoveX] = useState<number>(0);
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
     const canvas = useRef<HTMLCanvasElement>(null);
-    const componentToolbarWidth = 200;
-    const menuToolbarHeight = 125;
+    const componentToolbarWidth = 250;
+    const menuToolbarHeight = 75;
     const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - componentToolbarWidth-100);
     const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - menuToolbarHeight-100);
     const [showGridlines, setShowGridlines] = useState<boolean>(false);
@@ -59,7 +59,6 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
-            console.log(componentTree.components);
             if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
             updateComponents(channel, componentTree.root, canvasWidth, canvasHeight);
             displayComponentsOnCanvas(canvas, componentTree.root);
@@ -138,13 +137,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 addComponent = false;
                 break;
         }
-        if(addComponent) {
-            /*
-            const availPos = getNextAvailiblePosition(componentTree.find(selectedComponentId), null, width, height, canvasWidth, 
-                canvasHeight
-            );*/
+        if(addComponent)
             newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, filled, rounded);
-        }
     }
 
     return (
