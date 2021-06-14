@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import {SlideCheckbox} from './SlideCheckbox';
-import {SizeButton} from './SizeButton';
+import {WindowSizeButton} from './WindowSizeButton';
 import {ReactComponent as MaximizeIcon} from '../svg/maximize.svg';
 import {ReactComponent as GridShowIcon} from '../svg/GridShowIcon.svg';
 
@@ -12,15 +11,15 @@ export const WindowSection = (props: WindowSectionProps) => (
                 maxLength={4} size={6}
                 onChange={(e) => props.setCanvasWidth(parseInt(e.target.value))}
             />
-            <WindowInputLabel style={{right: "66px"}}>px</WindowInputLabel>
+            <WindowInputLabel style={{right: "70px"}}>px</WindowInputLabel>
             <WindowInputLabel>x</WindowInputLabel>
             <WindowInput type="text" value={props.canvasHeight}
                 maxLength={4} size={6}
                 onChange={(e) => props.setCanvasHeight(parseInt(e.target.value))}
             />
-            <WindowInputLabel style={{right: "1px"}}>px</WindowInputLabel>
+            <WindowInputLabel style={{right: "-1px"}}>px</WindowInputLabel>
         </WindowInputContainer>
-        <SizeButton setCanvasWidth={props.setCanvasWidth}/>
+        <WindowSizeButton setCanvasWidth={props.setCanvasWidth}/>
         <MaximizeButton onClick={(e: any) => {
                 props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
                 props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
@@ -74,7 +73,7 @@ const WindowInputContainer = styled.span`
 const WindowInputLabel = styled.h3`
     user-select: none;
     font-size: small;
-    margin: 0px 2px 0px 2px;
+    margin: 0px 5px 0px 5px;
     display: flex;
     align-items: center;
     &:nth-of-type(1), &:nth-of-type(3) {

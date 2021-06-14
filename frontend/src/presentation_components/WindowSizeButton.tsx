@@ -1,20 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import {DropdownMenu} from "./DropdownMenu";
+import {DropdownTooltip} from "./DropdownTooltip";
 import {ReactComponent as DesktopIcon} from "../svg/DesktopIcon.svg";
 import {ReactComponent as MobileIcon} from "../svg/mobile.svg";
 import {ReactComponent as TabletIcon} from "../svg/tablet.svg";
 import {ReactComponent as LaptopIcon} from "../svg/laptop.svg";
 
-export const SizeButton = (props: SizeButtonProps) => {
+export const WindowSizeButton = (props: WindowSizeButtonProps) => {
     
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
+    const [showTooltip, setShowTooltip] = useState<boolean>(false);
+    const [timer, setTimer] = useState<NodeJS.Timeout>();
+
+    function showMenu() {
+        if(timer) clearTimeout(timer);
+        setShowTooltip(false);
+        setShowDropdown(val => !val);
+    }
+
+    function hover() {
+        const timerId = setTimeout(() => {
+            if(!showDropdown && !showTooltip)
+                setShowTooltip(true);
+        }, 500);
+        setTimer(timerId);
+    }
+
+    function leave() {
+        setShowTooltip(false);
+        if(timer) clearTimeout(timer);
+    }
     
     return (
         <Container>
-            <SizeBtn onClick={(e) => setShowDropdown(val => !val)}>
+            <Button 
+                onClick={() => showMenu()}
+                onMouseOver={() => hover()}
+                onMouseOut={() => leave()}
+            >
                 <DesktopIcon style={{height: "20px", width: "20px"}}/>
-            </SizeBtn>
+            </Button>
+            {
+                showTooltip
+                    ? <DropdownTooltip>
+                        Change Window Size
+                      </DropdownTooltip>
+                    : null
+            }
             {
                 showDropdown
                     ? <DropdownMenu setMenu={setShowDropdown}>
@@ -47,6 +80,9 @@ const Button = styled.button`
     &:hover {
         background-color:#e6e6e6;
     }
+    &:focus {
+        outline: none;
+    }
     border: none;
     height: 30px;
     width: 30px;
@@ -61,10 +97,6 @@ const Container = styled.span`
     position: relative;
 `;
 
-const SizeBtn = styled(Button)`
-    
-`;
-
-interface SizeButtonProps {
+interface WindowSizeButtonProps {
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>
 }
