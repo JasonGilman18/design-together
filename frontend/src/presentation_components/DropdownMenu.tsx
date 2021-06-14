@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import {ReactComponent as DropdownMenuIcon} from "../svg/DropdownMenuIcon.svg";
 
 export const DropdownMenu = (props: DropdownMenuProps) => {
@@ -28,6 +28,11 @@ export const DropdownMenu = (props: DropdownMenuProps) => {
     );
 };
 
+const FadeIn = keyframes`
+    from {opacity: 0;}
+    to {opacity: 1;}
+`;
+
 const Container = styled.span`
     position: absolute;
     left: 50%;
@@ -35,6 +40,7 @@ const Container = styled.span`
     height: 150px;
     width: 200px;
     z-index: 99;
+    animation: ${FadeIn} .5s;
 `;
 
 const Content = styled.span`

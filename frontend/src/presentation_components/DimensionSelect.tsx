@@ -21,7 +21,7 @@ export const DimensionSelect = (props: DimensionSelectProps) => {
             </DimensionBox>
             {
                 showDropdown
-                    ? <DropdownMenuSelect setMenu={setShowDropdown} setDimension={setDimension}>
+                    ? <DropdownMenuSelect showDropdown={showDropdown} setMenu={setShowDropdown} setDimension={setDimension}>
                         <DimensionLabel onClick={() => dimensionSelected("px")}>px</DimensionLabel>
                         <DimensionLabel onClick={() => dimensionSelected("%")}>%</DimensionLabel>
                         <DimensionLabel onClick={() => dimensionSelected("vw")}>vw</DimensionLabel>
@@ -59,6 +59,7 @@ const DimensionLabel = styled.h3`
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 5px;
 `;
 
 interface DimensionSelectProps {

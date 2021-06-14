@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import {ReactComponent as DropdownMenuSelectIcon} from "../svg/DropdownMenuSelectIcon.svg";
 
 export const DropdownMenuSelect = (props: DropdownMenuSelectProps) => {
@@ -28,12 +28,18 @@ export const DropdownMenuSelect = (props: DropdownMenuSelectProps) => {
     );
 };
 
+const FadeIn = keyframes`
+    from {opacity: 0;}
+    to {opacity: 1;}
+`;
+
 const Container = styled.span`
     position: absolute;
     height: 150px;
     width: 100px;
     z-index: 99;
     margin-left: -25px;
+    animation: ${FadeIn} .5s;
 `;
 
 const Content = styled.span`
@@ -49,10 +55,14 @@ const Content = styled.span`
     justify-items: center;
     align-items: center;
     color: white;
+    & > *:hover {
+        background-color: #434a56;
+    }
 `;
 
 interface DropdownMenuSelectProps {
     children: ReactNode,
+    showDropdown: boolean,
     setMenu: React.Dispatch<React.SetStateAction<boolean>>,
     setDimension: React.Dispatch<React.SetStateAction<string>>
 }
