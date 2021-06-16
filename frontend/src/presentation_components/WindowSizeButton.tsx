@@ -35,13 +35,13 @@ export const WindowSizeButton = (props: WindowSizeButtonProps) => {
     
     return (
         <Container>
-            <Button 
+            <ToolbarMenuButton 
                 onClick={() => showMenu()}
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
             >
-                <DesktopIcon style={SizeIconStyle}/>
-            </Button>
+                <DesktopIcon/>
+            </ToolbarMenuButton>
             {
                 showTooltip
                     ? <DropdownTooltip>
@@ -52,21 +52,21 @@ export const WindowSizeButton = (props: WindowSizeButtonProps) => {
             {
                 showDropdown
                     ? <DropdownMenu setMenu={setShowDropdown}>
-                        <Button onClick={() => props.setCanvasWidth(320)}>
-                            <MobileIcon style={DropdownMenuIconStyle}/>
-                        </Button>
-                        <Button onClick={() => props.setCanvasWidth(480)}>
-                            <MobileIconHorizontal style={DropdownMenuIconStyle}/>
-                        </Button>
-                        <Button onClick={() => props.setCanvasWidth(769)}>
-                            <TabletIcon style={DropdownMenuIconStyle}/>
-                        </Button>
-                        <Button onClick={() => props.setCanvasWidth(1279)}>
-                            <LaptopIcon style={DropdownMenuIconStyle}/>
-                        </Button>
-                        <Button onClick={() => props.setCanvasWidth(1440)}>
-                            <DesktopIcon style={DropdownMenuIconStyle}/>
-                        </Button>
+                        <DropdownMenuButton onClick={() => props.setCanvasWidth(320)}>
+                            <MobileIcon/>
+                        </DropdownMenuButton>
+                        <DropdownMenuButton onClick={() => props.setCanvasWidth(480)}>
+                            <MobileIconHorizontal/>
+                        </DropdownMenuButton>
+                        <DropdownMenuButton onClick={() => props.setCanvasWidth(769)}>
+                            <TabletIcon/>
+                        </DropdownMenuButton>
+                        <DropdownMenuButton onClick={() => props.setCanvasWidth(1279)}>
+                            <LaptopIcon/>
+                        </DropdownMenuButton>
+                        <DropdownMenuButton onClick={() => props.setCanvasWidth(1440)}>
+                            <DesktopIcon/>
+                        </DropdownMenuButton>
                       </DropdownMenu>
                     : null
             }
@@ -78,9 +78,6 @@ const Button = styled.button`
     background-color: transparent;
     box-shadow: 0px 0px 0px transparent;
     border-radius: 3px;
-    &:hover {
-        background-color:#e6e6e6;
-    }
     &:focus {
         outline: none;
     }
@@ -94,17 +91,27 @@ const Button = styled.button`
     cursor: pointer;
 `;
 
-const SizeIconStyle = {
-    height: "20px",
-    width: "20px",
-    fill: "#282c33"
-}
+const ToolbarMenuButton = styled(Button)`
+    &:hover {
+        background-color:#e6e6e6;
+    }
+    & > svg {
+        height: 20px;
+        width: 20px;
+        fill: #282c33;
+    }
+`;
 
-const DropdownMenuIconStyle = {
-    height: "20px",
-    width: "20px",
-    fill: "white"
-};
+const DropdownMenuButton = styled(Button)`
+    &:hover {
+        background-color: #434a56;
+    }
+    & > svg {
+        height: 20px;
+        width: 20px;
+        fill: white;
+    }
+`; 
 
 const Container = styled.span`
     position: relative;

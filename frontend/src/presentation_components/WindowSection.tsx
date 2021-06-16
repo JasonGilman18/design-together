@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import {WindowSizeButton} from './WindowSizeButton';
-import {ReactComponent as MaximizeIcon} from '../svg/maximize.svg';
+import {MaximizeButton} from './MaximizeButton';
 import {ReactComponent as GridShowIcon} from '../svg/GridShowIcon.svg';
 
 export const WindowSection = (props: WindowSectionProps) => (
@@ -20,13 +20,11 @@ export const WindowSection = (props: WindowSectionProps) => (
             <WindowInputLabel style={{right: "-1px"}}>px</WindowInputLabel>
         </WindowInputContainer>
         <WindowSizeButton setCanvasWidth={props.setCanvasWidth}/>
-        <MaximizeButton onClick={(e: any) => {
-                props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
-                props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
-            }}
-        >
-            <MaximizeIcon width="18px" height="18px"/>
-        </MaximizeButton>
+        <MaximizeButton setCanvasWidth={props.setCanvasWidth}
+            setCanvasHeight={props.setCanvasHeight}
+            componentToolbarWidth={props.componentToolbarWidth}
+            menuToolbarHeight={props.menuToolbarHeight}
+        />
         <GridButton>
             <GridShowIcon style={{width: "20px", height: "20px"}}/>
         </GridButton>
@@ -48,7 +46,6 @@ const Button = styled.button`
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    fill: BLUE;
 `;
 
 const Section = styled.div`
@@ -59,8 +56,6 @@ const Section = styled.div`
     justify-content: space-around;
     align-items: center;
 `;
-
-const MaximizeButton = styled(Button)``;
 
 const GridButton = styled(Button)``;
 
