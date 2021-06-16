@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import styled from "styled-components";
+/// <reference types="styled-components/cssprop" />
+import styled, { css } from "styled-components";
+//import * as types from 'styled-components/cssprop';
 import {DropdownMenu} from "./DropdownMenu";
 import {DropdownTooltip} from "./DropdownTooltip";
 import {ReactComponent as DesktopIcon} from "../svg/DesktopIcon.svg";
 import {ReactComponent as MobileIcon} from "../svg/mobile.svg";
 import {ReactComponent as TabletIcon} from "../svg/tablet.svg";
 import {ReactComponent as LaptopIcon} from "../svg/laptop.svg";
+import { useState } from "react";
 
 export const WindowSizeButton = (props: WindowSizeButtonProps) => {
     
@@ -39,7 +41,7 @@ export const WindowSizeButton = (props: WindowSizeButtonProps) => {
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
             >
-                <DesktopIcon style={{height: "20px", width: "20px"}}/>
+                <DesktopIcon style={SizeIconStyle}/>
             </Button>
             {
                 showTooltip
@@ -52,19 +54,19 @@ export const WindowSizeButton = (props: WindowSizeButtonProps) => {
                 showDropdown
                     ? <DropdownMenu setMenu={setShowDropdown}>
                         <Button onClick={() => props.setCanvasWidth(320)}>
-                            <MobileIcon style={{height: "18px", width: "18px", color: "white"}}/>
+                            <MobileIcon style={DropdownMenuIconStyle}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(480)}>
-                            <MobileIcon style={{height: "18px", width: "18px", transform: "rotate(90deg)", color: "white"}}/>
+                            <MobileIcon style={DropdownMenuIconStyle}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(769)}>
-                            <TabletIcon style={{height: "18px", width: "18px", color: "white"}}/>
+                            <TabletIcon style={DropdownMenuIconStyle}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(1279)}>
-                            <LaptopIcon style={{height: "18px", width: "18px", color: "white"}}/>
+                            <LaptopIcon style={DropdownMenuIconStyle}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(1440)}>
-                            <DesktopIcon style={{height: "18px", width: "18px", color: "white"}}/>
+                            <DesktopIcon style={DropdownMenuIconStyle}/>
                         </Button>
                       </DropdownMenu>
                     : null
@@ -92,6 +94,18 @@ const Button = styled.button`
     align-items: center;
     cursor: pointer;
 `;
+
+const SizeIconStyle = {
+    height: "20px",
+    width: "20px",
+    fill: "#282c33"
+}
+
+const DropdownMenuIconStyle = {
+    height: "20px",
+    width: "20px",
+    fill: "white"
+};
 
 const Container = styled.span`
     position: relative;

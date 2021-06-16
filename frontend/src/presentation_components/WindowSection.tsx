@@ -48,6 +48,7 @@ const Button = styled.button`
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    fill: BLUE;
 `;
 
 const Section = styled.div`
