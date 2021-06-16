@@ -1,12 +1,11 @@
-/// <reference types="styled-components/cssprop" />
-import styled, { css } from "styled-components";
-//import * as types from 'styled-components/cssprop';
+import styled from "styled-components";
 import {DropdownMenu} from "./DropdownMenu";
 import {DropdownTooltip} from "./DropdownTooltip";
 import {ReactComponent as DesktopIcon} from "../svg/DesktopIcon.svg";
-import {ReactComponent as MobileIcon} from "../svg/mobile.svg";
-import {ReactComponent as TabletIcon} from "../svg/tablet.svg";
-import {ReactComponent as LaptopIcon} from "../svg/laptop.svg";
+import {ReactComponent as MobileIcon} from "../svg/MobileIcon.svg";
+import {ReactComponent as MobileIconHorizontal} from "../svg/MobileIconHorizontal.svg";
+import {ReactComponent as TabletIcon} from "../svg/TabletIcon.svg";
+import {ReactComponent as LaptopIcon} from "../svg/LaptopIcon.svg";
 import { useState } from "react";
 
 export const WindowSizeButton = (props: WindowSizeButtonProps) => {
@@ -57,7 +56,7 @@ export const WindowSizeButton = (props: WindowSizeButtonProps) => {
                             <MobileIcon style={DropdownMenuIconStyle}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(480)}>
-                            <MobileIcon style={DropdownMenuIconStyle}/>
+                            <MobileIconHorizontal style={DropdownMenuIconStyle}/>
                         </Button>
                         <Button onClick={() => props.setCanvasWidth(769)}>
                             <TabletIcon style={DropdownMenuIconStyle}/>
