@@ -1,9 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
-import {ReactComponent as GridShowIcon} from '../svg/GridShowIcon.svg';
-import {DropdownTooltip} from "./DropdownTooltip";
+import {DropdownTooltip} from "../dropdowns/DropdownTooltip";
+import {ReactComponent as MaximizeIcon} from '../svg/maximize.svg';
 
-export const ShowGridButton = (props: ShowGridButtonProps) => {
+export const MaximizeButton = (props: MaximizeButtonProps) => {
 
     const [showTooltip, setShowTooltip] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
@@ -26,10 +26,12 @@ export const ShowGridButton = (props: ShowGridButtonProps) => {
             <Button 
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={(e: any) => props.setShowGridlines(val => !val)}
-                showGridlines={props.showGridlines}
+                onClick={(e: any) => {
+                    props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
+                    props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
+                }}
             >
-                <GridShowIcon/>
+                <MaximizeIcon/>
             </Button>
             {
                 showTooltip
@@ -42,8 +44,8 @@ export const ShowGridButton = (props: ShowGridButtonProps) => {
     );
 };
 
-const Button = styled.button<{showGridlines: boolean}>`
-    background-color: ${props => props.showGridlines?"#e6e6e6":"transparent"};
+const Button = styled.button`
+    background-color: transparent;
     box-shadow: 0px 0px 0px transparent;
     border-radius: 3px;
     &:hover {
@@ -71,7 +73,9 @@ const Container = styled.span`
     position: relative;
 `;
 
-interface ShowGridButtonProps {
-    showGridlines: boolean,
-    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
+interface MaximizeButtonProps {
+    setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
+    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
+    componentToolbarWidth: number,
+    menuToolbarHeight: number
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import {LoginPage} from "../presentation_components/LoginPage";
+import {LoginPage} from "./LoginPage";
 
 export default function LoginPageContainer(props: LoginPageContainerProps) {
 

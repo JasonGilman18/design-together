@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import {DropdownMenu} from "./DropdownMenu";
-import {DropdownTooltip} from "./DropdownTooltip";
+import {DropdownMenu} from "../dropdowns/DropdownMenu";
+import {DropdownTooltip} from "../dropdowns/DropdownTooltip";
 import {ReactComponent as DesktopIcon} from "../svg/DesktopIcon.svg";
 import {ReactComponent as MobileIcon} from "../svg/MobileIcon.svg";
 import {ReactComponent as MobileIconHorizontal} from "../svg/MobileIconHorizontal.svg";

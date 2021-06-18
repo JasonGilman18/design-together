@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import {WindowSizeButton} from './WindowSizeButton';
-import {MaximizeButton} from './MaximizeButton';
-import {ShowGridButton} from './ShowGridButton';
+import {WindowSizeButton} from '../interactive/WindowSizeButton';
+import {MaximizeButton} from '../interactive/MaximizeButton';
+import {ShowGridButton} from '../interactive/ShowGridButton';
 
 export const WindowSection = (props: WindowSectionProps) => (
     

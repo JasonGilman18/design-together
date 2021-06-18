@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { DropdownTooltip } from "./DropdownTooltip";
-import {ReactComponent as ContainerIcon} from '../svg/ContainerIcon.svg';
+import {ReactComponent as GridShowIcon} from '../svg/GridShowIcon.svg';
+import {DropdownTooltip} from "../dropdowns/DropdownTooltip";
 
-export const ContainerButton = (props: ContainerButtonProps) => {
-    
+export const ShowGridButton = (props: ShowGridButtonProps) => {
+
     const [showTooltip, setShowTooltip] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
 
@@ -23,17 +23,18 @@ export const ContainerButton = (props: ContainerButtonProps) => {
 
     return (
         <Container>
-            <Button
+            <Button 
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={() => props.newComponent("rectangle-filled")}
+                onClick={(e: any) => props.setShowGridlines(val => !val)}
+                showGridlines={props.showGridlines}
             >
-                <ContainerIcon/>
+                <GridShowIcon/>
             </Button>
             {
                 showTooltip
                 ? <DropdownTooltip>
-                    Container Component
+                    Maximize Window Size
                   </DropdownTooltip>
                 : null
             }
@@ -41,8 +42,8 @@ export const ContainerButton = (props: ContainerButtonProps) => {
     );
 };
 
-const Button = styled.button`
-    background-color: transparent;
+const Button = styled.button<{showGridlines: boolean}>`
+    background-color: ${props => props.showGridlines?"#e6e6e6":"transparent"};
     box-shadow: 0px 0px 0px transparent;
     border-radius: 3px;
     &:hover {
@@ -68,9 +69,9 @@ const Button = styled.button`
 
 const Container = styled.span`
     position: relative;
-    margin-right: 10px;
 `;
 
-interface ContainerButtonProps {
-    newComponent: (type: string) => void
+interface ShowGridButtonProps {
+    showGridlines: boolean,
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
 };

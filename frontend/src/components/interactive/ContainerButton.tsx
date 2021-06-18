@@ -1,9 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { DropdownTooltip } from "./DropdownTooltip";
-import {ReactComponent as CircleContainerIcon} from '../svg/CircleContainerIcon.svg';
+import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
+import {ReactComponent as ContainerIcon} from '../svg/ContainerIcon.svg';
 
-export const CircleContainerButton = (props: CircleContainerButtonProps) => {
+export const ContainerButton = (props: ContainerButtonProps) => {
     
     const [showTooltip, setShowTooltip] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
@@ -28,7 +28,7 @@ export const CircleContainerButton = (props: CircleContainerButtonProps) => {
                 onMouseOut={() => leave()}
                 onClick={() => props.newComponent("rectangle-filled")}
             >
-                <CircleContainerIcon/>
+                <ContainerIcon/>
             </Button>
             {
                 showTooltip
@@ -71,6 +71,6 @@ const Container = styled.span`
     margin-right: 10px;
 `;
 
-interface CircleContainerButtonProps {
+interface ContainerButtonProps {
     newComponent: (type: string) => void
 };

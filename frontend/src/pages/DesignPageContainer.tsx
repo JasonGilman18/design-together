@@ -1,7 +1,7 @@
 import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import ComponentTree from "../classes/ComponentTree";
-import {DesignPage} from "../presentation_components/DesignPage";
+import {DesignPage} from "./DesignPage";
 import {
     displayComponentsOnCanvas,
     drawGridlinesOnCanvas,

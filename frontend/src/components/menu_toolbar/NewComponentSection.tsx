@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import {ContainerButton} from './ContainerButton';
-import {RoundedContainerButton} from './RoundedContainerButton';
-import {CircleContainerButton} from './CircleContainerButton';
+import {ContainerButton} from '../interactive/ContainerButton';
+import {RoundedContainerButton} from '../interactive/RoundedContainerButton';
+import {CircleContainerButton} from '../interactive/CircleContainerButton';
 
 export const NewComponentSection = (props: NewComponentSectionProps) => (
     <Section>

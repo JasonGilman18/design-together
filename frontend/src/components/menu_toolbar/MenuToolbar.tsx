@@ -1,11 +1,11 @@
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
-import ComponentTree from '../classes/ComponentTree';
+import ComponentTree from '../../classes/ComponentTree';
 import {WindowSection} from './WindowSection';
 import {NewComponentSection} from './NewComponentSection';
-import {CursorsSection} from './CursorsSection';
-import {LayoutSection} from './LayoutSection';
-import {SizeSection} from './SizeSection';
+import {CursorsSection} from '../CursorsSection';
+import {LayoutSection} from '../component_toolbar/LayoutSection';
+import {SizeSection} from '../component_toolbar/SizeSection';
 
 export const MenuToolbar = (props: MenuToolbarProps) => (
     <ToolbarContainer componentToolbarWidth={props.componentToolbarWidth}>
@@ -107,10 +107,6 @@ interface MenuToolbarProps {
     canvasHeight: number,
     canvasWidth: number,
     showGridlines: boolean,
-    updateComponentWidth: (width: number) => void,
-    updateComponentHeight: (height: number) => void,
-    updateComponentAlignHorizontal: (align: string) => void,
-    updateComponentAlignVertical: (align: string) => void,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,

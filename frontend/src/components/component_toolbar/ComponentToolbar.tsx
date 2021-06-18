@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { SizeSection } from './SizeSection';
 
 export const ComponentToolbar = (props: ComponentToolbarProps) => {
 
@@ -24,7 +25,11 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => {
                     </Tab>
                 </TabContainer>
                 <ContentContainer>
-
+                    {
+                        activeTab==0
+                        ? <SizeSection/>
+                        : <StyleSection/>
+                    }
                 </ContentContainer>
             </SelectContainer>
         </ToolbarContainer>
@@ -77,13 +82,10 @@ const Tab = styled.div<{activeTab: boolean}>`
 
 const ContentContainer = styled.div`
     background-color: whitesmoke;
-    //box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
     border: solid 1px #dcdcdc;
     border-top: transparent;
 `;
 
 interface ComponentToolbarProps {
-    containerOpen: Array<boolean>,
-    closeTypeContainer: (index: number) => void,
-    newComponent: (type: string) => void
+    
 }

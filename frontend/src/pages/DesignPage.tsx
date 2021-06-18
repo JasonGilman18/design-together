@@ -2,9 +2,9 @@ import React from 'react';
 import Component from '../classes/Component';
 import {Channel} from 'phoenix';
 import styled from 'styled-components';
-import {ComponentToolbarContainer} from '../container_components/ComponentToolbarContainer';
+import {ComponentToolbar} from '../components/component_toolbar/ComponentToolbar';
 import {mouseDownOnCanvas} from '../services/design_service';
-import {MenuToolbarContainer} from '../container_components/MenuToolbarContainer';
+import {MenuToolbar} from '../components/menu_toolbar/MenuToolbar';
 import ComponentTree from '../classes/ComponentTree';
 
 export const DesignPage = (props: DesignPageProps) => (
@@ -16,7 +16,7 @@ export const DesignPage = (props: DesignPageProps) => (
             </>
         :
             <DesignPageContainer componentToolbarWidth={props.componentToolbarWidth} menuToolbarHeight={props.menuToolbarHeight}>
-                <MenuToolbarContainer
+                <MenuToolbar
                     componentTree={props.componentTree}
                     selectedComponentId={props.selectedComponentId}
                     componentToolbarWidth={props.componentToolbarWidth}
@@ -25,16 +25,14 @@ export const DesignPage = (props: DesignPageProps) => (
                     canvasHeight={props.canvasHeight}
                     canvasWidth={props.canvasWidth}
                     showGridlines={props.showGridlines}
-                    channel={props.channel}
                     setAuthenticated={props.setAuthenticated}
                     setCanvasWidth={props.setCanvasWidth}
                     setCanvasHeight={props.setCanvasHeight}
-                    setComponentTree={props.setComponentTree}
                     setShowGridlines={props.setShowGridlines}
                     newComponent={props.newComponent}
                 />
-                <ComponentToolbarContainer 
-                    newComponent={props.newComponent}
+                <ComponentToolbar 
+                    
                 />
                 <CanvasContainer>
                     <canvas 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import ComponentTree from "../classes/ComponentTree";
-import { DimensionSelect } from "./DimensionSelect";
+import ComponentTree from "../../classes/ComponentTree";
+import { DimensionSelect } from "../interactive/DimensionSelect";
 
 export const SizeSection = (props: SizeSectionProps) => (
     <Section>

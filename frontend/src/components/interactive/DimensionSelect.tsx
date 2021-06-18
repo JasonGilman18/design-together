@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { DropdownMenuSelect } from "./DropdownMenuSelect";
+import { DropdownMenuSelect } from "../dropdowns/DropdownMenuSelect";
 import {ReactComponent as ChevronIcon} from "../svg/chevron.svg";
 
 export const DimensionSelect = (props: DimensionSelectProps) => {
