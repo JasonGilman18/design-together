@@ -21,7 +21,8 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
         </TopSection>
         <BottomSection componentToolbarWidth={props.componentToolbarWidth}>
             <SettingsSection>
-                Settings Section
+                <SettingsButton>Settings</SettingsButton>
+                <SettingsButton>Share</SettingsButton>
             </SettingsSection>
             <WindowSection 
                 setCanvasWidth={props.setCanvasWidth}
@@ -73,6 +74,28 @@ const SettingsSection = styled.div`
     grid-row: 1/2;
     border-right: solid 1px #dcdcdc;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+const SettingsButton = styled.button`
+    background-color: transparent;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    color: #282c33;
+    border-radius: 3px;
+    &:hover {
+        background-color:#e6e6e6;
+    }
+    &:focus {
+        outline: none;
+    }
+    border: none;
+    height: 30px;
+    width: 75px;
+    padding: 0px;
+    cursor: pointer;
+    margin-right: 25px;
 `;
 
 interface MenuToolbarProps {

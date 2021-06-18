@@ -61,7 +61,7 @@ const DesignPageContainer = styled.div<{componentToolbarWidth: number, menuToolb
     width: 100vw;
     grid-template-columns: ${props => props.componentToolbarWidth + "px"} auto;
     grid-template-rows: ${props => props.menuToolbarHeight + "px"} auto;
-    background-color: #f8f9fa;
+    background-color: whitesmoke;
 `;
 
 const CanvasContainer = styled.div`

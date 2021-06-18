@@ -1,122 +1,85 @@
+import { useState } from 'react';
 import styled from 'styled-components';
-import {ComponentSection} from './ComponentSection';
-import {ReactComponent as SquareSVG} from '../svg/square.svg';
-import {ReactComponent as SquareFillSVG} from '../svg/square-fill.svg';
-import {ReactComponent as SquareRoundedSVG} from '../svg/square-rounded.svg';
-import {ReactComponent as SquareFillRoundedSVG} from '../svg/square-fill-rounded.svg';
-import {ReactComponent as RectangleSVG} from '../svg/rectangle.svg';
-import {ReactComponent as RectangleFillSVG} from '../svg/rectangle-fill.svg';
-import {ReactComponent as RectangleRoundedSVG} from '../svg/rectangle-rounded.svg';
-import {ReactComponent as RectangleFillRoundedSVG} from '../svg/rectangle-fill-rounded.svg';
-import {ReactComponent as ChevronSVG} from '../svg/chevron.svg';
 
-export const ComponentToolbar = (props: ComponentToolbarProps) => (
+export const ComponentToolbar = (props: ComponentToolbarProps) => {
 
-    <ToolbarContainer>
-        <ComponentSection newComponent={props.newComponent}/>
-        
-        {/*
-        <ToolbarType>
-            <TypeLabel onClick={() => props.closeTypeContainer(0)}>
-                <ChevronSVG style={{height: "15px", width: "15px", transition: ".6s", 
-                    transform: !props.containerOpen[0]?"rotate(-90deg)":"none",
-                    position: "absolute", left: "20px"}}
-                />
-                <h5 style={{userSelect: "none"}}>Components</h5>
-            </TypeLabel>
-            <TypeButtonContainer 
-                style={
-                    props.containerOpen[0]
-                        ?{height:"100px", border:"solid 1px #dcdcdc", borderTop:"transparent", 
-                            borderRight:"transparent", borderLeft:"transparent"
-                        }
-                        :{height:"0px", border:"none"}
-                }
-            >
-                <TypeButton onClick={(e) => props.newComponent("square")}>
-                    <SquareSVG style={{height:"65%", width:"65%"}}/>
-                </TypeButton>
-                <TypeButton onClick={(e) => props.newComponent("square-filled")}>
-                    <SquareFillSVG style={{height:"65%", width:"65%"}}/>
-                </TypeButton>
-                <TypeButton onClick={(e) => props.newComponent("square-rounded")}>
-                    <SquareRoundedSVG style={{height:"65%", width:"65%"}}/>
-                </TypeButton>
-                <TypeButton onClick={(e) => props.newComponent("square-filled-rounded")}>
-                    <SquareFillRoundedSVG style={{height:"65%", width:"65%"}}/>
-                </TypeButton>
-                <TypeButton onClick={(e) => props.newComponent("rectangle")}>
-                    <RectangleSVG style={{height:"75%", width:"75%"}}/>
-                </TypeButton>
-                <TypeButton onClick={(e) => props.newComponent("rectangle-filled")}>
-                    <RectangleFillSVG style={{height:"75%", width:"75%"}}/>
-                </TypeButton>
-                <TypeButton onClick={(e) => props.newComponent("rectangle-rounded")}>
-                    <RectangleRoundedSVG style={{height:"75%", width:"75%"}}/>
-                </TypeButton>
-                <TypeButton onClick={(e) => props.newComponent("rectangle-filled-rounded")}>
-                    <RectangleFillRoundedSVG style={{height:"75%", width:"75%"}}/>
-                </TypeButton>
-            </TypeButtonContainer>
-        </ToolbarType>
-        */}
-    </ToolbarContainer>
-);
+    const [activeTab, setActiveTab] = useState<number>(0);
+    
+    return (
+        <ToolbarContainer>
+            <ComponentLabel>Component</ComponentLabel>
+            <SelectContainer>
+                <TabContainer>
+                    <Tab
+                        onClick={() => setActiveTab(0)}
+                        activeTab={activeTab==0}
+                    >
+                        Size
+                    </Tab>
+                    <Tab
+                        onClick={() => setActiveTab(1)}
+                        activeTab={activeTab==1}
+                    >
+                        Style
+                    </Tab>
+                </TabContainer>
+                <ContentContainer>
+
+                </ContentContainer>
+            </SelectContainer>
+        </ToolbarContainer>
+    );
+};
 
 const ToolbarContainer = styled.div`
     grid-column: 1/2;
     grid-row: 2/3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-rows: 75px auto;
     background-color: #fbfbfb;
     border: solid 1px #dcdcdc;
     border-top: none;
     border-left: none;
+    max-height: 100%;
+    padding-bottom: 25px;
 `;
 
-const ToolbarType = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+const ComponentLabel = styled.h3`
+    user-select: none;
+    justify-self: center;
+    align-self: center;
+`;
+
+const SelectContainer = styled.div`
+    width: 85%;
+    justify-self: center;
+    justify-self: center;
+    display: grid;
+    grid-template-rows: 30px auto;
+`;
+
+const TabContainer = styled.div`
     width: 100%;
     height: auto;
+    display: grid;
+    grid-template-columns: 50% 50%;
 `;
 
-const TypeLabel = styled.div`
-    position: relative;
-    height: 35px;
+const Tab = styled.div<{activeTab: boolean}>`
+    height: 30px;
     width: 100%;
+    border-radius: 5px 5px 0px 0px;
     border: solid 1px #dcdcdc;
-    border-top: none;
-    border-left: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    & h5 {
-        margin: 0;
-    }
+    border-bottom: ${props => props.activeTab ? "transparent" : ""};
+    background-color: ${props => props.activeTab ? "whitesmoke" : "#fbfbfb"};
+    box-sizing: border-box;
 `;
 
-const TypeButtonContainer = styled.div`
-    transition: height .5s, border .5s;
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    overflow: hidden;
-`;
-
-const TypeButton = styled.div`
-    flex: 25% 0 0;
-    height: 49.5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 15px;
-    &:hover {
-            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    }
+const ContentContainer = styled.div`
+    background-color: whitesmoke;
+    //box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+    border: solid 1px #dcdcdc;
+    border-top: transparent;
 `;
 
 interface ComponentToolbarProps {
