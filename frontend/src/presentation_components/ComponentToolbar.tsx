@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import {ComponentSection} from './ComponentSection';
 import {ReactComponent as SquareSVG} from '../svg/square.svg';
 import {ReactComponent as SquareFillSVG} from '../svg/square-fill.svg';
 import {ReactComponent as SquareRoundedSVG} from '../svg/square-rounded.svg';
@@ -12,6 +13,9 @@ import {ReactComponent as ChevronSVG} from '../svg/chevron.svg';
 export const ComponentToolbar = (props: ComponentToolbarProps) => (
 
     <ToolbarContainer>
+        <ComponentSection newComponent={props.newComponent}/>
+        
+        {/*
         <ToolbarType>
             <TypeLabel onClick={() => props.closeTypeContainer(0)}>
                 <ChevronSVG style={{height: "15px", width: "15px", transition: ".6s", 
@@ -55,6 +59,7 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => (
                 </TypeButton>
             </TypeButtonContainer>
         </ToolbarType>
+        */}
     </ToolbarContainer>
 );
 

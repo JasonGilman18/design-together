@@ -24,12 +24,14 @@ export const DesignPage = (props: DesignPageProps) => (
                     docName={props.docName}
                     canvasHeight={props.canvasHeight}
                     canvasWidth={props.canvasWidth}
+                    showGridlines={props.showGridlines}
                     channel={props.channel}
                     setAuthenticated={props.setAuthenticated}
                     setCanvasWidth={props.setCanvasWidth}
                     setCanvasHeight={props.setCanvasHeight}
                     setComponentTree={props.setComponentTree}
                     setShowGridlines={props.setShowGridlines}
+                    newComponent={props.newComponent}
                 />
                 <ComponentToolbarContainer 
                     newComponent={props.newComponent}
@@ -83,6 +85,7 @@ interface DesignPageProps {
     selectedComponentId: number,
     componentToolbarWidth: number,
     menuToolbarHeight: number,
+    showGridlines: boolean,
     canvasHeight: number,
     canvasWidth: number,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,

@@ -155,6 +155,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             menuToolbarHeight={menuToolbarHeight}
             canvasHeight={canvasHeight}
             canvasWidth={canvasWidth}
+            showGridlines={showGridlines}
             docId={props.location.state.doc_id}
             docName={props.location.state.doc_name}
             setSelectedComponentId={setSelectedComponentId}

@@ -57,6 +57,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             docName={props.docName}
             canvasHeight={props.canvasHeight}
             canvasWidth={props.canvasWidth}
+            showGridlines={props.showGridlines}
             setAuthenticated={props.setAuthenticated}
             setCanvasWidth={props.setCanvasWidth}
             setCanvasHeight={props.setCanvasHeight}
@@ -65,6 +66,7 @@ export const MenuToolbarContainer = (props: MenuToolbarContainerProps) => {
             updateComponentAlignHorizontal={updateComponentAlignHorizontal}
             updateComponentAlignVertical={updateComponentAlignVertical}
             setShowGridlines={props.setShowGridlines}
+            newComponent={props.newComponent}
         />
     );
 };
@@ -77,10 +79,12 @@ interface MenuToolbarContainerProps {
     docName: string,
     canvasHeight: number,
     canvasWidth: number,
+    showGridlines: boolean,
     channel: Channel | undefined,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
-    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
+    newComponent: (type: string) => void
 }

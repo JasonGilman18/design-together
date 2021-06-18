@@ -2,6 +2,8 @@ import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import ComponentTree from '../classes/ComponentTree';
 import {WindowSection} from './WindowSection';
+import {NewComponentSection} from './NewComponentSection';
+import {CursorsSection} from './CursorsSection';
 import {LayoutSection} from './LayoutSection';
 import {SizeSection} from './SizeSection';
 
@@ -18,17 +20,9 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
             <DocumentName>{props.docName}</DocumentName>
         </TopSection>
         <BottomSection componentToolbarWidth={props.componentToolbarWidth}>
-        <   WindowSection 
-                setCanvasWidth={props.setCanvasWidth}
-                setCanvasHeight={props.setCanvasHeight}
-                setShowGridlines={props.setShowGridlines}
-                componentToolbarWidth={props.componentToolbarWidth}
-                menuToolbarHeight={props.menuToolbarHeight}
-                canvasWidth={props.canvasWidth}
-                canvasHeight={props.canvasHeight}
-            />
-        </BottomSection>
-        {/*
+            <SettingsSection>
+                Settings Section
+            </SettingsSection>
             <WindowSection 
                 setCanvasWidth={props.setCanvasWidth}
                 setCanvasHeight={props.setCanvasHeight}
@@ -37,23 +31,10 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
                 menuToolbarHeight={props.menuToolbarHeight}
                 canvasWidth={props.canvasWidth}
                 canvasHeight={props.canvasHeight}
+                showGridlines={props.showGridlines}
             />
-            <LayoutSection
-                updateComponentAlignHorizontal={props.updateComponentAlignHorizontal}
-                updateComponentAlignVertical={props.updateComponentAlignVertical}
-                selectedComponentId={props.selectedComponentId}
-                componentTree={props.componentTree}
-            />
-            <SizeSection
-                updateComponentWidth={props.updateComponentWidth}
-                updateComponentHeight={props.updateComponentHeight}
-                selectedComponentId={props.selectedComponentId}
-                componentTree={props.componentTree}
-            />
-            <StyleSection>
-                <SectionLabel>Style</SectionLabel>
-            </StyleSection>
-        */}
+            <NewComponentSection newComponent={props.newComponent}/>
+        </BottomSection>
     </ToolbarContainer>
 );
 
@@ -83,25 +64,15 @@ const BottomSection = styled.div<{componentToolbarWidth: number}>`
     grid-column: 1/6;
     grid-row: 2/3;
     display: grid;
-    grid-template-columns: ${props => props.componentToolbarWidth-1 + "px"} auto;
+    grid-template-columns: ${props => props.componentToolbarWidth-1 + "px"} ${props => props.componentToolbarWidth-1 + "px"} auto;
     grid-template-rows: 100%;
 `;
 
-
-
-
-const SectionLabel = styled.h5`
-    grid-column: 1/4;
+const SettingsSection = styled.div`
+    grid-column: 1/2;
     grid-row: 1/2;
-    margin: auto;
-    width: fit-content;
-    user-select: "none";
-`;
-
-const StyleSection = styled.div`
-    grid-column: 4/5;
-    grid-row: 2/3;
     border-right: solid 1px #dcdcdc;
+    text-align: center;
 `;
 
 interface MenuToolbarProps {
@@ -112,6 +83,7 @@ interface MenuToolbarProps {
     docName: string,
     canvasHeight: number,
     canvasWidth: number,
+    showGridlines: boolean,
     updateComponentWidth: (width: number) => void,
     updateComponentHeight: (height: number) => void,
     updateComponentAlignHorizontal: (align: string) => void,
@@ -119,5 +91,6 @@ interface MenuToolbarProps {
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
-    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
+    newComponent: (type: string) => void
 }

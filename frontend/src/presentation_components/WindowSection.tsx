@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {WindowSizeButton} from './WindowSizeButton';
 import {MaximizeButton} from './MaximizeButton';
-import {ReactComponent as GridShowIcon} from '../svg/GridShowIcon.svg';
+import {ShowGridButton} from './ShowGridButton';
 
 export const WindowSection = (props: WindowSectionProps) => (
     
@@ -25,9 +25,7 @@ export const WindowSection = (props: WindowSectionProps) => (
             componentToolbarWidth={props.componentToolbarWidth}
             menuToolbarHeight={props.menuToolbarHeight}
         />
-        <GridButton>
-            <GridShowIcon style={{width: "20px", height: "20px"}}/>
-        </GridButton>
+        <ShowGridButton setShowGridlines={props.setShowGridlines} showGridlines={props.showGridlines}/>
     </Section>
 );
 
@@ -49,15 +47,13 @@ const Button = styled.button`
 `;
 
 const Section = styled.div`
-    grid-column: 1/2;
+    grid-column: 2/3;
     grid-row: 1/2;
     border-right: solid 1px #dcdcdc;
     display: flex;
     justify-content: space-around;
     align-items: center;
 `;
-
-const GridButton = styled(Button)``;
 
 const WindowInputContainer = styled.span`
     display: flex;
@@ -94,6 +90,7 @@ interface WindowSectionProps {
     menuToolbarHeight: number,
     canvasWidth: number,
     canvasHeight: number,
+    showGridlines: boolean,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
     setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>

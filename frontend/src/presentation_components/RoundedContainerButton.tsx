@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styled from "styled-components";
-import {DropdownTooltip} from "./DropdownTooltip";
-import {ReactComponent as MaximizeIcon} from '../svg/maximize.svg';
+import { DropdownTooltip } from "./DropdownTooltip";
+import {ReactComponent as RoundedContainerIcon} from '../svg/RoundedContainerIcon.svg';
 
-export const MaximizeButton = (props: MaximizeButtonProps) => {
-
+export const RoundedContainerButton = (props: RoundedContainerButtonProps) => {
+    
     const [showTooltip, setShowTooltip] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
 
@@ -23,20 +23,17 @@ export const MaximizeButton = (props: MaximizeButtonProps) => {
 
     return (
         <Container>
-            <Button 
+            <Button
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={(e: any) => {
-                    props.setCanvasWidth(window.innerWidth-props.componentToolbarWidth);
-                    props.setCanvasHeight(window.innerHeight-props.menuToolbarHeight);
-                }}
+                onClick={() => props.newComponent("rectangle-filled-rounded")}
             >
-                <MaximizeIcon/>
+                <RoundedContainerIcon/>
             </Button>
             {
                 showTooltip
                 ? <DropdownTooltip>
-                    Maximize Window Size
+                    Container Component
                   </DropdownTooltip>
                 : null
             }
@@ -71,11 +68,9 @@ const Button = styled.button`
 
 const Container = styled.span`
     position: relative;
+    margin-right: 10px;
 `;
 
-interface MaximizeButtonProps {
-    setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
-    setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
-    componentToolbarWidth: number,
-    menuToolbarHeight: number
+interface RoundedContainerButtonProps {
+    newComponent: (type: string) => void
 };

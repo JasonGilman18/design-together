@@ -22,7 +22,7 @@ const Container = styled.span`
     margin-left: -100px;
     height: 50px;
     width: 200px;
-    z-index: 99;
+    z-index: 999;
     animation: ${FadeIn} .5s;
 `;
 
