@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
-import {ReactComponent as RoundedContainerIcon} from '../svg/RoundedContainerIcon.svg';
+import {ReactComponent as RoundedContainerIcon} from '../../svg/RoundedContainerIcon.svg';
 
 export const RoundedContainerButton = (props: RoundedContainerButtonProps) => {
     

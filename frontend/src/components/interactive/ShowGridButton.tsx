@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import {ReactComponent as GridShowIcon} from '../svg/GridShowIcon.svg';
+import {ReactComponent as GridShowIcon} from '../../svg/GridShowIcon.svg';
 import {DropdownTooltip} from "../dropdowns/DropdownTooltip";
 
 export const ShowGridButton = (props: ShowGridButtonProps) => {

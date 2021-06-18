@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import styled, { keyframes } from "styled-components";
-import {ReactComponent as DropdownTooltipIcon} from "../svg/DropdownTooltipIcon.svg";
+import {ReactComponent as DropdownTooltipIcon} from "../../svg/DropdownTooltipIcon.svg";
 
 export const DropdownTooltip = (props: DropdownTooltipProps) => (
     <Container>

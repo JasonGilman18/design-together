@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
-import {ReactComponent as ContainerIcon} from '../svg/ContainerIcon.svg';
+import {ReactComponent as ContainerIcon} from '../../svg/ContainerIcon.svg';
 
 export const ContainerButton = (props: ContainerButtonProps) => {
     
