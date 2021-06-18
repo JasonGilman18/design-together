@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 //services ===================================================
 import {reqAuthToken, getDocuments, logout, postDocument} from '../services/http_api_service';
 //pages ======================================================
-import {DashboardPage} from "../presentation_components/DashboardPage";
+import {DashboardPage} from "./DashboardPage";
 
 export default function DashboardPageContainer(props: DashboardPageContainerProps) {
 

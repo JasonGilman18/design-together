@@ -1,7 +1,7 @@
 import {Socket, Channel} from "phoenix";
 import {useEffect, useRef, useState} from "react";
 import ComponentTree from "../classes/ComponentTree";
-import {DesignPage} from "../presentation_components/DesignPage";
+import {DesignPage} from "./DesignPage";
 import {
     displayComponentsOnCanvas,
     drawGridlinesOnCanvas,
@@ -28,8 +28,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const [mouseMoveX, setMouseMoveX] = useState<number>(0);
     const [mouseMoveY, setMouseMoveY] = useState<number>(0);
     const canvas = useRef<HTMLCanvasElement>(null);
-    const componentToolbarWidth = 200;
-    const menuToolbarHeight = 125;
+    const componentToolbarWidth = 250;
+    const menuToolbarHeight = 75;
     const [canvasWidth, setCanvasWidth] = useState<number>(window.innerWidth - componentToolbarWidth-100);
     const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - menuToolbarHeight-100);
     const [showGridlines, setShowGridlines] = useState<boolean>(false);
@@ -60,7 +60,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
             if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            updateComponents(channel, componentTree.root, canvasWidth);
+            updateComponents(channel, componentTree.root, canvasWidth, canvasHeight);
             displayComponentsOnCanvas(canvas, componentTree.root);
         }
     }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
@@ -69,6 +69,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
+            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, false, 0);
         }
     }, [channel]);
 
@@ -136,13 +137,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 addComponent = false;
                 break;
         }
-        if(addComponent) {
-            /*
-            const availPos = getNextAvailiblePosition(componentTree.find(selectedComponentId), null, width, height, canvasWidth, 
-                canvasHeight
-            );*/
+        if(addComponent)
             newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, filled, rounded);
-        }
     }
 
     return (
@@ -159,6 +155,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             menuToolbarHeight={menuToolbarHeight}
             canvasHeight={canvasHeight}
             canvasWidth={canvasWidth}
+            showGridlines={showGridlines}
             docId={props.location.state.doc_id}
             docName={props.location.state.doc_name}
             setSelectedComponentId={setSelectedComponentId}

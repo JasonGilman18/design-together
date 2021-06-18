@@ -9,9 +9,9 @@ import {
 //services ==================================================
 import {getAuthenticated} from './services/http_api_service';
 //components ================================================
-import LoginPageContainer from './container_components/LoginPageContainer';
-import DashboardPageContainer from './container_components/DashboardPageContainer';
-import DesignPageContainer from './container_components/DesignPageContainer';
+import LoginPageContainer from './pages/LoginPageContainer';
+import DashboardPageContainer from './pages/DashboardPageContainer';
+import DesignPageContainer from './pages/DesignPageContainer';
 
 export default function App() {
 

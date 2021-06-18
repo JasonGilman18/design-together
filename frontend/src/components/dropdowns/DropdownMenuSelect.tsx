@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useRef } from "react";
-import styled from "styled-components";
-import {ReactComponent as DropdownMenuIcon} from "../svg/DropdownMenu.svg";
+import React, { ReactNode, useEffect, useRef } from "react";
+import styled, { css, keyframes } from "styled-components";
+import {ReactComponent as DropdownMenuSelectIcon} from "../svg/DropdownMenuSelectIcon.svg";
 
-export const DropdownMenu = (props: DropdownMenuProps) => {
-    
+export const DropdownMenuSelect = (props: DropdownMenuSelectProps) => {
+
     const menuRef = useRef<HTMLSpanElement>(null);
     useEffect(() => {
         window.addEventListener("click", (e) => openCloseMenu(e));
@@ -20,7 +20,7 @@ export const DropdownMenu = (props: DropdownMenuProps) => {
 
     return (
         <Container ref={menuRef}>
-            <DropdownMenuIcon style={{height: "150px", width: "200px", position: "absolute"}}/>
+            <DropdownMenuSelectIcon style={{height: "150px", width: "100px", position: "absolute"}}/>
             <Content>
                 {props.children}
             </Content>
@@ -28,13 +28,18 @@ export const DropdownMenu = (props: DropdownMenuProps) => {
     );
 };
 
+const FadeIn = keyframes`
+    from {opacity: 0;}
+    to {opacity: 1;}
+`;
+
 const Container = styled.span`
     position: absolute;
-    left: 50%;
-    margin-left: -100px;
     height: 150px;
-    width: 200px;
+    width: 100px;
     z-index: 99;
+    margin-left: -25px;
+    animation: ${FadeIn} .5s;
 `;
 
 const Content = styled.span`
@@ -43,15 +48,21 @@ const Content = styled.span`
     left: 0px;
     right: 0px;
     bottom: 0px;
-    padding: 40px 20px 10px 20px;
+    padding: 32px 34px 20px 22px;
     display: grid;
-    grid-template-columns: auto auto auto auto;
-    grid-template-rows: auto auto auto;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto auto auto;
     justify-items: center;
     align-items: center;
+    color: white;
+    & > *:hover {
+        background-color: #434a56;
+    }
 `;
 
-interface DropdownMenuProps {
-    children: ReactNode;
-    setMenu: React.Dispatch<React.SetStateAction<boolean>>
+interface DropdownMenuSelectProps {
+    children: ReactNode,
+    showDropdown: boolean,
+    setMenu: React.Dispatch<React.SetStateAction<boolean>>,
+    setDimension: React.Dispatch<React.SetStateAction<string>>
 }

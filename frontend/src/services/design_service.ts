@@ -19,16 +19,24 @@ export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCan
     }
 }
 
-export function updateComponents(channel: Channel | undefined, component: Component | null, canvasWidth: number) {
+export function updateComponents(channel: Channel | undefined, component: Component | null, canvasWidth: number,
+    canvasHeight: number    
+) {
     if(component) {
-        if(component.node.parent === null && component.updateRequired)
-            updateComponentToChannel(channel, component);
+        if(component.node.parent === null) {
+            if(component.style.width !== canvasWidth)
+                component.updateWidth(canvasWidth);
+            if(component.style.height !== canvasHeight)
+                component.updateHeight(canvasHeight);
+            if(component.updateRequired)
+                updateComponentToChannel(channel, component);
+        }
         setChildPositions(component, canvasWidth);
         component.node.children.forEach((child) => {
             if(child.updateRequired)
                 updateComponentToChannel(channel, child);
             if(component.node.children.length > 0)
-                updateComponents(channel, child, canvasWidth);
+                updateComponents(channel, child, canvasWidth, canvasHeight);
         });
     }
 }

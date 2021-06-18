@@ -6,7 +6,7 @@ import {ReactComponent as AlignVerticalCenterIcon} from '../svg/AlignVerticalCen
 import {ReactComponent as AlignVerticalStartIcon} from '../svg/AlignVerticalStartIcon.svg';
 import {ReactComponent as AlignVerticalEndIcon} from '../svg/AlignVerticalEndIcon.svg';
 import {ReactComponent as GridIcon} from '../svg/GridIcon.svg';
-import ComponentTree from "../classes/ComponentTree";
+import ComponentTree from "../../classes/ComponentTree";
 
 export const LayoutSection = (props: LayoutSectionProps) => (
     <Section>
