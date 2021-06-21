@@ -1,5 +1,4 @@
 import React from 'react';
-import Component from '../classes/Component';
 import {Channel} from 'phoenix';
 import styled from 'styled-components';
 import {ComponentToolbar} from '../components/component_toolbar/ComponentToolbar';
@@ -32,7 +31,9 @@ export const DesignPage = (props: DesignPageProps) => (
                     newComponent={props.newComponent}
                 />
                 <ComponentToolbar 
-                    
+                    componentTree={props.componentTree}
+                    selectedComponentId={props.selectedComponentId}
+                    setComponentTree={props.setComponentTree}
                 />
                 <CanvasContainer>
                     <canvas 

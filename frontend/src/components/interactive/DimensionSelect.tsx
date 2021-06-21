@@ -38,7 +38,7 @@ const Container = styled.span`
 `;
 
 const DimensionBox = styled.div`
-    height: 100%;
+    height: 21px;
     width: 39px;
     position: relative;
     background-color: whitesmoke;

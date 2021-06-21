@@ -1,72 +1,117 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import ComponentTree from "../../classes/ComponentTree";
 import { DimensionSelect } from "../interactive/DimensionSelect";
 
-export const SizeSection = (props: SizeSectionProps) => (
-    <Section>
-        <SectionLabel>Size</SectionLabel>
-        <SizeInputContainer>
-            <span style={{display: "flex", marginBottom: "5px"}}>
-                <SizeInputLabel>W:</SizeInputLabel>
+export const SizeSection = (props: SizeSectionProps) => {
+
+    const [width, setWidth] = useState<string>();
+    const [height, setHeight] = useState<string>();
+
+    useEffect(() => {
+        if(props.selectedComponentId !== -1) {
+            const selectedComponent = props.componentTree.find(props.selectedComponentId);
+            if(selectedComponent) {
+                setWidth("" + selectedComponent.style.width);
+                setHeight("" + selectedComponent.style.height);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if(props.selectedComponentId !== -1) {
+            const selectedComponent = props.componentTree.find(props.selectedComponentId);
+            if(selectedComponent) {
+                if(parseInt(width!) !== selectedComponent.style.width)
+                    setWidth("" + selectedComponent.style.width);
+                if(parseInt(height!) !== selectedComponent.style.height)
+                    setHeight("" + selectedComponent.style.height);
+            }
+        }
+    }, [props.componentTree.find(props.selectedComponentId)?.style.width,
+        props.componentTree.find(props.selectedComponentId)?.style.height]);
+    
+    function updateComponentWidth(val: string) {
+        if(val !== "") {
+            var number = parseInt(val);
+            if(number !== NaN && number >= 0) {
+                setWidth("" + number);
+                props.componentTree.find(props.selectedComponentId)?.updateWidth(number);
+                props.setComponentTree(prev => {
+                    return prev.copy();
+                });
+            }
+        }
+        else
+            setWidth("");
+    }
+
+    function updateComponentHeight(val: string) {
+        if(val !== "") {
+            var number = parseInt(val);
+            if(number !== NaN && number >= 0) {
+                setHeight("" + number);
+                props.componentTree.find(props.selectedComponentId)?.updateHeight(number);
+                props.setComponentTree(prev => {
+                    return prev.copy();
+                });
+            }
+        }
+        else
+            setHeight("");
+    }
+    
+    return (
+        <Section>
+            <InputContainer>
+                <SizeInputLabel>Width:</SizeInputLabel>
                 <SizeInput type="text" value={props.selectedComponentId==-1
                     ? ""
-                    : props.componentTree.find(props.selectedComponentId)?.style.width}
+                    : width}
                     maxLength={4} size={4}
-                    onChange={(e) => props.updateComponentWidth(parseInt(e.target.value))}
+                    onChange={(e) => updateComponentWidth(e.target.value)}
                 />
-                <DimensionSelect/>
-            </span>
-            <span style={{display:"flex"}}>
-                <SizeInputLabel>H:</SizeInputLabel>
+                <DimensionInput>
+                    <DimensionSelect/>
+                </DimensionInput>
+            </InputContainer>
+            <InputContainer>
+                <SizeInputLabel>Height:</SizeInputLabel>
                 <SizeInput type="text" value={props.selectedComponentId==-1
                     ? "" 
-                    : props.componentTree.find(props.selectedComponentId)?.style.height}
+                    : height}
                     maxLength={4} size={4}
-                    onChange={(e) => props.updateComponentHeight(parseInt(e.target.value))}
+                    onChange={(e) => updateComponentHeight(e.target.value)}
                 />
-                <DimensionSelect/>
-            </span>
-        </SizeInputContainer>
-    </Section>
-);
+                <DimensionInput>
+                    <DimensionSelect/>
+                </DimensionInput>
+            </InputContainer>
+        </Section>
+    );
+};
 
 const Section = styled.div`
-    grid-column: 3/4;
-    grid-row: 2/3;
-    border-right: solid 1px #dcdcdc;
+   
+`;
+
+const InputContainer = styled.span`
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: 25px repeat(2, minmax(0, 1fr));
-    justify-items: center;
-    align-items: center;
-`;
-
-const SectionLabel = styled.h5`
-    grid-column: 1/4;
-    grid-row: 1/2;
-    margin: auto;
-    width: fit-content;
-    user-select: "none";
-`;
-
-const SizeInputContainer = styled.span`
-    grid-column: 1/4;
-    grid-row: 2/4;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    grid-template-columns: 33% 33% 33%;
 `;
 
 const SizeInputLabel = styled.h3`
+    grid-column: 1/2;
+    align-self: center;
+    justify-self: end;
     user-select: none;
     font-size: small;
-    margin: 0px 5px 0px 0px;
-    display: flex;
-    align-items: center;
-    min-width: 20px;
+    margin-right: 10px;
 `;
 
 const SizeInput = styled.input`
+    grid-column: 2/3;
+    align-self: center;
     padding: 3px;
     border-radius: 5px;
     margin-right: 5px;
@@ -78,9 +123,13 @@ const SizeInput = styled.input`
     }
 `;
 
+const DimensionInput = styled.span`
+    grid-column: 3/4;
+    align-self: center;
+`;
+
 interface SizeSectionProps {
     selectedComponentId: number | null,
     componentTree: ComponentTree,
-    updateComponentWidth: (width: number) => void,
-    updateComponentHeight: (height: number) => void
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 };
