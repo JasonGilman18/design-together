@@ -27,8 +27,24 @@ export default class Component {
             rounded: rounded,
             selected: false,
             align_horizontal: "start",
-            align_vertical: "start"
+            align_vertical: "start",
+            margin_top: 0,
+            margin_right: 0,
+            margin_bottom: 0,
+            margin_left: 0,
+            padding_top: 0,
+            padding_right: 0,
+            padding_bottom: 0,
+            padding_left: 0
         };
+    }
+
+    public getTotalWidth() {
+        return this.style.width + this.style.margin_left + this.style.margin_right;
+    }
+
+    public getTotalHeight() {
+        return this.style.height + this.style.margin_top + this.style.margin_bottom;
     }
 
     public updatePositionX(position_x: number) {
@@ -194,5 +210,13 @@ type ComponentStyle = {
     rounded: number,
     selected: boolean,
     align_horizontal: string,
-    align_vertical: string
+    align_vertical: string,
+    margin_top: number,
+    margin_right: number,
+    margin_bottom: number,
+    margin_left: number,
+    padding_top: number,
+    padding_right: number,
+    padding_bottom: number,
+    padding_left: number
 }

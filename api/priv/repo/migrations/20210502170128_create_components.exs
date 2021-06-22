@@ -12,6 +12,14 @@ defmodule Api.Repo.Migrations.CreateComponents do
       add :rounded, :integer
       add :align_horizontal, :string, default: "start"
       add :align_vertical, :string, default: "start"
+      add :margin_top, :integer
+      add :margin_right, :integer
+      add :margin_bottom, :integer
+      add :margin_left, :integer
+      add :padding_top, :integer
+      add :padding_right, :integer
+      add :padding_bottom, :integer
+      add :padding_left, :integer
       add :document_id, references(:documents, on_delete: :nothing)
 
       timestamps()

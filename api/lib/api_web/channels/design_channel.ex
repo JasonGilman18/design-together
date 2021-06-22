@@ -40,7 +40,15 @@ defmodule ApiWeb.DesignChannel do
       filled: component["style"]["filled"],
       rounded: component["style"]["rounded"],
       align_horizontal: component["style"]["align_horizontal"],
-      align_vertical: component["style"]["align_vertical"]
+      align_vertical: component["style"]["align_vertical"],
+      margin_top: component["style"]["margin_top"],
+      margin_right: component["style"]["margin_right"],
+      margin_bottom: component["style"]["margin_bottom"],
+      margin_left: component["style"]["margin_left"],
+      padding_top: component["style"]["padding_top"],
+      padding_right: component["style"]["padding_right"],
+      padding_bottom: component["style"]["padding_bottom"],
+      padding_left: component["style"]["padding_left"]
     }
     case Design.compare_components(updateComponent, incomingData) do
       :different ->
@@ -62,7 +70,15 @@ defmodule ApiWeb.DesignChannel do
                 filled: component.filled,
                 rounded: component.rounded,
                 align_horizontal: component.align_horizontal,
-                align_vertical: component.align_vertical
+                align_vertical: component.align_vertical,
+                margin_top: component.margin_top,
+                margin_right: component.margin_right,
+                margin_bottom: component.margin_bottom,
+                margin_left: component.margin_left,
+                padding_top: component.padding_top,
+                padding_right: component.padding_right,
+                padding_bottom: component.padding_bottom,
+                padding_left: component.padding_left
               }
             })
             {:noreply, socket}

@@ -18,7 +18,15 @@ defmodule Api.Design do
       recorded.filled != incomingData.filled ||
       recorded.rounded != incomingData.rounded ||
       recorded.align_horizontal != incomingData.align_horizontal ||
-      recorded.align_vertical != incomingData.align_vertical
+      recorded.align_vertical != incomingData.align_vertical ||
+      recorded.margin_top != incomingData.margin_top ||
+      recorded.margin_right != incomingData.margin_right ||
+      recorded.margin_bottom != incomingData.margin_bottom ||
+      recorded.margin_left != incomingData.margin_left ||
+      recorded.padding_top != incomingData.padding_top ||
+      recorded.padding_right != incomingData.padding_right ||
+      recorded.padding_bottom != incomingData.padding_bottom ||
+      recorded.padding_left != incomingData.padding_left
     do
       :different
     else
