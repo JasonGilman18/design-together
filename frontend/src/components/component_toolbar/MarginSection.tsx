@@ -1,10 +1,71 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
+import Component from "../../classes/Component";
+import ComponentTree from "../../classes/ComponentTree";
 import {DimensionSelect} from './../interactive/DimensionSelect';
 
 export const MarginSection = (props: MarginSectionProps) => {
     
     const [selectedSide, setSelectedSide] = useState<string>("Top");
+    const [margin, setMargin] = useState<string>();
+
+    useEffect(() => {
+        if(props.selectedComponentId !== -1) {
+            const selectedComponent = props.componentTree.find(props.selectedComponentId);
+            if(selectedComponent) {
+                var selectedMargin = getSelectedMargin(selectedComponent);
+                setMargin("" + selectedMargin);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if(props.selectedComponentId !== -1) {
+            const selectedComponent = props.componentTree.find(props.selectedComponentId);
+            if(selectedComponent) {
+                if(parseInt(margin!) !== getSelectedMargin(selectedComponent))
+                    setMargin("" + getSelectedMargin(selectedComponent));
+            }
+        }
+    }, [getSelectedMargin(props.componentTree.find(props.selectedComponentId)), props.selectedComponentId]);
+
+    function updateMargin(val: string) {
+        if(val !== "") {
+            var number = parseInt(val);
+            if(number !== NaN && number >= 0) {
+                setMargin("" + number);
+                if(selectedSide==="Top")
+                    props.componentTree.find(props.selectedComponentId)?.updateMarginTop(number);
+                else if(selectedSide==="Right") 
+                    props.componentTree.find(props.selectedComponentId)?.updateMarginRight(number);
+                else if(selectedSide==="Bottom")
+                    props.componentTree.find(props.selectedComponentId)?.updateMarginBottom(number);
+                else if(selectedSide==="Left")
+                    props.componentTree.find(props.selectedComponentId)?.updateMarginLeft(number);
+                props.setComponentTree(prev => {
+                    return prev.copy();
+                });
+            }
+        }
+        else
+            setMargin("");
+    }
+
+    function getSelectedMargin(selectedComponent: Component | null) {
+        if(selectedComponent) {
+            return selectedSide==="Top"
+            ? selectedComponent.style.margin_top
+            : selectedSide==="Right"
+            ? selectedComponent.style.margin_right
+            : selectedSide==="Bottom"
+            ? selectedComponent.style.margin_bottom
+            : selectedSide==="Left"
+            ? selectedComponent.style.margin_left
+            : "";
+        }
+        else
+            return "";
+    }
 
     return (
         <Section>
@@ -37,6 +98,18 @@ export const MarginSection = (props: MarginSectionProps) => {
             <Input
                 maxLength={4} 
                 size={4}
+                value={
+                    selectedSide==="Top"
+                    ? props.componentTree.find(props.selectedComponentId)?.style.margin_top
+                    : selectedSide==="Right"
+                    ? props.componentTree.find(props.selectedComponentId)?.style.margin_right
+                    : selectedSide==="Bottom"
+                    ? props.componentTree.find(props.selectedComponentId)?.style.margin_bottom
+                    : selectedSide==="Left"
+                    ? props.componentTree.find(props.selectedComponentId)?.style.margin_left
+                    : ""
+                }
+                onChange={(e) => updateMargin(e.currentTarget.value)}
             />
             <DimensionSelect/>
         </Section>
@@ -257,5 +330,7 @@ const Input = styled.input`
 `;
 
 interface MarginSectionProps {
-
+    componentTree: ComponentTree,
+    selectedComponentId: number | null,
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 };

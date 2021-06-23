@@ -135,16 +135,19 @@ export function setChildPositions(parent: Component | null, canvasWidth: number
 }
 
 function alignHorizontalStart(parent: Component) {
+
+    //not working with margin left
+
     var sumWidth = 0;
     parent.node.children.forEach((child) => {
-        const checkOverflow = parent.getComponentBounds().topLeft.x + child.style.width + sumWidth;
+        const checkOverflow = parent.getComponentBounds().topLeft.x + child.getTotalWidth() + sumWidth;
         if(checkOverflow <= parent.getComponentBounds().topRight.x) {
-            child.updatePositionX(checkOverflow - child.style.width);
-            sumWidth += child.style.width;
+            child.updatePositionX(checkOverflow - child.getTotalWidth());
+            sumWidth += child.getTotalWidth();
         }
         else {
             child.updatePositionX(parent.getComponentBounds().topLeft.x);
-            sumWidth = child.style.width;
+            sumWidth = child.getTotalWidth();
         }
     });
 }

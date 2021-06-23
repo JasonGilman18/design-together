@@ -13,8 +13,16 @@ export const PositionSection = (props: PositionSectionProps) => {
                 selectedComponentId={props.selectedComponentId}
                 setComponentTree={props.setComponentTree}
             />
-            <MarginSection/>
-            <PaddingSection/>
+            <MarginSection
+                componentTree={props.componentTree}
+                selectedComponentId={props.selectedComponentId}
+                setComponentTree={props.setComponentTree}
+            />
+            <PaddingSection
+                componentTree={props.componentTree}
+                selectedComponentId={props.selectedComponentId}
+                setComponentTree={props.setComponentTree}
+            />
         </Section>
     );
 };

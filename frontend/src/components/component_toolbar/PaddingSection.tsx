@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled, { css } from "styled-components";
+import ComponentTree from "../../classes/ComponentTree";
 import {DimensionSelect} from './../interactive/DimensionSelect';
 
 export const PaddingSection = (props: PaddingSectionProps) => {
@@ -254,5 +255,7 @@ const Input = styled.input`
 `;
 
 interface PaddingSectionProps {
-
+    componentTree: ComponentTree,
+    selectedComponentId: number | null,
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 };

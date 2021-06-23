@@ -103,6 +103,62 @@ export default class Component {
         }
     }
 
+    public updateMarginTop(margin_top: number) {
+        if(this.style.margin_top !== margin_top) {
+            this.style.margin_top = margin_top;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateMarginRight(margin_right: number) {
+        if(this.style.margin_right !== margin_right) {
+            this.style.margin_right = margin_right;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateMarginBottom(margin_bottom: number) {
+        if(this.style.margin_bottom !== margin_bottom) {
+            this.style.margin_bottom = margin_bottom;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateMarginLeft(margin_left: number) {
+        if(this.style.margin_left !== margin_left) {
+            this.style.margin_left = margin_left;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePaddingTop(padding_top: number) {
+        if(this.style.padding_top !== padding_top) {
+            this.style.padding_top = padding_top;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePaddingRight(padding_right: number) {
+        if(this.style.padding_right !== padding_right) {
+            this.style.padding_right = padding_right;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePaddingBottom(padding_bottom: number) {
+        if(this.style.padding_bottom !== padding_bottom) {
+            this.style.padding_bottom = padding_bottom;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePaddingLeft(padding_left: number) {
+        if(this.style.padding_left !== padding_left) {
+            this.style.padding_left = padding_left;
+            this.updateRequired = true;
+        }
+    }
+
     public addChild(component: Component) {
         component.node.parent = this;
         this.node.children.push(component);
