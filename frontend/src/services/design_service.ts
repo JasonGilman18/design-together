@@ -1,5 +1,5 @@
 import { Channel } from "phoenix";
-import React from "react";
+import React, { Children } from "react";
 import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import Stack from "../classes/Stack";
@@ -135,19 +135,17 @@ export function setChildPositions(parent: Component | null, canvasWidth: number
 }
 
 function alignHorizontalStart(parent: Component) {
-
-    //not working with margin left
-
     var sumWidth = 0;
     parent.node.children.forEach((child) => {
-        const checkOverflow = parent.getComponentBounds().topLeft.x + child.getTotalWidth() + sumWidth;
+        const checkOverflow = parent.getComponentBounds().topLeft.x + child.style.width + child.style.margin_left
+            + child.style.margin_right + sumWidth;
         if(checkOverflow <= parent.getComponentBounds().topRight.x) {
-            child.updatePositionX(checkOverflow - child.getTotalWidth());
-            sumWidth += child.getTotalWidth();
+            child.updatePositionX(checkOverflow - child.style.width - child.style.margin_right);
+            sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         }
         else {
             child.updatePositionX(parent.getComponentBounds().topLeft.x);
-            sumWidth = child.getTotalWidth();
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
         }
     });
 }
@@ -157,11 +155,11 @@ function alignHorizontalCenter(parent: Component) {
     var rows: {startOffset: number, components: Component[]}[] = [];
     var row: Component[] = [];
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
             var startOffset = ((parent.style.width) - sumWidth + child.style.width) / 2;
             rows.push({startOffset: startOffset, components: row});
-            sumWidth = child.style.width;
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
             row = [child];
         }
         else {
@@ -173,8 +171,8 @@ function alignHorizontalCenter(parent: Component) {
     rows.forEach((rowObject) => {
         sumWidth = 0;
         rowObject.components.forEach((child) => {
-            child.updatePositionX(parent.getComponentBounds().topLeft.x + rowObject.startOffset + sumWidth);
-            sumWidth += child.style.width;
+            child.updatePositionX(parent.getComponentBounds().topLeft.x + rowObject.startOffset + sumWidth + child.style.margin_left);
+            sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         });
     });
 }
@@ -183,24 +181,24 @@ function alignHorizontalEnd(parent: Component) {
     var sumWidth = 0;
     var row: Component[] = [];
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         if(parent.getComponentBounds().topRight.x - sumWidth < parent.getComponentBounds().topLeft.x) {
             sumWidth = 0;
             for(var i=row.length-1;i>=0;i--) {
-               sumWidth += row[i].style.width;
-               row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+               sumWidth += row[i].style.width + row[i].style.margin_left + row[i].style.margin_right;
+               row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth + row[i].style.margin_left);
             }
             row = [child];
-            sumWidth = child.style.width;
-            child.updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
+            child.updatePositionX(parent.getComponentBounds().topRight.x - sumWidth + child.style.margin_left);
         }   
         else
             row.push(child);
     });
     sumWidth = 0;
     for(var i=row.length-1;i>=0;i--) {
-        sumWidth += row[i].style.width;
-        row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+        sumWidth += row[i].style.width + row[i].style.margin_left + row[i].style.margin_right;
+        row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth + row[i].style.margin_left);
     }
 }
 
@@ -209,16 +207,18 @@ function alignVerticalStart(parent: Component) {
     var currentHeight = 0;
     var greatestHeight = 0;
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
-            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + greatestHeight);
-            sumWidth = child.style.width;
+            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + greatestHeight + child.style.margin_top);
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
             currentHeight += greatestHeight;
-            greatestHeight = child.style.height;
+            greatestHeight = child.style.height + child.style.margin_top + child.style.margin_bottom;
         }
         else {
-            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight);
-            greatestHeight = child.style.height > greatestHeight ? child.style.height : greatestHeight;
+            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + child.style.margin_top);
+            greatestHeight = child.style.height + child.style.margin_top + child.style.margin_bottom > greatestHeight 
+                ? child.style.height + child.style.margin_top + child.style.margin_bottom 
+                : greatestHeight;
         }
     });
 }
@@ -229,16 +229,18 @@ function alignVerticalCenter(parent: Component) {
     var rows: {greatestHeight: number, components: Component[]}[] = [];
     var row: Component[] = [];
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
             rows.push({greatestHeight: greatestHeight, components: row});
-            sumWidth = child.style.width;
-            greatestHeight = child.style.height;
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
+            greatestHeight = child.style.height + child.style.margin_top + child.style.margin_bottom;
             row = [child];
         }
         else {
             row.push(child);
-            greatestHeight = child.style.height > greatestHeight ? child.style.height : greatestHeight;
+            greatestHeight = child.style.height + child.style.margin_bottom + child.style.margin_top > greatestHeight 
+                ? child.style.height + child.style.margin_top + child.style.margin_bottom
+                : greatestHeight;
         }
     });
     rows.push({greatestHeight: greatestHeight, components: row});
@@ -250,37 +252,38 @@ function alignVerticalCenter(parent: Component) {
     sumHeight = 0;
     rows.forEach((rowObject) => {
         rowObject.components.forEach((c) => {
-            c.updatePositionY(parent.getComponentBounds().topLeft.y + startOffset + sumHeight);
+            c.updatePositionY(parent.getComponentBounds().topLeft.y + startOffset + sumHeight + c.style.margin_top - c.style.margin_bottom);
         });
         sumHeight += rowObject.greatestHeight;
     });
 }
 
 function alignVerticalEnd(parent: Component) {
-    
     var sumWidth = 0;
     var greatestHeight = 0;
     var currentHeight = 0;
     var row: Component[] = [];
     var stack = new Stack<{greatestHeight: number, components: Component[]}>();
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         if(parent.getComponentBounds().topRight.x - sumWidth < parent.getComponentBounds().topLeft.x) {
             stack.push({greatestHeight: greatestHeight, components: row});
             row = [child];
-            sumWidth = child.style.width;
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
             greatestHeight = 0;
         }
         else
             row.push(child);
-        greatestHeight = greatestHeight < child.style.height ? child.style.height : greatestHeight;
+        greatestHeight = greatestHeight < child.style.height + child.style.margin_top + child.style.margin_bottom
+            ? child.style.height + child.style.margin_top + child.style.margin_bottom
+            : greatestHeight;
     });
     stack.push({greatestHeight: greatestHeight, components: row});
     var currentRow: {greatestHeight: number, components: Component[]};
     while(!stack.empty()) {
         currentRow = stack.pop();
         currentRow.components.forEach((component) => {
-            component.updatePositionY(parent.getComponentBounds().bottomRight.y - currentHeight - component.style.height);
+            component.updatePositionY(parent.getComponentBounds().bottomRight.y - currentHeight - component.style.height - component.style.margin_bottom);
         });
         currentHeight += currentRow.greatestHeight;
     }
