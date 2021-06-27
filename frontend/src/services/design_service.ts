@@ -137,14 +137,14 @@ export function setChildPositions(parent: Component | null, canvasWidth: number
 function alignHorizontalStart(parent: Component) {
     var sumWidth = 0;
     parent.node.children.forEach((child) => {
-        const checkOverflow = parent.getComponentBounds().topLeft.x + child.style.width + child.style.margin_left
-            + child.style.margin_right + sumWidth;
-        if(checkOverflow <= parent.getComponentBounds().topRight.x) {
+        const checkOverflow = parent.getComponentBounds().topLeft.x + parent.style.padding_left + child.style.width 
+            + child.style.margin_left + child.style.margin_right + sumWidth;
+        if(checkOverflow <= parent.getComponentBounds().topRight.x - parent.style.padding_right) {
             child.updatePositionX(checkOverflow - child.style.width - child.style.margin_right);
             sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         }
         else {
-            child.updatePositionX(parent.getComponentBounds().topLeft.x);
+            child.updatePositionX(parent.getComponentBounds().topLeft.x = parent.style.padding_left);
             sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
         }
     });
@@ -156,8 +156,10 @@ function alignHorizontalCenter(parent: Component) {
     var row: Component[] = [];
     parent.node.children.forEach((child) => {
         sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
-        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
-            var startOffset = ((parent.style.width) - sumWidth + child.style.width) / 2;
+        if(parent.getComponentBounds().topLeft.x + parent.style.padding_left + sumWidth 
+            > parent.getComponentBounds().topRight.x - parent.style.padding_right
+        ) {
+            var startOffset = (parent.style.width - sumWidth - parent.style.padding_left - parent.style.padding_right + child.style.width) / 2;
             rows.push({startOffset: startOffset, components: row});
             sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
             row = [child];
@@ -166,12 +168,12 @@ function alignHorizontalCenter(parent: Component) {
             row.push(child);
         }
     });
-    var startOffset = ((parent.style.width) - sumWidth) / 2;
+    var startOffset = (parent.style.width - sumWidth - parent.style.padding_left - parent.style.padding_right) / 2;
     rows.push({startOffset: startOffset, components: row});
     rows.forEach((rowObject) => {
         sumWidth = 0;
         rowObject.components.forEach((child) => {
-            child.updatePositionX(parent.getComponentBounds().topLeft.x + rowObject.startOffset + sumWidth + child.style.margin_left);
+            child.updatePositionX(parent.getComponentBounds().topLeft.x + parent.style.padding_left + rowObject.startOffset + sumWidth + child.style.margin_left);
             sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         });
     });
@@ -204,11 +206,13 @@ function alignHorizontalEnd(parent: Component) {
 
 function alignVerticalStart(parent: Component) {
     var sumWidth = 0;
-    var currentHeight = 0;
+    var currentHeight = parent.style.padding_top;
     var greatestHeight = 0;
     parent.node.children.forEach((child) => {
         sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
-        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
+        if(parent.getComponentBounds().topLeft.x + parent.style.padding_left + sumWidth 
+            > parent.getComponentBounds().topRight.x - parent.style.padding_right
+        ) {
             child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + greatestHeight + child.style.margin_top);
             sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
             currentHeight += greatestHeight;

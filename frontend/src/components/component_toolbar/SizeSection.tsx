@@ -5,8 +5,8 @@ import { DimensionSelect } from "../interactive/DimensionSelect";
 
 export const SizeSection = (props: SizeSectionProps) => {
 
-    const [width, setWidth] = useState<string>();
-    const [height, setHeight] = useState<string>();
+    const [width, setWidth] = useState<string>("");
+    const [height, setHeight] = useState<string>("");
 
     useEffect(() => {
         if(props.selectedComponentId !== -1) {

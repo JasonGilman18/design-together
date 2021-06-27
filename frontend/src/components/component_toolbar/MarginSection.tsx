@@ -3,11 +3,15 @@ import styled, { css } from "styled-components";
 import Component from "../../classes/Component";
 import ComponentTree from "../../classes/ComponentTree";
 import {DimensionSelect} from './../interactive/DimensionSelect';
+import {ReactComponent as ArrowUpIcon} from './../../svg/ArrowUpIcon.svg';
+import {ReactComponent as ArrowRightIcon} from './../../svg/ArrowRightIcon.svg';
+import {ReactComponent as ArrowDownIcon} from './../../svg/ArrowDownIcon.svg';
+import {ReactComponent as ArrowLeftIcon} from './../../svg/ArrowLeftIcon.svg';
 
 export const MarginSection = (props: MarginSectionProps) => {
     
     const [selectedSide, setSelectedSide] = useState<string>("Top");
-    const [margin, setMargin] = useState<string>();
+    const [margin, setMargin] = useState<string>("");
 
     useEffect(() => {
         if(props.selectedComponentId !== -1) {
@@ -73,22 +77,30 @@ export const MarginSection = (props: MarginSectionProps) => {
                 <MarginWidgetTop 
                     onClick={() => setSelectedSide("Top")}
                     selected={selectedSide==="Top"}
-                />
+                >
+                    <ArrowUpIcon/>
+                </MarginWidgetTop>
                 <MarginWidgetRight 
                     onClick={() => setSelectedSide("Right")}
                     selected={selectedSide==="Right"}
-                />
+                >
+                    <ArrowRightIcon/>
+                </MarginWidgetRight>
                 <MarginWidgetCenter>
                     <CenterLabel>Component</CenterLabel>
                 </MarginWidgetCenter>
                 <MarginWidgetBottom 
                     onClick={() => setSelectedSide("Bottom")}
                     selected={selectedSide==="Bottom"}
-                />
+                >
+                    <ArrowDownIcon/>
+                </MarginWidgetBottom>
                 <MarginWidgetLeft 
                     onClick={() => setSelectedSide("Left")}
                     selected={selectedSide==="Left"}
-                />
+                >
+                    <ArrowLeftIcon/>
+                </MarginWidgetLeft>
                 <MarginWidgetTL/>
                 <MarginWidgetTR/>
                 <MarginWidgetBR/>
@@ -143,6 +155,14 @@ const MarginWidgetPiece = styled.div`
     height: 100%;
     width: 100%;
     background-color: #fbfbfb;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    & > svg {
+        height: 10px;
+        width: 10px;
+        fill: #bfbfbf;
+    }
 `;
 
 const MarginWidgetTL = styled.div`
@@ -184,6 +204,9 @@ const MarginWidgetTop = styled(MarginWidgetPiece)<{selected: boolean}>`
         props => props.selected
         ? css`
             background-color: #e6e6e6;
+            & > svg {
+                fill: #737373;
+            }
             & ~ ${MarginWidgetTL} {
                 background-color: #e6e6e6; 
             }
@@ -195,6 +218,9 @@ const MarginWidgetTop = styled(MarginWidgetPiece)<{selected: boolean}>`
     }
     &:hover {
         background-color: #e6e6e6;
+        & > svg {
+                fill: #737373;
+        }
         & ~ ${MarginWidgetTL} {
             background-color: #e6e6e6; 
         }
@@ -211,6 +237,9 @@ const MarginWidgetRight = styled(MarginWidgetPiece)<{selected: boolean}>`
         props => props.selected
         ? css`
             background-color: #e6e6e6;
+            & > svg {
+                fill: #737373;
+            }
             & ~ ${MarginWidgetTR} {
                 background-color: #e6e6e6; 
             }
@@ -222,6 +251,9 @@ const MarginWidgetRight = styled(MarginWidgetPiece)<{selected: boolean}>`
     }
     &:hover {
         background-color: #e6e6e6;
+        & > svg {
+                fill: #737373;
+        }
         & ~ ${MarginWidgetTR} {
             background-color: #e6e6e6; 
         }
@@ -256,6 +288,9 @@ const MarginWidgetBottom = styled(MarginWidgetPiece)<{selected: boolean}>`
         props => props.selected
         ? css`
             background-color: #e6e6e6;
+            & > svg {
+                fill: #737373;
+            }
             & ~ ${MarginWidgetBL} {
                 background-color: #e6e6e6; 
             }
@@ -267,6 +302,9 @@ const MarginWidgetBottom = styled(MarginWidgetPiece)<{selected: boolean}>`
     }
     &:hover {
         background-color: #e6e6e6;
+        & > svg {
+                fill: #737373;
+        }
         & ~ ${MarginWidgetBL} {
             background-color: #e6e6e6; 
         }
@@ -283,6 +321,9 @@ const MarginWidgetLeft = styled(MarginWidgetPiece)<{selected: boolean}>`
         props => props.selected
         ? css`
             background-color: #e6e6e6;
+            & > svg {
+                fill: #737373;
+            }
             & ~ ${MarginWidgetTL} {
                 background-color: #e6e6e6; 
             }
@@ -294,6 +335,9 @@ const MarginWidgetLeft = styled(MarginWidgetPiece)<{selected: boolean}>`
     }
     &:hover {
         background-color: #e6e6e6;
+        & > svg {
+                fill: #737373;
+        }
         & ~ ${MarginWidgetTL} {
             background-color: #e6e6e6; 
         }
