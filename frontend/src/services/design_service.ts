@@ -325,7 +325,7 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
     if(context !== null && context !== undefined) {
         context.beginPath();
         draw(context, component);
-        if(component.style.filled) {
+        if(component.style.background !== "transparent") {
             context.fillStyle = "black";
             context.fill();
             context.closePath();

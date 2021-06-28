@@ -110,17 +110,7 @@ export const MarginSection = (props: MarginSectionProps) => {
             <Input
                 maxLength={4} 
                 size={4}
-                value={
-                    selectedSide==="Top"
-                    ? props.componentTree.find(props.selectedComponentId)?.style.margin_top
-                    : selectedSide==="Right"
-                    ? props.componentTree.find(props.selectedComponentId)?.style.margin_right
-                    : selectedSide==="Bottom"
-                    ? props.componentTree.find(props.selectedComponentId)?.style.margin_bottom
-                    : selectedSide==="Left"
-                    ? props.componentTree.find(props.selectedComponentId)?.style.margin_left
-                    : ""
-                }
+                value={margin}
                 onChange={(e) => updateMargin(e.currentTarget.value)}
             />
             <DimensionSelect/>

@@ -23,7 +23,6 @@ defmodule ApiWeb.DesignChannel do
           width: component.width,
           position_x: component.position_x,
           position_y: component.position_y,
-          filled: component.filled,
           rounded: component.rounded})
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
@@ -37,7 +36,6 @@ defmodule ApiWeb.DesignChannel do
       width: component["style"]["width"],
       position_x: component["style"]["position_x"],
       position_y: component["style"]["position_y"],
-      filled: component["style"]["filled"],
       rounded: component["style"]["rounded"],
       align_horizontal: component["style"]["align_horizontal"],
       align_vertical: component["style"]["align_vertical"],
@@ -48,7 +46,9 @@ defmodule ApiWeb.DesignChannel do
       padding_top: component["style"]["padding_top"],
       padding_right: component["style"]["padding_right"],
       padding_bottom: component["style"]["padding_bottom"],
-      padding_left: component["style"]["padding_left"]
+      padding_left: component["style"]["padding_left"],
+      background: component["style"]["background"],
+      border: component["style"]["border"]
     }
     case Design.compare_components(updateComponent, incomingData) do
       :different ->
@@ -67,7 +67,6 @@ defmodule ApiWeb.DesignChannel do
                 width: component.width,
                 position_x: component.position_x,
                 position_y: component.position_y,
-                filled: component.filled,
                 rounded: component.rounded,
                 align_horizontal: component.align_horizontal,
                 align_vertical: component.align_vertical,
@@ -78,7 +77,9 @@ defmodule ApiWeb.DesignChannel do
                 padding_top: component.padding_top,
                 padding_right: component.padding_right,
                 padding_bottom: component.padding_bottom,
-                padding_left: component.padding_left
+                padding_left: component.padding_left,
+                background: component.background,
+                border: component.border
               }
             })
             {:noreply, socket}

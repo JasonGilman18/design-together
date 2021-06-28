@@ -60,7 +60,6 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
             if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            console.log("here");
             updateComponents(channel, componentTree.root, canvasWidth, canvasHeight);
             displayComponentsOnCanvas(canvas, componentTree.root);
         }
@@ -70,7 +69,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
-            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, false, 0);
+            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, 0);
         }
     }, [channel]);
 
@@ -78,68 +77,58 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         const docId = props.location.state.doc_id;
         var height: number;
         var width: number;
-        var filled: boolean;
         var rounded: number;
         var addComponent = true;
         switch(type) {
             case "square":
                 height = 50;
                 width = 50;
-                filled = false;
                 rounded = 0;
                 break;
             case "square-filled":
                 height = 50;
                 width = 50;
-                filled = true;
                 rounded = 0;
                 break;
             case "square-rounded":
                 height = 50;
                 width = 50;
-                filled = false;
                 rounded = 15;
                 break;
             case "square-filled-rounded":
                 height = 50;
                 width = 50;
-                filled = true;
                 rounded = 15;
                 break;
             case "rectangle":
                 height = 50;
                 width = 100;
-                filled = false;
                 rounded = 0;
                 break;
             case "rectangle-filled":
                 height = 50;
                 width = 100;
-                filled = true;
                 rounded = 0;
                 break;
             case "rectangle-rounded":
                 height = 50;
                 width = 100;
-                filled = false;
                 rounded = 15;
                 break;
             case "rectangle-filled-rounded":
                 height = 50;
                 width = 100;
-                filled = true;
                 rounded = 15;
                 break;
             default:
                 height = 0;
                 width = 0;
-                filled = false;
                 rounded = 0;
                 addComponent = false;
                 break;
         }
         if(addComponent)
-            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, filled, rounded);
+            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, rounded);
     }
 
     return (

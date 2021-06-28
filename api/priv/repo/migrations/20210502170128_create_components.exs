@@ -8,7 +8,6 @@ defmodule Api.Repo.Migrations.CreateComponents do
       add :width, :integer
       add :position_x, :integer
       add :position_y, :integer
-      add :filled, :boolean
       add :rounded, :integer
       add :align_horizontal, :string, default: "start"
       add :align_vertical, :string, default: "start"
@@ -20,6 +19,8 @@ defmodule Api.Repo.Migrations.CreateComponents do
       add :padding_right, :integer
       add :padding_bottom, :integer
       add :padding_left, :integer
+      add :background, :string
+      add :border, :boolean
       add :document_id, references(:documents, on_delete: :nothing)
 
       timestamps()

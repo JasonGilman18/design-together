@@ -110,17 +110,7 @@ export const PaddingSection = (props: PaddingSectionProps) => {
             <Input
                 maxLength={4} 
                 size={4}
-                value={
-                    selectedSide==="Top"
-                    ? props.componentTree.find(props.selectedComponentId)?.style.padding_top
-                    : selectedSide==="Right"
-                    ? props.componentTree.find(props.selectedComponentId)?.style.padding_right
-                    : selectedSide==="Bottom"
-                    ? props.componentTree.find(props.selectedComponentId)?.style.padding_bottom
-                    : selectedSide==="Left"
-                    ? props.componentTree.find(props.selectedComponentId)?.style.padding_left
-                    : ""
-                }
+                value={padding}
                 onChange={(e) => updatePadding(e.currentTarget.value)}
             />
             <DimensionSelect/>

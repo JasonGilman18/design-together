@@ -21,13 +21,13 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => {
                 <TabContainer>
                     <Tab
                         onClick={() => setActiveTab(0)}
-                        activeTab={activeTab==0}
+                        activeTab={activeTab===0}
                     >
                         <TabLabel>Position</TabLabel>
                     </Tab>
                     <Tab
                         onClick={() => setActiveTab(1)}
-                        activeTab={activeTab==1}
+                        activeTab={activeTab===1}
                     >
                         <TabLabel>Style</TabLabel>
                     </Tab>

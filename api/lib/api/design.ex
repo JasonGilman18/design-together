@@ -15,7 +15,6 @@ defmodule Api.Design do
       recorded.width != incomingData.width||
       recorded.position_x != incomingData.position_x ||
       recorded.position_y != incomingData.position_y ||
-      recorded.filled != incomingData.filled ||
       recorded.rounded != incomingData.rounded ||
       recorded.align_horizontal != incomingData.align_horizontal ||
       recorded.align_vertical != incomingData.align_vertical ||
@@ -26,7 +25,9 @@ defmodule Api.Design do
       recorded.padding_top != incomingData.padding_top ||
       recorded.padding_right != incomingData.padding_right ||
       recorded.padding_bottom != incomingData.padding_bottom ||
-      recorded.padding_left != incomingData.padding_left
+      recorded.padding_left != incomingData.padding_left ||
+      recorded.background != incomingData.background ||
+      recorded.border != incomingData.border
     do
       :different
     else

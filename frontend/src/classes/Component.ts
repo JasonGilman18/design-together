@@ -9,7 +9,7 @@ export default class Component {
     };
 
     public constructor(componentId: number, documentId: number, parent: Component | null, positionX: number, 
-        positionY: number, height: number, width: number, filled: boolean, rounded: number
+        positionY: number, height: number, width: number, rounded: number
     ) {
         this.id = componentId;
         this.document_id = documentId;
@@ -23,7 +23,6 @@ export default class Component {
             position_y: positionY,
             height: height,
             width: width,
-            filled: filled,
             rounded: rounded,
             selected: false,
             align_horizontal: "start",
@@ -35,7 +34,9 @@ export default class Component {
             padding_top: 0,
             padding_right: 0,
             padding_bottom: 0,
-            padding_left: 0
+            padding_left: 0,
+            background: "transparent",
+            border: true
         };
     }
 
@@ -71,13 +72,6 @@ export default class Component {
     public updateWidth(width: number) {
         if(this.style.width !== width) {
             this.style.width = width;
-            this.updateRequired = true;
-        }
-    }
-
-    public updateFilled(filled: boolean) {
-        if(this.style.filled !== filled) {
-            this.style.filled = filled;
             this.updateRequired = true;
         }
     }
@@ -166,7 +160,7 @@ export default class Component {
 
     public removeChild(component: Component) {
         this.node.children.forEach((c, index) => {
-            if(component.id == c.id) {
+            if(component.id === c.id) {
                 this.node.children.splice(index);
             }
         });
@@ -262,7 +256,6 @@ type ComponentStyle = {
     position_y: number,
     height: number,
     width: number,
-    filled: boolean,
     rounded: number,
     selected: boolean,
     align_horizontal: string,
@@ -274,5 +267,7 @@ type ComponentStyle = {
     padding_top: number,
     padding_right: number,
     padding_bottom: number,
-    padding_left: number
+    padding_left: number,
+    background: string,
+    border: boolean
 }
