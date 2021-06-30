@@ -41,7 +41,11 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => {
                             selectedComponentId={props.selectedComponentId}
                         />
                         : activeTab === 1
-                        ? <StyleSection/>
+                        ? <StyleSection
+                            componentTree={props.componentTree}
+                            setComponentTree={props.setComponentTree}
+                            selectedComponentId={props.selectedComponentId}
+                        />
                         : null
                     }
                 </ContentContainer>

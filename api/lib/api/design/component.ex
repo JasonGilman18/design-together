@@ -37,6 +37,6 @@ defmodule Api.Design.Component do
     |> cast(attrs, [:parent_id, :height, :width, :position_x, :position_y, :rounded,
       :align_horizontal, :align_vertical, :margin_top, :margin_right, :margin_bottom, :margin_left,
       :padding_top, :padding_right, :padding_bottom, :padding_left, :background, :border, :document_id])
-    |> validate_required([:height, :width, :position_x, :position_y, :filled, :rounded, :document_id])
+    |> validate_required([:height, :width, :position_x, :position_y, :document_id])
   end
 end

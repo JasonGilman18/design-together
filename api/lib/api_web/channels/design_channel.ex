@@ -22,8 +22,7 @@ defmodule ApiWeb.DesignChannel do
           height: component.height,
           width: component.width,
           position_x: component.position_x,
-          position_y: component.position_y,
-          rounded: component.rounded})
+          position_y: component.position_y})
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
     end

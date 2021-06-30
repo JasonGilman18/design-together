@@ -69,7 +69,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
-            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, 0);
+            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0);
         }
     }, [channel]);
 
@@ -128,7 +128,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 break;
         }
         if(addComponent)
-            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, rounded);
+            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0);
     }
 
     return (

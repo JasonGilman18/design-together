@@ -1,5 +1,5 @@
 import { Channel } from "phoenix";
-import React, { Children } from "react";
+import React from "react";
 import Component from "../classes/Component";
 import ComponentTree from "../classes/ComponentTree";
 import Stack from "../classes/Stack";
@@ -326,7 +326,7 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
         context.beginPath();
         draw(context, component);
         if(component.style.background !== "transparent") {
-            context.fillStyle = "black";
+            context.fillStyle = component.style.background;
             context.fill();
             context.closePath();
             if(component.style.selected) {

@@ -9,7 +9,7 @@ export default class Component {
     };
 
     public constructor(componentId: number, documentId: number, parent: Component | null, positionX: number, 
-        positionY: number, height: number, width: number, rounded: number
+        positionY: number, height: number, width: number
     ) {
         this.id = componentId;
         this.document_id = documentId;
@@ -23,7 +23,7 @@ export default class Component {
             position_y: positionY,
             height: height,
             width: width,
-            rounded: rounded,
+            rounded: 0,
             selected: false,
             align_horizontal: "start",
             align_vertical: "start",
@@ -149,6 +149,13 @@ export default class Component {
     public updatePaddingLeft(padding_left: number) {
         if(this.style.padding_left !== padding_left) {
             this.style.padding_left = padding_left;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateBackground(background: string) {
+        if(this.style.background !== background) {
+            this.style.background = background;
             this.updateRequired = true;
         }
     }

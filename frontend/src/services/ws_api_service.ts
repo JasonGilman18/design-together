@@ -27,8 +27,7 @@ export function newComponentFromChannel(channel: Channel | undefined,
         setComponentTree(prevTree => {
             const newComponent = new Component(responseComponent.id, responseComponent.document_id, 
                 prevTree.find(responseComponent.parent_id), responseComponent.position_x, 
-                responseComponent.position_y, responseComponent.height, responseComponent.width, 
-                responseComponent.rounded);
+                responseComponent.position_y, responseComponent.height, responseComponent.width);
             prevTree.insert(newComponent);
             return prevTree.copy();
         });
@@ -36,10 +35,10 @@ export function newComponentFromChannel(channel: Channel | undefined,
 }
 
 export function newComponentToChannel(channel: Channel | undefined, documentId: number, parentId: number | null, 
-    height: number, width: number, position_x: number, position_y: number, rounded: number
+    height: number, width: number, position_x: number, position_y: number
 ) {
     channel?.push("new_component", {document_id: documentId, parent_id: parentId, height: height, 
-        width: width, position_x: position_x, position_y: position_y, rounded: rounded}, 10000);
+        width: width, position_x: position_x, position_y: position_y}, 10000);
 }
 
 export function updateComponentFromChannel(channel: Channel | undefined, 
