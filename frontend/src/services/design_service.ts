@@ -20,7 +20,7 @@ export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCan
 }
 
 export function updateComponents(channel: Channel | undefined, component: Component | null, canvasWidth: number,
-    canvasHeight: number    
+    canvasHeight: number, canvas: React.RefObject<HTMLCanvasElement>   
 ) {
     if(component) {
         if(component.node.parent === null) {
@@ -31,13 +31,25 @@ export function updateComponents(channel: Channel | undefined, component: Compon
             if(component.updateRequired)
                 updateComponentToChannel(channel, component);
         }
-        setChildPositions(component, canvasWidth);
-        component.node.children.forEach((child) => {
-            if(child.updateRequired)
-                updateComponentToChannel(channel, child);
-            if(component.node.children.length > 0)
-                updateComponents(channel, child, canvasWidth, canvasHeight);
-        });
+        if(component.type === "text") {
+            const context = canvas.current?.getContext("2d");
+            if(context) {
+                context.font = "20px Arial";
+                var textWidth = 50;
+                if(textWidth < context.measureText(component.style.text).width)
+                    textWidth = context.measureText(component.style.text).width;
+                component.updateWidth(textWidth);
+            }
+        }
+        else {
+            setChildPositions(component, canvasWidth);
+            component.node.children.forEach((child) => {
+                if(child.updateRequired)
+                    updateComponentToChannel(channel, child);
+                if(component.node.children.length > 0)
+                    updateComponents(channel, child, canvasWidth, canvasHeight, canvas);
+            });
+        }
     }
 }
 
@@ -56,7 +68,10 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
             component.style.selected = false;
         });
         const selected = prevTree.find(id);
-        if(selected) selected.style.selected = true;
+        if(selected) {
+            selected.style.selected = true;
+            setMouseDown(selected.type);
+        }
         return prevTree.copy();
     });
 }
@@ -345,8 +360,13 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
             }
         }
         else if(component.type === "text") {
-            //create text for canvas
-            
+            drawContainer(context, component);
+            context.fillText(component.style.text, component.style.position_x, 
+                component.style.position_y + component.style.height/2
+            );
+            context.strokeStyle = component.style.selected ? "green" : "black";
+            context.lineWidth = component.style.selected ? 3 : 1;
+            context.stroke();
         }
         context.closePath();
     }

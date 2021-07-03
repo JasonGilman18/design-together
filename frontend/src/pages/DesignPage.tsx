@@ -38,14 +38,14 @@ export const DesignPage = (props: DesignPageProps) => (
                 />
                 <CanvasContainer>
                     <canvas 
+                        id="canvasElement"
                         ref={props.canvas}
+                        tabIndex={0}
                         style={{backgroundColor: "#ffffff", boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}}
                         onMouseDown={(e) => {
                             mouseDownOnCanvas(e, props.canvas, props.setComponentTree, props.componentTree, props.setMouseDown, props.setSelectedComponentId);
                         }}
-                        onMouseUp={(e) => {
-                            props.setMouseDown("");
-                        }}
+                        onKeyDown={(e) => props.keyDownOnCanvas(e)}
                     />
                 </CanvasContainer>
             </DesignPageContainer>
@@ -99,5 +99,6 @@ interface DesignPageProps {
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
     newComponent: (type: string) => void,
-    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
+    keyDownOnCanvas: (e: React.KeyboardEvent<HTMLCanvasElement>) => void
 }

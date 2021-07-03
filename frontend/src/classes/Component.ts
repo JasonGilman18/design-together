@@ -163,6 +163,13 @@ export default class Component {
         }
     }
 
+    public updateText(text: string) {
+        if(this.style.text !== text) {
+            this.style.text = text;
+            this.updateRequired = true;
+        }
+    }
+
     public addChild(component: Component) {
         component.node.parent = this;
         this.node.children.push(component);

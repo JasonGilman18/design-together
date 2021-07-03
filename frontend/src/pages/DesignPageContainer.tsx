@@ -60,7 +60,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
             if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            updateComponents(channel, componentTree.root, canvasWidth, canvasHeight);
+            updateComponents(channel, componentTree.root, canvasWidth, canvasHeight, canvas);
             displayComponentsOnCanvas(canvas, componentTree.root);
         }
     }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
@@ -110,6 +110,38 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, type);
     }
 
+    function keyDownOnCanvas(e: React.KeyboardEvent<HTMLCanvasElement>) {
+        if(mouseDown === "text") {
+            const selectedComponent = componentTree.find(selectedComponentId);
+            if(selectedComponent) {
+                console.log(e.key);
+                if(e.key === "Backspace")
+                    selectedComponent.updateText(selectedComponent.style.text.slice(0, -1));
+                else if(e.key === "Enter") {
+
+                }
+                else if(e.key === "Control") {
+
+                }
+                else if(e.key === "Shift") {
+
+                }
+                else if(e.key === "Alt") {
+
+                }
+                else if(e.key === "Tab") {
+
+                }
+                else if(e.key === "Meta") {
+
+                }
+                else
+                    selectedComponent.updateText(selectedComponent.style.text + e.key);
+                setComponentTree(prev => prev.copy());
+            }
+        }
+    }
+
     return (
         <DesignPage
             loading={loading}
@@ -137,6 +169,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             setComponentTree={setComponentTree}
             newComponent={newComponent}
             setShowGridlines={setShowGridlines}
+            keyDownOnCanvas={keyDownOnCanvas}
         />
     );
 }
