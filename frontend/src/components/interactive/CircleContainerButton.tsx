@@ -26,7 +26,7 @@ export const CircleContainerButton = (props: CircleContainerButtonProps) => {
             <Button
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={() => props.newComponent("rectangle-filled")}
+                onClick={() => props.newComponent("rectangle-rounded")}
             >
                 <CircleContainerIcon/>
             </Button>

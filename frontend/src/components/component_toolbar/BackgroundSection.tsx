@@ -8,6 +8,7 @@ export const BackgroundSection = (props: BackgroundSectionProps) => {
     const [selectedBackground, setSelectedBackground] = useState<string>("");
     const [background, setBackground] = useState<string>("");
     const [hue, setHue] = useState<number>(0);
+    const [hueCursor, setHueCursor] = useState<{x: number, y: number}>({x: 0, y: 0});
     const [saturation, setSaturation] = useState<number>(0);
     const [lightness, setLightness] = useState<number>(0);
     const [backgroundOptions, setBackgroundOptions] = useState<string[]>([]);
@@ -16,8 +17,12 @@ export const BackgroundSection = (props: BackgroundSectionProps) => {
         if(props.selectedComponentId !== -1) {
             const selectedComponent = props.componentTree.find(props.selectedComponentId);
             if(selectedComponent) {
+                var color = Color(selectedComponent.style.background, "hex");
                 setSelectedBackground(selectedComponent.style.background);
                 setBackground(selectedComponent.style.background);
+                setHue(color.hue());
+                setSaturation(color.saturationl());
+                setLightness(color.lightness());
             }
         }
     }, []);
@@ -26,8 +31,12 @@ export const BackgroundSection = (props: BackgroundSectionProps) => {
         if(props.selectedComponentId !== -1) {
             const selectedComponent = props.componentTree.find(props.selectedComponentId);
             if(selectedComponent) {
+                var color = Color(selectedComponent.style.background, "hex");
                 setSelectedBackground(selectedComponent.style.background);
                 setBackground(selectedComponent.style.background);
+                setHue(color.hue());
+                setSaturation(color.saturationl());
+                setLightness(color.lightness());
                 if(selectedComponent.style.background === "")
                     setBackgroundOptions([]);
                 else {
@@ -164,28 +173,27 @@ export const BackgroundSection = (props: BackgroundSectionProps) => {
                     onKeyPress={(e) => {if(e.key==="Enter") updateBackground(selectedBackground)}}
                     onChange={(e) => setSelectedBackground(e.currentTarget.value)}
                 />
-                <BackgroundInputLabel>Hue: </BackgroundInputLabel>
-                <SliderInput
+                <HueInput
                     type="range"
                     min={0}
                     max={360}
                     value={hue}
                     onChange={(e) => updateHue(parseInt(e.currentTarget.value))}
                 />
-                <BackgroundInputLabel>Saturation: </BackgroundInputLabel>
-                <SliderInput
+                <SaturationInput
                     type="range"
                     min={0}
                     max={100}
                     value={saturation}
+                    hue={hue}
                     onChange={(e) => updateSaturation(parseInt(e.currentTarget.value))}
                 />
-                <BackgroundInputLabel>Lightness: </BackgroundInputLabel>
-                <SliderInput
+                <LightnessInput
                     type="range"
                     min={0}
                     max={100}
                     value={lightness}
+                    hue={hue}
                     onChange={(e) => updateLightness(parseInt(e.currentTarget.value))}
                 />
             </InputContainer>
@@ -250,7 +258,7 @@ const InputContainer = styled.div`
     margin-top: 15px;
     grid-column: 1/3;
     display: grid;
-    grid-template-columns: 30% auto;
+    grid-template-columns: 50% 50%;
 `;
 
 const BackgroundInputLabel = styled.h6`
@@ -280,7 +288,32 @@ const TextInput = styled.input`
 `;
 
 const SliderInput = styled.input`
+    grid-column: 1/3;
+    margin: 10px 8px 0px 8px;
+    height: 10px;
+    appearance: none;
+    border-radius: 3px;
+    border: solid 1px #dcdcdc;
+    &::-webkit-slider-thumb {
+        appearance: none;
+        height: 12px;
+        width: 12px;
+        background-color: transparent;
+        border: solid 2px whitesmoke;
+        border-radius: 100%;
+    }
+`;
 
+const HueInput = styled(SliderInput)`
+    background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+`;
+
+const SaturationInput = styled(SliderInput)<{hue: number}>`
+    background: linear-gradient(to right, hsl(${props => props.hue}, 0%, 50%), hsl(${props => props.hue}, 100%, 50%));
+`;
+
+const LightnessInput = styled(SliderInput)<{hue: number}>`
+    background: linear-gradient(to right, hsl(${props => props.hue}, 50%, 0%) 0%, hsl(${props => props.hue}, 50%, 50%) 50%, hsl(${props => props.hue}, 50%, 100%) 100%);
 `;
 
 interface BackgroundSectionProps {

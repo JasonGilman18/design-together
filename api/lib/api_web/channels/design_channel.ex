@@ -22,7 +22,9 @@ defmodule ApiWeb.DesignChannel do
           height: component.height,
           width: component.width,
           position_x: component.position_x,
-          position_y: component.position_y})
+          position_y: component.position_y,
+          type: component.type
+        })
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
     end
@@ -47,7 +49,8 @@ defmodule ApiWeb.DesignChannel do
       padding_bottom: component["style"]["padding_bottom"],
       padding_left: component["style"]["padding_left"],
       background: component["style"]["background"],
-      border: component["style"]["border"]
+      border: component["style"]["border"],
+      text: component["style"]["text"]
     }
     case Design.compare_components(updateComponent, incomingData) do
       :different ->
@@ -57,6 +60,7 @@ defmodule ApiWeb.DesignChannel do
             broadcast_from!(socket, "update_component", %{
               id: component.id,
               document_id: component.document_id,
+              type: component.type,
               node: %{
                 parent: nil,
                 children: []
@@ -78,7 +82,8 @@ defmodule ApiWeb.DesignChannel do
                 padding_bottom: component.padding_bottom,
                 padding_left: component.padding_left,
                 background: component.background,
-                border: component.border
+                border: component.border,
+                text: component.text
               }
             })
             {:noreply, socket}

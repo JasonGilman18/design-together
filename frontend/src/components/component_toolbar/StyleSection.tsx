@@ -13,7 +13,7 @@ export const StyleSection = (props: StyleSectionProps) => (
 );
 
 const Section = styled.div`
-    height: 100%;
+    height: auto;
     width: 100%;
 `;
 

@@ -324,29 +324,35 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
     const context = canvas.current?.getContext("2d");
     if(context !== null && context !== undefined) {
         context.beginPath();
-        draw(context, component);
-        if(component.style.background !== "transparent") {
-            context.fillStyle = component.style.background;
-            context.fill();
-            context.closePath();
-            if(component.style.selected) {
-                context.beginPath();
-                context.strokeStyle = "green";
-                context.lineWidth = 3;
-                draw(context, component);
+        if(component.type === "container") {
+            drawContainer(context, component);
+            if(component.style.background !== "transparent") {
+                context.fillStyle = component.style.background;
+                context.fill();
+                context.closePath();
+                if(component.style.selected) {
+                    context.beginPath();
+                    context.strokeStyle = "green";
+                    context.lineWidth = 3;
+                    drawContainer(context, component);
+                    context.stroke();
+                }
+            }
+            else {
+                context.strokeStyle = component.style.selected ? "green" : "black";
+                context.lineWidth = component.style.selected ? 3 : 1;
                 context.stroke();
             }
         }
-        else {
-            context.strokeStyle = component.style.selected ? "green" : "black";
-            context.lineWidth = component.style.selected ? 3 : 1;
-            context.stroke();
+        else if(component.type === "text") {
+            //create text for canvas
+            
         }
         context.closePath();
     }
 }
 
-function draw(context: CanvasRenderingContext2D, component: Component) {
+function drawContainer(context: CanvasRenderingContext2D, component: Component) {
     if(component.style.rounded == 0)
         context.rect(component.style.position_x, component.style.position_y, component.style.width, component.style.height);
     else {

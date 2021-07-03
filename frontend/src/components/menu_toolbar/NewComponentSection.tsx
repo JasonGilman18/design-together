@@ -2,12 +2,14 @@ import styled from "styled-components";
 import {ContainerButton} from '../interactive/ContainerButton';
 import {RoundedContainerButton} from '../interactive/RoundedContainerButton';
 import {CircleContainerButton} from '../interactive/CircleContainerButton';
+import {TextButton} from '../interactive/TextButton';
 
 export const NewComponentSection = (props: NewComponentSectionProps) => (
     <Section>
         <ContainerButton newComponent={props.newComponent}/>
         <RoundedContainerButton newComponent={props.newComponent}/>
         <CircleContainerButton newComponent={props.newComponent}/>
+        <TextButton newComponent={props.newComponent}/>
     </Section>
 );
 

@@ -27,7 +27,9 @@ defmodule Api.Design do
       recorded.padding_bottom != incomingData.padding_bottom ||
       recorded.padding_left != incomingData.padding_left ||
       recorded.background != incomingData.background ||
-      recorded.border != incomingData.border
+      recorded.border != incomingData.border ||
+      recorded.type != incomingData.type ||
+      recorded.text != incomingData.text
     do
       :different
     else

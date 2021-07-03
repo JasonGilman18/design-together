@@ -33,6 +33,7 @@ export const DesignPage = (props: DesignPageProps) => (
                 <ComponentToolbar 
                     componentTree={props.componentTree}
                     selectedComponentId={props.selectedComponentId}
+                    menuToolbarHeight={props.menuToolbarHeight}
                     setComponentTree={props.setComponentTree}
                 />
                 <CanvasContainer>
@@ -61,6 +62,7 @@ const DesignPageContainer = styled.div<{componentToolbarWidth: number, menuToolb
     grid-template-columns: ${props => props.componentToolbarWidth + "px"} auto;
     grid-template-rows: ${props => props.menuToolbarHeight + "px"} auto;
     background-color: whitesmoke;
+    overflow: hidden;
 `;
 
 const CanvasContainer = styled.div`
@@ -69,7 +71,7 @@ const CanvasContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: scroll;
+    overflow: auto;
 `;
 
 interface DesignPageProps {

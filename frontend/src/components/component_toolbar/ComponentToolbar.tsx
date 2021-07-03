@@ -10,7 +10,7 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => {
     const [activeTab, setActiveTab] = useState<number>(0);
     
     return (
-        <ToolbarContainer>
+        <ToolbarContainer menuToolbarHeight={props.menuToolbarHeight}>
             <ComponentLabel>Component</ComponentLabel>
             <SizeSection
                 componentTree={props.componentTree}
@@ -54,17 +54,16 @@ export const ComponentToolbar = (props: ComponentToolbarProps) => {
     );
 };
 
-const ToolbarContainer = styled.div`
+const ToolbarContainer = styled.div<{menuToolbarHeight: number}>`
     grid-column: 1/2;
     grid-row: 2/3;
     display: grid;
-    grid-template-rows: 50px 100px auto;
+    grid-template-rows: 50px 100px calc(100vh - 75px - 50px - 100px - 15px);
     background-color: #fbfbfb;
     border: solid 1px #dcdcdc;
     border-top: none;
     border-left: none;
-    max-height: 100%;
-    padding-bottom: 25px;
+    min-height: calc(100vh - 75px);
 `;
 
 const ComponentLabel = styled.h3`
@@ -113,10 +112,13 @@ const ContentContainer = styled.div`
     background-color: whitesmoke;
     border: solid 1px #dcdcdc;
     border-top: transparent;
+    max-width: 100%;
+    overflow-y: auto;
 `;
 
 interface ComponentToolbarProps {
     componentTree: ComponentTree,
     selectedComponentId: number,
+    menuToolbarHeight: number,
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 }

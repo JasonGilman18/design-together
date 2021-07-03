@@ -2,6 +2,7 @@ export default class Component {
     id: number;
     document_id: number;
     updateRequired: boolean;
+    type: string;
     style: ComponentStyle;
     node: {
         parent: Component | null,
@@ -9,11 +10,12 @@ export default class Component {
     };
 
     public constructor(componentId: number, documentId: number, parent: Component | null, positionX: number, 
-        positionY: number, height: number, width: number
+        positionY: number, height: number, width: number, type: string
     ) {
         this.id = componentId;
         this.document_id = documentId;
         this.updateRequired = true;
+        this.type = type;
         this.node = {
             parent: parent,
             children: []
@@ -36,7 +38,8 @@ export default class Component {
             padding_bottom: 0,
             padding_left: 0,
             background: "transparent",
-            border: true
+            border: true,
+            text: ""
         };
     }
 
@@ -276,5 +279,6 @@ type ComponentStyle = {
     padding_bottom: number,
     padding_left: number,
     background: string,
-    border: boolean
+    border: boolean,
+    text: string
 }

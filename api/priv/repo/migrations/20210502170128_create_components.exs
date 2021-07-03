@@ -21,6 +21,8 @@ defmodule Api.Repo.Migrations.CreateComponents do
       add :padding_left, :integer
       add :background, :string
       add :border, :boolean
+      add :type, :string
+      add :text, :string
       add :document_id, references(:documents, on_delete: :nothing)
 
       timestamps()

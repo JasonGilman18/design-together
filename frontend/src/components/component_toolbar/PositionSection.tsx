@@ -28,7 +28,7 @@ export const PositionSection = (props: PositionSectionProps) => {
 };
 
 const Section = styled.div`
-    height: 100%;
+    height: auto;
     width: 100%;
 `;
 

@@ -69,7 +69,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
-            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0);
+            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, "container");
         }
     }, [channel]);
 
@@ -78,57 +78,36 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         var height: number;
         var width: number;
         var rounded: number;
+        var type: string;
         var addComponent = true;
         switch(type) {
-            case "square":
-                height = 50;
-                width = 50;
-                rounded = 0;
-                break;
-            case "square-filled":
-                height = 50;
-                width = 50;
-                rounded = 0;
-                break;
-            case "square-rounded":
-                height = 50;
-                width = 50;
-                rounded = 15;
-                break;
-            case "square-filled-rounded":
-                height = 50;
-                width = 50;
-                rounded = 15;
-                break;
             case "rectangle":
                 height = 50;
                 width = 100;
                 rounded = 0;
-                break;
-            case "rectangle-filled":
-                height = 50;
-                width = 100;
-                rounded = 0;
+                type = "container";
                 break;
             case "rectangle-rounded":
                 height = 50;
                 width = 100;
                 rounded = 15;
+                type = "container";
                 break;
-            case "rectangle-filled-rounded":
+            case "text":
                 height = 50;
                 width = 100;
-                rounded = 15;
+                type= "text";
                 break;
             default:
                 height = 0;
                 width = 0;
                 rounded = 0;
+                type = "";
                 addComponent = false;
                 break;
         }
         if(addComponent)
-            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0);
+            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, type);
     }
 
     return (
