@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import {DropdownMenu} from "../dropdowns/DropdownMenu";
 import {DropdownTooltip} from "../dropdowns/DropdownTooltip";
-import {ReactComponent as DesktopIcon} from "../svg/DesktopIcon.svg";
-import {ReactComponent as MobileIcon} from "../svg/MobileIcon.svg";
-import {ReactComponent as MobileIconHorizontal} from "../svg/MobileIconHorizontal.svg";
-import {ReactComponent as TabletIcon} from "../svg/TabletIcon.svg";
-import {ReactComponent as LaptopIcon} from "../svg/LaptopIcon.svg";
+import {ReactComponent as DesktopIcon} from "../../svg/DesktopIcon.svg";
+import {ReactComponent as MobileIcon} from "../../svg/MobileIcon.svg";
+import {ReactComponent as MobileIconHorizontal} from "../../svg/MobileIconHorizontal.svg";
+import {ReactComponent as TabletIcon} from "../../svg/TabletIcon.svg";
+import {ReactComponent as LaptopIcon} from "../../svg/LaptopIcon.svg";
 import { useState } from "react";
 
 export const WindowSizeButton = (props: WindowSizeButtonProps) => {

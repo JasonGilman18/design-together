@@ -23,8 +23,8 @@ defmodule ApiWeb.DesignChannel do
           width: component.width,
           position_x: component.position_x,
           position_y: component.position_y,
-          filled: component.filled,
-          rounded: component.rounded})
+          type: component.type
+        })
         {:noreply, socket}
       {:error, _errors} -> {:noreply, socket}
     end
@@ -37,10 +37,20 @@ defmodule ApiWeb.DesignChannel do
       width: component["style"]["width"],
       position_x: component["style"]["position_x"],
       position_y: component["style"]["position_y"],
-      filled: component["style"]["filled"],
       rounded: component["style"]["rounded"],
       align_horizontal: component["style"]["align_horizontal"],
-      align_vertical: component["style"]["align_vertical"]
+      align_vertical: component["style"]["align_vertical"],
+      margin_top: component["style"]["margin_top"],
+      margin_right: component["style"]["margin_right"],
+      margin_bottom: component["style"]["margin_bottom"],
+      margin_left: component["style"]["margin_left"],
+      padding_top: component["style"]["padding_top"],
+      padding_right: component["style"]["padding_right"],
+      padding_bottom: component["style"]["padding_bottom"],
+      padding_left: component["style"]["padding_left"],
+      background: component["style"]["background"],
+      border: component["style"]["border"],
+      text: component["style"]["text"]
     }
     case Design.compare_components(updateComponent, incomingData) do
       :different ->
@@ -50,6 +60,7 @@ defmodule ApiWeb.DesignChannel do
             broadcast_from!(socket, "update_component", %{
               id: component.id,
               document_id: component.document_id,
+              type: component.type,
               node: %{
                 parent: nil,
                 children: []
@@ -59,10 +70,20 @@ defmodule ApiWeb.DesignChannel do
                 width: component.width,
                 position_x: component.position_x,
                 position_y: component.position_y,
-                filled: component.filled,
                 rounded: component.rounded,
                 align_horizontal: component.align_horizontal,
-                align_vertical: component.align_vertical
+                align_vertical: component.align_vertical,
+                margin_top: component.margin_top,
+                margin_right: component.margin_right,
+                margin_bottom: component.margin_bottom,
+                margin_left: component.margin_left,
+                padding_top: component.padding_top,
+                padding_right: component.padding_right,
+                padding_bottom: component.padding_bottom,
+                padding_left: component.padding_left,
+                background: component.background,
+                border: component.border,
+                text: component.text
               }
             })
             {:noreply, socket}

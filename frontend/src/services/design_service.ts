@@ -20,7 +20,7 @@ export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCan
 }
 
 export function updateComponents(channel: Channel | undefined, component: Component | null, canvasWidth: number,
-    canvasHeight: number    
+    canvasHeight: number, canvas: React.RefObject<HTMLCanvasElement>   
 ) {
     if(component) {
         if(component.node.parent === null) {
@@ -31,13 +31,25 @@ export function updateComponents(channel: Channel | undefined, component: Compon
             if(component.updateRequired)
                 updateComponentToChannel(channel, component);
         }
-        setChildPositions(component, canvasWidth);
-        component.node.children.forEach((child) => {
-            if(child.updateRequired)
-                updateComponentToChannel(channel, child);
-            if(component.node.children.length > 0)
-                updateComponents(channel, child, canvasWidth, canvasHeight);
-        });
+        if(component.type === "text") {
+            const context = canvas.current?.getContext("2d");
+            if(context) {
+                context.font = "20px Arial";
+                var textWidth = 50;
+                if(textWidth < context.measureText(component.style.text).width)
+                    textWidth = context.measureText(component.style.text).width;
+                component.updateWidth(textWidth);
+            }
+        }
+        else {
+            setChildPositions(component, canvasWidth);
+            component.node.children.forEach((child) => {
+                if(child.updateRequired)
+                    updateComponentToChannel(channel, child);
+                if(component.node.children.length > 0)
+                    updateComponents(channel, child, canvasWidth, canvasHeight, canvas);
+            });
+        }
     }
 }
 
@@ -56,7 +68,10 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
             component.style.selected = false;
         });
         const selected = prevTree.find(id);
-        if(selected) selected.style.selected = true;
+        if(selected) {
+            selected.style.selected = true;
+            setMouseDown(selected.type);
+        }
         return prevTree.copy();
     });
 }
@@ -137,14 +152,15 @@ export function setChildPositions(parent: Component | null, canvasWidth: number
 function alignHorizontalStart(parent: Component) {
     var sumWidth = 0;
     parent.node.children.forEach((child) => {
-        const checkOverflow = parent.getComponentBounds().topLeft.x + child.style.width + sumWidth;
-        if(checkOverflow <= parent.getComponentBounds().topRight.x) {
-            child.updatePositionX(checkOverflow - child.style.width);
-            sumWidth += child.style.width;
+        const checkOverflow = parent.getComponentBounds().topLeft.x + parent.style.padding_left + child.style.width 
+            + child.style.margin_left + child.style.margin_right + sumWidth;
+        if(checkOverflow <= parent.getComponentBounds().topRight.x - parent.style.padding_right) {
+            child.updatePositionX(checkOverflow - child.style.width - child.style.margin_right);
+            sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         }
         else {
-            child.updatePositionX(parent.getComponentBounds().topLeft.x);
-            sumWidth = child.style.width;
+            child.updatePositionX(parent.getComponentBounds().topLeft.x = parent.style.padding_left);
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
         }
     });
 }
@@ -154,24 +170,29 @@ function alignHorizontalCenter(parent: Component) {
     var rows: {startOffset: number, components: Component[]}[] = [];
     var row: Component[] = [];
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
-        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
-            var startOffset = ((parent.style.width) - sumWidth + child.style.width) / 2;
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
+        if(parent.getComponentBounds().topLeft.x + parent.style.padding_left + sumWidth 
+            > parent.getComponentBounds().topRight.x - parent.style.padding_right
+        ) {
+            var startOffset = (parent.style.width - sumWidth - parent.style.padding_left 
+                - parent.style.padding_right + child.style.width) / 2;
             rows.push({startOffset: startOffset, components: row});
-            sumWidth = child.style.width;
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
             row = [child];
         }
         else {
             row.push(child);
         }
     });
-    var startOffset = ((parent.style.width) - sumWidth) / 2;
+    var startOffset = (parent.style.width - sumWidth - parent.style.padding_left 
+        - parent.style.padding_right) / 2;
     rows.push({startOffset: startOffset, components: row});
     rows.forEach((rowObject) => {
         sumWidth = 0;
         rowObject.components.forEach((child) => {
-            child.updatePositionX(parent.getComponentBounds().topLeft.x + rowObject.startOffset + sumWidth);
-            sumWidth += child.style.width;
+            child.updatePositionX(parent.getComponentBounds().topLeft.x + parent.style.padding_left 
+                + rowObject.startOffset + sumWidth + child.style.margin_left);
+            sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         });
     });
 }
@@ -180,42 +201,51 @@ function alignHorizontalEnd(parent: Component) {
     var sumWidth = 0;
     var row: Component[] = [];
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
-        if(parent.getComponentBounds().topRight.x - sumWidth < parent.getComponentBounds().topLeft.x) {
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
+        if(parent.getComponentBounds().topRight.x - sumWidth - parent.style.padding_right 
+            < parent.getComponentBounds().topLeft.x + parent.style.padding_left
+        ) {
             sumWidth = 0;
             for(var i=row.length-1;i>=0;i--) {
-               sumWidth += row[i].style.width;
-               row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+               sumWidth += row[i].style.width + row[i].style.margin_left + row[i].style.margin_right;
+               row[i].updatePositionX(parent.getComponentBounds().topRight.x - parent.style.padding_right 
+                    - sumWidth + row[i].style.margin_left);
             }
             row = [child];
-            sumWidth = child.style.width;
-            child.updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
+            child.updatePositionX(parent.getComponentBounds().topRight.x - parent.style.padding_right 
+                - sumWidth + child.style.margin_left);
         }   
         else
             row.push(child);
     });
     sumWidth = 0;
     for(var i=row.length-1;i>=0;i--) {
-        sumWidth += row[i].style.width;
-        row[i].updatePositionX(parent.getComponentBounds().topRight.x - sumWidth);
+        sumWidth += row[i].style.width + row[i].style.margin_left + row[i].style.margin_right;
+        row[i].updatePositionX(parent.getComponentBounds().topRight.x - parent.style.padding_right
+             - sumWidth + row[i].style.margin_left);
     }
 }
 
 function alignVerticalStart(parent: Component) {
     var sumWidth = 0;
-    var currentHeight = 0;
+    var currentHeight = parent.style.padding_top;
     var greatestHeight = 0;
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
-        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
-            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + greatestHeight);
-            sumWidth = child.style.width;
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
+        if(parent.getComponentBounds().topLeft.x + parent.style.padding_left + sumWidth 
+            > parent.getComponentBounds().topRight.x - parent.style.padding_right
+        ) {
+            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + greatestHeight + child.style.margin_top);
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
             currentHeight += greatestHeight;
-            greatestHeight = child.style.height;
+            greatestHeight = child.style.height + child.style.margin_top + child.style.margin_bottom;
         }
         else {
-            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight);
-            greatestHeight = child.style.height > greatestHeight ? child.style.height : greatestHeight;
+            child.updatePositionY(parent.getComponentBounds().topLeft.y + currentHeight + child.style.margin_top);
+            greatestHeight = child.style.height + child.style.margin_top + child.style.margin_bottom > greatestHeight 
+                ? child.style.height + child.style.margin_top + child.style.margin_bottom 
+                : greatestHeight;
         }
     });
 }
@@ -226,16 +256,20 @@ function alignVerticalCenter(parent: Component) {
     var rows: {greatestHeight: number, components: Component[]}[] = [];
     var row: Component[] = [];
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
-        if(parent.getComponentBounds().topLeft.x + sumWidth > parent.getComponentBounds().topRight.x) {
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
+        if(parent.getComponentBounds().topLeft.x + sumWidth + parent.style.padding_left 
+            > parent.getComponentBounds().topRight.x - parent.style.padding_right
+        ) {
             rows.push({greatestHeight: greatestHeight, components: row});
-            sumWidth = child.style.width;
-            greatestHeight = child.style.height;
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
+            greatestHeight = child.style.height + child.style.margin_top + child.style.margin_bottom;
             row = [child];
         }
         else {
             row.push(child);
-            greatestHeight = child.style.height > greatestHeight ? child.style.height : greatestHeight;
+            greatestHeight = child.style.height + child.style.margin_bottom + child.style.margin_top > greatestHeight 
+                ? child.style.height + child.style.margin_top + child.style.margin_bottom
+                : greatestHeight;
         }
     });
     rows.push({greatestHeight: greatestHeight, components: row});
@@ -243,41 +277,47 @@ function alignVerticalCenter(parent: Component) {
     rows.forEach((rowObject) => {
         sumHeight += rowObject.greatestHeight;
     });
-    const startOffset = ((parent.style.height) - sumHeight) / 2;
+    const startOffset = (parent.style.height - sumHeight - parent.style.padding_top - parent.style.padding_bottom) / 2;
     sumHeight = 0;
     rows.forEach((rowObject) => {
         rowObject.components.forEach((c) => {
-            c.updatePositionY(parent.getComponentBounds().topLeft.y + startOffset + sumHeight);
+            c.updatePositionY(parent.getComponentBounds().topLeft.y + parent.style.padding_top + startOffset + sumHeight 
+                + c.style.margin_top - c.style.margin_bottom
+            );
         });
         sumHeight += rowObject.greatestHeight;
     });
 }
 
 function alignVerticalEnd(parent: Component) {
-    
     var sumWidth = 0;
     var greatestHeight = 0;
     var currentHeight = 0;
     var row: Component[] = [];
     var stack = new Stack<{greatestHeight: number, components: Component[]}>();
     parent.node.children.forEach((child) => {
-        sumWidth += child.style.width;
-        if(parent.getComponentBounds().topRight.x - sumWidth < parent.getComponentBounds().topLeft.x) {
+        sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
+        if(parent.getComponentBounds().topRight.x - sumWidth - parent.style.padding_right 
+            < parent.getComponentBounds().topLeft.x + parent.style.padding_left
+        ) {
             stack.push({greatestHeight: greatestHeight, components: row});
             row = [child];
-            sumWidth = child.style.width;
+            sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
             greatestHeight = 0;
         }
         else
             row.push(child);
-        greatestHeight = greatestHeight < child.style.height ? child.style.height : greatestHeight;
+        greatestHeight = greatestHeight < child.style.height + child.style.margin_top + child.style.margin_bottom
+            ? child.style.height + child.style.margin_top + child.style.margin_bottom
+            : greatestHeight;
     });
     stack.push({greatestHeight: greatestHeight, components: row});
     var currentRow: {greatestHeight: number, components: Component[]};
     while(!stack.empty()) {
         currentRow = stack.pop();
         currentRow.components.forEach((component) => {
-            component.updatePositionY(parent.getComponentBounds().bottomRight.y - currentHeight - component.style.height);
+            component.updatePositionY(parent.getComponentBounds().bottomRight.y - parent.style.padding_bottom - currentHeight 
+                - component.style.height - component.style.margin_bottom);
         });
         currentHeight += currentRow.greatestHeight;
     }
@@ -299,20 +339,31 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
     const context = canvas.current?.getContext("2d");
     if(context !== null && context !== undefined) {
         context.beginPath();
-        draw(context, component);
-        if(component.style.filled) {
-            context.fillStyle = "black";
-            context.fill();
-            context.closePath();
-            if(component.style.selected) {
-                context.beginPath();
-                context.strokeStyle = "green";
-                context.lineWidth = 3;
-                draw(context, component);
+        if(component.type === "container") {
+            drawContainer(context, component);
+            if(component.style.background !== "transparent") {
+                context.fillStyle = component.style.background;
+                context.fill();
+                context.closePath();
+                if(component.style.selected) {
+                    context.beginPath();
+                    context.strokeStyle = "green";
+                    context.lineWidth = 3;
+                    drawContainer(context, component);
+                    context.stroke();
+                }
+            }
+            else {
+                context.strokeStyle = component.style.selected ? "green" : "black";
+                context.lineWidth = component.style.selected ? 3 : 1;
                 context.stroke();
             }
         }
-        else {
+        else if(component.type === "text") {
+            drawContainer(context, component);
+            context.fillText(component.style.text, component.style.position_x, 
+                component.style.position_y + component.style.height/2
+            );
             context.strokeStyle = component.style.selected ? "green" : "black";
             context.lineWidth = component.style.selected ? 3 : 1;
             context.stroke();
@@ -321,7 +372,7 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
     }
 }
 
-function draw(context: CanvasRenderingContext2D, component: Component) {
+function drawContainer(context: CanvasRenderingContext2D, component: Component) {
     if(component.style.rounded == 0)
         context.rect(component.style.position_x, component.style.position_y, component.style.width, component.style.height);
     else {

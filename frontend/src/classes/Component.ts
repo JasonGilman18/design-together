@@ -2,6 +2,7 @@ export default class Component {
     id: number;
     document_id: number;
     updateRequired: boolean;
+    type: string;
     style: ComponentStyle;
     node: {
         parent: Component | null,
@@ -9,11 +10,12 @@ export default class Component {
     };
 
     public constructor(componentId: number, documentId: number, parent: Component | null, positionX: number, 
-        positionY: number, height: number, width: number, filled: boolean, rounded: number
+        positionY: number, height: number, width: number, type: string
     ) {
         this.id = componentId;
         this.document_id = documentId;
         this.updateRequired = true;
+        this.type = type;
         this.node = {
             parent: parent,
             children: []
@@ -23,12 +25,30 @@ export default class Component {
             position_y: positionY,
             height: height,
             width: width,
-            filled: filled,
-            rounded: rounded,
+            rounded: 0,
             selected: false,
             align_horizontal: "start",
-            align_vertical: "start"
+            align_vertical: "start",
+            margin_top: 0,
+            margin_right: 0,
+            margin_bottom: 0,
+            margin_left: 0,
+            padding_top: 0,
+            padding_right: 0,
+            padding_bottom: 0,
+            padding_left: 0,
+            background: "transparent",
+            border: true,
+            text: ""
         };
+    }
+
+    public getTotalWidth() {
+        return this.style.width + this.style.margin_left + this.style.margin_right;
+    }
+
+    public getTotalHeight() {
+        return this.style.height + this.style.margin_top + this.style.margin_bottom;
     }
 
     public updatePositionX(position_x: number) {
@@ -59,13 +79,6 @@ export default class Component {
         }
     }
 
-    public updateFilled(filled: boolean) {
-        if(this.style.filled !== filled) {
-            this.style.filled = filled;
-            this.updateRequired = true;
-        }
-    }
-
     public updateRounded(rounded: number) {
         if(this.style.rounded !== rounded) {
             this.style.rounded = rounded;
@@ -87,6 +100,76 @@ export default class Component {
         }
     }
 
+    public updateMarginTop(margin_top: number) {
+        if(this.style.margin_top !== margin_top) {
+            this.style.margin_top = margin_top;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateMarginRight(margin_right: number) {
+        if(this.style.margin_right !== margin_right) {
+            this.style.margin_right = margin_right;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateMarginBottom(margin_bottom: number) {
+        if(this.style.margin_bottom !== margin_bottom) {
+            this.style.margin_bottom = margin_bottom;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateMarginLeft(margin_left: number) {
+        if(this.style.margin_left !== margin_left) {
+            this.style.margin_left = margin_left;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePaddingTop(padding_top: number) {
+        if(this.style.padding_top !== padding_top) {
+            this.style.padding_top = padding_top;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePaddingRight(padding_right: number) {
+        if(this.style.padding_right !== padding_right) {
+            this.style.padding_right = padding_right;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePaddingBottom(padding_bottom: number) {
+        if(this.style.padding_bottom !== padding_bottom) {
+            this.style.padding_bottom = padding_bottom;
+            this.updateRequired = true;
+        }
+    }
+
+    public updatePaddingLeft(padding_left: number) {
+        if(this.style.padding_left !== padding_left) {
+            this.style.padding_left = padding_left;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateBackground(background: string) {
+        if(this.style.background !== background) {
+            this.style.background = background;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateText(text: string) {
+        if(this.style.text !== text) {
+            this.style.text = text;
+            this.updateRequired = true;
+        }
+    }
+
     public addChild(component: Component) {
         component.node.parent = this;
         this.node.children.push(component);
@@ -94,7 +177,7 @@ export default class Component {
 
     public removeChild(component: Component) {
         this.node.children.forEach((c, index) => {
-            if(component.id == c.id) {
+            if(component.id === c.id) {
                 this.node.children.splice(index);
             }
         });
@@ -190,9 +273,19 @@ type ComponentStyle = {
     position_y: number,
     height: number,
     width: number,
-    filled: boolean,
     rounded: number,
     selected: boolean,
     align_horizontal: string,
-    align_vertical: string
+    align_vertical: string,
+    margin_top: number,
+    margin_right: number,
+    margin_bottom: number,
+    margin_left: number,
+    padding_top: number,
+    padding_right: number,
+    padding_bottom: number,
+    padding_left: number,
+    background: string,
+    border: boolean,
+    text: string
 }

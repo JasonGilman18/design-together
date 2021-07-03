@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
-import {ReactComponent as ContainerIcon} from '../svg/ContainerIcon.svg';
+import {ReactComponent as ContainerIcon} from '../../svg/ContainerIcon.svg';
 
 export const ContainerButton = (props: ContainerButtonProps) => {
     
@@ -26,7 +26,7 @@ export const ContainerButton = (props: ContainerButtonProps) => {
             <Button
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={() => props.newComponent("rectangle-filled")}
+                onClick={() => props.newComponent("rectangle")}
             >
                 <ContainerIcon/>
             </Button>

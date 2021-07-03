@@ -60,7 +60,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             canvas.current.width = canvasWidth;
             canvas.current.height = canvasHeight;
             if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            updateComponents(channel, componentTree.root, canvasWidth, canvasHeight);
+            updateComponents(channel, componentTree.root, canvasWidth, canvasHeight, canvas);
             displayComponentsOnCanvas(canvas, componentTree.root);
         }
     }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
@@ -69,7 +69,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
-            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, false, 0);
+            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, "container");
         }
     }, [channel]);
 
@@ -77,68 +77,69 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         const docId = props.location.state.doc_id;
         var height: number;
         var width: number;
-        var filled: boolean;
         var rounded: number;
+        var type: string;
         var addComponent = true;
         switch(type) {
-            case "square":
-                height = 50;
-                width = 50;
-                filled = false;
-                rounded = 0;
-                break;
-            case "square-filled":
-                height = 50;
-                width = 50;
-                filled = true;
-                rounded = 0;
-                break;
-            case "square-rounded":
-                height = 50;
-                width = 50;
-                filled = false;
-                rounded = 15;
-                break;
-            case "square-filled-rounded":
-                height = 50;
-                width = 50;
-                filled = true;
-                rounded = 15;
-                break;
             case "rectangle":
                 height = 50;
                 width = 100;
-                filled = false;
                 rounded = 0;
-                break;
-            case "rectangle-filled":
-                height = 50;
-                width = 100;
-                filled = true;
-                rounded = 0;
+                type = "container";
                 break;
             case "rectangle-rounded":
                 height = 50;
                 width = 100;
-                filled = false;
                 rounded = 15;
+                type = "container";
                 break;
-            case "rectangle-filled-rounded":
+            case "text":
                 height = 50;
                 width = 100;
-                filled = true;
-                rounded = 15;
+                type= "text";
                 break;
             default:
                 height = 0;
                 width = 0;
-                filled = false;
                 rounded = 0;
+                type = "";
                 addComponent = false;
                 break;
         }
         if(addComponent)
-            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, filled, rounded);
+            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, type);
+    }
+
+    function keyDownOnCanvas(e: React.KeyboardEvent<HTMLCanvasElement>) {
+        if(mouseDown === "text") {
+            const selectedComponent = componentTree.find(selectedComponentId);
+            if(selectedComponent) {
+                console.log(e.key);
+                if(e.key === "Backspace")
+                    selectedComponent.updateText(selectedComponent.style.text.slice(0, -1));
+                else if(e.key === "Enter") {
+
+                }
+                else if(e.key === "Control") {
+
+                }
+                else if(e.key === "Shift") {
+
+                }
+                else if(e.key === "Alt") {
+
+                }
+                else if(e.key === "Tab") {
+
+                }
+                else if(e.key === "Meta") {
+
+                }
+                else
+                    selectedComponent.updateText(selectedComponent.style.text + e.key);
+                setComponentTree(prev => prev.copy());
+            }
+        }
     }
 
     return (
@@ -168,6 +169,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             setComponentTree={setComponentTree}
             newComponent={newComponent}
             setShowGridlines={setShowGridlines}
+            keyDownOnCanvas={keyDownOnCanvas}
         />
     );
 }

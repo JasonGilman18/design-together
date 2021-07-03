@@ -3,9 +3,6 @@ import styled from 'styled-components';
 import ComponentTree from '../../classes/ComponentTree';
 import {WindowSection} from './WindowSection';
 import {NewComponentSection} from './NewComponentSection';
-import {CursorsSection} from '../CursorsSection';
-import {LayoutSection} from '../component_toolbar/LayoutSection';
-import {SizeSection} from '../component_toolbar/SizeSection';
 
 export const MenuToolbar = (props: MenuToolbarProps) => (
     <ToolbarContainer componentToolbarWidth={props.componentToolbarWidth}>

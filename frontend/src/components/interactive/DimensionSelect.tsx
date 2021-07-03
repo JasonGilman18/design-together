@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { DropdownMenuSelect } from "../dropdowns/DropdownMenuSelect";
-import {ReactComponent as ChevronIcon} from "../svg/chevron.svg";
+import {ReactComponent as ChevronIcon} from "../../svg/chevron.svg";
 
 export const DimensionSelect = (props: DimensionSelectProps) => {
 
@@ -38,7 +38,7 @@ const Container = styled.span`
 `;
 
 const DimensionBox = styled.div`
-    height: 100%;
+    height: 21px;
     width: 39px;
     position: relative;
     background-color: whitesmoke;

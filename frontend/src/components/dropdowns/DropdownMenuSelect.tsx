@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useRef } from "react";
 import styled, { css, keyframes } from "styled-components";
-import {ReactComponent as DropdownMenuSelectIcon} from "../svg/DropdownMenuSelectIcon.svg";
+import {ReactComponent as DropdownMenuSelectIcon} from "../../svg/DropdownMenuSelectIcon.svg";
 
 export const DropdownMenuSelect = (props: DropdownMenuSelectProps) => {
 

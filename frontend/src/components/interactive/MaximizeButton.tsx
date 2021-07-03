@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import {DropdownTooltip} from "../dropdowns/DropdownTooltip";
-import {ReactComponent as MaximizeIcon} from '../svg/maximize.svg';
+import {ReactComponent as MaximizeIcon} from '../../svg/maximize.svg';
 
 export const MaximizeButton = (props: MaximizeButtonProps) => {
 
