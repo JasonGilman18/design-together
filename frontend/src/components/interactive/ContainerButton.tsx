@@ -26,7 +26,7 @@ export const ContainerButton = (props: ContainerButtonProps) => {
             <Button
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={() => props.newComponent("rectangle")}
+                onClick={() => props.newComponent("container_rectangle")}
             >
                 <ContainerIcon/>
             </Button>

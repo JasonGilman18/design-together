@@ -19,10 +19,6 @@ defmodule ApiWeb.DesignChannel do
           id: component.id,
           document_id: component.document_id,
           parent_id: component.parent_id,
-          height: component.height,
-          width: component.width,
-          position_x: component.position_x,
-          position_y: component.position_y,
           type: component.type
         })
         {:noreply, socket}
@@ -50,7 +46,9 @@ defmodule ApiWeb.DesignChannel do
       padding_left: component["style"]["padding_left"],
       background: component["style"]["background"],
       border: component["style"]["border"],
-      text: component["style"]["text"]
+      text: component["style"]["text"],
+      text_size: component["style"]["text_size"],
+      text_bold: component["style"]["text_bold"]
     }
     case Design.compare_components(updateComponent, incomingData) do
       :different ->
@@ -83,7 +81,9 @@ defmodule ApiWeb.DesignChannel do
                 padding_left: component.padding_left,
                 background: component.background,
                 border: component.border,
-                text: component.text
+                text: component.text,
+                text_size: component.text_size,
+                text_bold: component.text_bold
               }
             })
             {:noreply, socket}

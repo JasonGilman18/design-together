@@ -26,7 +26,7 @@ export const HeaderOneButton = (props: TextButtonProps) => {
             <Button
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={() => props.newComponent("header_one")}
+                onClick={() => props.newComponent("text_header_one")}
             >
                 <TextIcon/>
             </Button>

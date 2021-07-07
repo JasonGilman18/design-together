@@ -9,10 +9,11 @@ export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCan
     component: Component | null
 ) {
     if(component) {
+        const context = canvas.current?.getContext("2d");
         if(component.node.parent === null)
-            drawComponentOnCanvas(canvas, component);
+            drawComponentOnCanvas(context, component);
         component.node.children.forEach((child) => {
-            drawComponentOnCanvas(canvas, child);
+            drawComponentOnCanvas(context, child);
             if(component.node.children.length > 0)
                 displayComponentsOnCanvas(canvas, child);
         });
@@ -31,10 +32,11 @@ export function updateComponents(channel: Channel | undefined, component: Compon
             if(component.updateRequired)
                 updateComponentToChannel(channel, component);
         }
-        if(component.type === "text") {
+        if(component.type.substring(0, component.type.indexOf("_")) === "text") {
             const context = canvas.current?.getContext("2d");
             if(context) {
-                context.font = "20px Arial";
+                var bold = component.style.text_bold ? "bold " : "normal ";
+                context.font = bold + component.style.text_size + "px Arial";
                 var textWidth = 50;
                 if(textWidth < context.measureText(component.style.text).width)
                     textWidth = context.measureText(component.style.text).width;
@@ -333,13 +335,23 @@ function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>)
     }
 }
 
-function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
+function drawComponentOnCanvas(context: CanvasRenderingContext2D | null | undefined, 
     component: Component
 ) {
-    const context = canvas.current?.getContext("2d");
     if(context !== null && context !== undefined) {
-        context.beginPath();
-        if(component.type === "container") {
+        if(component.type.substring(0, component.type.indexOf("_")) === "text") {
+            context.beginPath();
+            drawContainer(context, component);
+            context.strokeStyle = component.style.selected ? "green" : "black";
+            context.lineWidth = component.style.selected ? 3 : 1;
+            context.stroke();
+            context.closePath();
+            context.fillText(component.style.text, component.style.position_x, 
+                component.style.position_y + component.style.height/2
+            );
+        }
+        else {
+            context.beginPath();
             drawContainer(context, component);
             if(component.style.background !== "transparent") {
                 context.fillStyle = component.style.background;
@@ -358,17 +370,8 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
                 context.lineWidth = component.style.selected ? 3 : 1;
                 context.stroke();
             }
+            context.closePath();
         }
-        else if(component.type === "text") {
-            drawContainer(context, component);
-            context.fillText(component.style.text, component.style.position_x, 
-                component.style.position_y + component.style.height/2
-            );
-            context.strokeStyle = component.style.selected ? "green" : "black";
-            context.lineWidth = component.style.selected ? 3 : 1;
-            context.stroke();
-        }
-        context.closePath();
     }
 }
 
