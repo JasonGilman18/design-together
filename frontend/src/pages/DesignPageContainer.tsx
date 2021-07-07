@@ -56,12 +56,18 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
 
     useEffect(() => {
         if(canvas.current !== null && canvas.current !== undefined) {
-            canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
-            canvas.current.width = canvasWidth;
-            canvas.current.height = canvasHeight;
-            if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            updateComponents(channel, componentTree.root, canvasWidth, canvasHeight, canvas);
-            displayComponentsOnCanvas(canvas, componentTree.root);
+            var ctx = canvas.current.getContext("2d");
+            if(ctx) {
+                ctx.clearRect(0,0, canvas.current.width, canvas.current.height);
+                canvas.current.width = window.devicePixelRatio * canvasWidth;
+                canvas.current.height = window.devicePixelRatio * canvasHeight;
+                canvas.current.style.width = canvasWidth + "px";
+                canvas.current.style.height = canvasHeight + "px";
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                if(showGridlines) drawGridlinesOnCanvas(ctx, canvasWidth, canvasHeight);
+                updateComponents(channel, componentTree.root, canvasWidth, canvasHeight, ctx);
+                displayComponentsOnCanvas(ctx, componentTree.root);
+            }
         }
     }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
 
