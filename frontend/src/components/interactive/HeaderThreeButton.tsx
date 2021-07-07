@@ -1,9 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
-import {ReactComponent as TextIcon} from '../../svg/TextIcon.svg';
+import {ReactComponent as TextIcon} from '../../svg/HeaderThreeIcon.svg';
 
-export const TextButton = (props: TextButtonProps) => {
+export const HeaderThreeButton = (props: TextButtonProps) => {
     
     const [showTooltip, setShowTooltip] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
@@ -26,14 +26,14 @@ export const TextButton = (props: TextButtonProps) => {
             <Button
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={() => props.newComponent("text")}
+                onClick={() => props.newComponent("header_three")}
             >
                 <TextIcon/>
             </Button>
             {
                 showTooltip
                 ? <DropdownTooltip>
-                    Container Component
+                    Small Header Component
                   </DropdownTooltip>
                 : null
             }
@@ -60,8 +60,8 @@ const Button = styled.button`
     align-items: center;
     cursor: pointer;
     & > svg {
-        height: 20px;
-        width: 20px;
+        height: 18px;
+        width: 18px;
         fill: #282c33;
     }
 `;

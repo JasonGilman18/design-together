@@ -93,7 +93,22 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 rounded = 15;
                 type = "container";
                 break;
-            case "text":
+            case "header_one":
+                height = 100;
+                width = 100;
+                type = "text";
+                break;
+            case "header_two":
+                height = 75;
+                width = 100;
+                type = "text";
+                break;
+            case "header_three":
+                height = 50;
+                width = 100;
+                type = "text";
+                break;
+            case "text_block":
                 height = 50;
                 width = 100;
                 type= "text";
