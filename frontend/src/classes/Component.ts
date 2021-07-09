@@ -64,7 +64,7 @@ export default class Component {
             height: height,
             width: width,
             rounded: rounded,
-            selected: false,
+            selected: type === "document",
             align_horizontal: "start",
             align_vertical: "start",
             margin_top: 0,
@@ -92,6 +92,7 @@ export default class Component {
     }
 
     public updatePositionX(position_x: number) {
+        //border width instead of 1
         if(this.style.position_x !== position_x) {
             this.style.position_x = position_x;
             this.updateRequired = true;

@@ -330,7 +330,7 @@ function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>)
     }
 }
 
-function drawComponentOnCanvas(context: CanvasRenderingContext2D | null | undefined, 
+function drawComponentOnCanvas(context: CanvasRenderingContext2D, 
     component: Component
 ) {
     if(context !== null && context !== undefined) {
@@ -339,6 +339,9 @@ function drawComponentOnCanvas(context: CanvasRenderingContext2D | null | undefi
             drawContainer(context, component);
             var bold = component.style.text_bold ? "bold " : "normal ";
             context.font = bold + component.style.text_size + "px Arial";
+            context.fillStyle = component.style.background === "transparent"
+                ? "#000000"
+                : component.style.background;
             context.fillText(component.style.text, component.style.position_x, 
                 component.style.position_y + component.style.height/2
             );
@@ -352,7 +355,7 @@ function drawComponentOnCanvas(context: CanvasRenderingContext2D | null | undefi
                 context.fillStyle = component.style.background;
                 context.fill();
                 context.closePath();
-                if(component.style.selected) {
+                if(component.style.selected && component.type !== "document") {
                     context.beginPath();
                     context.strokeStyle = "green";
                     context.lineWidth = 3;
@@ -361,9 +364,11 @@ function drawComponentOnCanvas(context: CanvasRenderingContext2D | null | undefi
                 }
             }
             else {
-                context.strokeStyle = component.style.selected ? "green" : "black";
-                context.lineWidth = component.style.selected ? 3 : 1;
-                context.stroke();
+                if(component.type !== "document") {
+                    context.strokeStyle = component.style.selected ? "green" : "black";
+                    context.lineWidth = component.style.selected ? 3 : 1;
+                    context.stroke();
+                }
             }
         }
         context.closePath();
@@ -371,23 +376,30 @@ function drawComponentOnCanvas(context: CanvasRenderingContext2D | null | undefi
 }
 
 function drawContainer(context: CanvasRenderingContext2D, component: Component) {
-    if(component.style.rounded == 0)
-        context.rect(component.style.position_x, component.style.position_y, component.style.width, component.style.height);
+    const borderWidth = component.style.selected ? 1.5 : .5;
+    if(component.style.rounded == 0) {
+        const bounds = component.getComponentBounds();
+        context.moveTo(bounds.topLeft.x + borderWidth, bounds.topLeft.y + borderWidth);
+        context.lineTo(bounds.bottomLeft.x + borderWidth, bounds.bottomLeft.y - borderWidth);
+        context.lineTo(bounds.bottomRight.x - borderWidth, bounds.bottomRight.y - borderWidth);
+        context.lineTo(bounds.topRight.x - borderWidth, bounds.topRight.y + borderWidth);
+        context.lineTo(bounds.topLeft.x, bounds.topLeft.y + borderWidth);
+    }
     else {
         const bounds = component.getComponentBounds();
-        context.moveTo(bounds.topLeft.x, bounds.topLeft.y+component.style.rounded);
-        context.lineTo(bounds.bottomLeft.x, bounds.bottomLeft.y-component.style.rounded);
-        context.arcTo(bounds.bottomLeft.x, bounds.bottomLeft.y,
-            bounds.bottomRight.x, bounds.bottomRight.y, component.style.rounded);
-        context.lineTo(bounds.bottomRight.x-component.style.rounded, bounds.bottomRight.y);
-        context.arcTo(bounds.bottomRight.x, bounds.bottomRight.y, 
-            bounds.topRight.x, bounds.topRight.y, component.style.rounded);
-        context.lineTo(bounds.topRight.x, bounds.topRight.y+component.style.rounded);
-        context.arcTo(bounds.topRight.x, bounds.topRight.y,
-            bounds.topLeft.x, bounds.topLeft.y, component.style.rounded);
-        context.lineTo(bounds.topLeft.x+component.style.rounded, bounds.topLeft.y);
-        context.arcTo(bounds.topLeft.x, bounds.topLeft.y,
-            bounds.bottomLeft.x, bounds.bottomLeft.y, component.style.rounded);
+        context.moveTo(bounds.topLeft.x + borderWidth, bounds.topLeft.y+component.style.rounded + borderWidth);
+        context.lineTo(bounds.bottomLeft.x + borderWidth, bounds.bottomLeft.y-component.style.rounded - borderWidth);
+        context.arcTo(bounds.bottomLeft.x + borderWidth, bounds.bottomLeft.y - borderWidth,
+            bounds.bottomRight.x - borderWidth, bounds.bottomRight.y - borderWidth, component.style.rounded);
+        context.lineTo(bounds.bottomRight.x-component.style.rounded - borderWidth, bounds.bottomRight.y - borderWidth);
+        context.arcTo(bounds.bottomRight.x - borderWidth, bounds.bottomRight.y - borderWidth, 
+            bounds.topRight.x - borderWidth, bounds.topRight.y + borderWidth, component.style.rounded);
+        context.lineTo(bounds.topRight.x - borderWidth, bounds.topRight.y+component.style.rounded + borderWidth);
+        context.arcTo(bounds.topRight.x - borderWidth, bounds.topRight.y + borderWidth,
+            bounds.topLeft.x + borderWidth, bounds.topLeft.y + borderWidth, component.style.rounded);
+        context.lineTo(bounds.topLeft.x+component.style.rounded + borderWidth, bounds.topLeft.y + borderWidth);
+        context.arcTo(bounds.topLeft.x + borderWidth, bounds.topLeft.y + borderWidth,
+            bounds.bottomLeft.x + borderWidth, bounds.bottomLeft.y - borderWidth, component.style.rounded);
     }
 }
 
