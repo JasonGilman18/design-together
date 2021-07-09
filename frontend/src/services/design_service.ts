@@ -5,22 +5,20 @@ import ComponentTree from "../classes/ComponentTree";
 import Stack from "../classes/Stack";
 import { updateComponentToChannel } from "./ws_api_service";
 
-export function displayComponentsOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
-    component: Component | null
-) {
+export function displayComponentsOnCanvas(context: CanvasRenderingContext2D, component: Component | null) {
     if(component) {
         if(component.node.parent === null)
-            drawComponentOnCanvas(canvas, component);
+            drawComponentOnCanvas(context, component);
         component.node.children.forEach((child) => {
-            drawComponentOnCanvas(canvas, child);
+            drawComponentOnCanvas(context, child);
             if(component.node.children.length > 0)
-                displayComponentsOnCanvas(canvas, child);
+                displayComponentsOnCanvas(context, child);
         });
     }
 }
 
 export function updateComponents(channel: Channel | undefined, component: Component | null, canvasWidth: number,
-    canvasHeight: number, canvas: React.RefObject<HTMLCanvasElement>   
+    canvasHeight: number, context: CanvasRenderingContext2D 
 ) {
     if(component) {
         if(component.node.parent === null) {
@@ -31,15 +29,13 @@ export function updateComponents(channel: Channel | undefined, component: Compon
             if(component.updateRequired)
                 updateComponentToChannel(channel, component);
         }
-        if(component.type === "text") {
-            const context = canvas.current?.getContext("2d");
-            if(context) {
-                context.font = "20px Arial";
-                var textWidth = 50;
-                if(textWidth < context.measureText(component.style.text).width)
-                    textWidth = context.measureText(component.style.text).width;
-                component.updateWidth(textWidth);
-            }
+        if(component.type.substring(0, component.type.indexOf("_")) === "text") {
+            var bold = component.style.text_bold ? "bold " : "normal ";
+            context.font = bold + component.style.text_size + "px Arial";
+            var textWidth = 50;
+            if(textWidth < context.measureText(component.style.text).width)
+                textWidth = context.measureText(component.style.text).width;
+            component.updateWidth(textWidth);
         }
         else {
             setChildPositions(component, canvasWidth);
@@ -47,7 +43,7 @@ export function updateComponents(channel: Channel | undefined, component: Compon
                 if(child.updateRequired)
                     updateComponentToChannel(channel, child);
                 if(component.node.children.length > 0)
-                    updateComponents(channel, child, canvasWidth, canvasHeight, canvas);
+                    updateComponents(channel, child, canvasWidth, canvasHeight, context);
             });
         }
     }
@@ -97,9 +93,10 @@ function findSelectedComponentId(componentTree: ComponentTree, mousePos: {x: num
     return id;
 }
 
-export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>,
-    canvasWidth: number, canvasHeight: number) {
-    const ctx = canvas.current?.getContext('2d');
+export function drawGridlinesOnCanvas(context: CanvasRenderingContext2D,
+    canvasWidth: number, canvasHeight: number
+) {
+    const ctx = context;
     const height = canvasHeight;
     const width = canvasWidth;
     const cellSize = 10;
@@ -118,7 +115,7 @@ export function drawGridlinesOnCanvas(canvas: React.MutableRefObject<HTMLCanvasE
         ctx.strokeStyle = "#dcdcdc"; //#f6f6f6
         ctx.lineWidth = .5;
     }
-    ctx?.stroke();
+    ctx.stroke();
 }
 
 export function setChildPositions(parent: Component | null, canvasWidth: number
@@ -333,13 +330,23 @@ function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>)
     }
 }
 
-function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement | null>, 
+function drawComponentOnCanvas(context: CanvasRenderingContext2D | null | undefined, 
     component: Component
 ) {
-    const context = canvas.current?.getContext("2d");
     if(context !== null && context !== undefined) {
         context.beginPath();
-        if(component.type === "container") {
+        if(component.type.substring(0, component.type.indexOf("_")) === "text") {
+            drawContainer(context, component);
+            var bold = component.style.text_bold ? "bold " : "normal ";
+            context.font = bold + component.style.text_size + "px Arial";
+            context.fillText(component.style.text, component.style.position_x, 
+                component.style.position_y + component.style.height/2
+            );
+            context.strokeStyle = component.style.selected ? "green" : "black";
+            context.lineWidth = component.style.selected ? 3 : 1;
+            context.stroke();
+        }
+        else {
             drawContainer(context, component);
             if(component.style.background !== "transparent") {
                 context.fillStyle = component.style.background;
@@ -358,15 +365,6 @@ function drawComponentOnCanvas(canvas: React.MutableRefObject<HTMLCanvasElement 
                 context.lineWidth = component.style.selected ? 3 : 1;
                 context.stroke();
             }
-        }
-        else if(component.type === "text") {
-            drawContainer(context, component);
-            context.fillText(component.style.text, component.style.position_x, 
-                component.style.position_y + component.style.height/2
-            );
-            context.strokeStyle = component.style.selected ? "green" : "black";
-            context.lineWidth = component.style.selected ? 3 : 1;
-            context.stroke();
         }
         context.closePath();
     }

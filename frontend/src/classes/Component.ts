@@ -9,9 +9,47 @@ export default class Component {
         children: Component[]
     };
 
-    public constructor(componentId: number, documentId: number, parent: Component | null, positionX: number, 
-        positionY: number, height: number, width: number, type: string
-    ) {
+    public constructor(componentId: number, documentId: number, parent: Component | null, type: string) {
+        var height = 0;
+        var width = 0;
+        var rounded = 0;
+        var text_size = 0;
+        var text_bold = false;
+        switch(type) {
+            case "container_rectangle":
+                height = 50;
+                width = 100;
+                break;
+            case "container_rectangle_rounded":
+                height = 50;
+                width = 100;
+                rounded = 15;
+                break;
+            case "text_header_one":
+                height = 100;
+                width = 100;
+                text_size = 75;
+                text_bold = true;
+                break;
+            case "text_header_two":
+                height = 75;
+                width = 100;
+                text_size = 50;
+                text_bold = true;
+                break;
+            case "text_header_three":
+                height = 50;
+                width = 100;
+                text_size = 30;
+                text_bold = false;
+                break;
+            case "text_block":
+                height = 50;
+                width = 50;
+                text_size = 20;
+                text_bold = false;
+                break;
+        }
         this.id = componentId;
         this.document_id = documentId;
         this.updateRequired = true;
@@ -21,11 +59,11 @@ export default class Component {
             children: []
         };
         this.style = {
-            position_x: positionX,
-            position_y: positionY,
+            position_x: 0,
+            position_y: 0,
             height: height,
             width: width,
-            rounded: 0,
+            rounded: rounded,
             selected: false,
             align_horizontal: "start",
             align_vertical: "start",
@@ -39,7 +77,9 @@ export default class Component {
             padding_left: 0,
             background: "transparent",
             border: true,
-            text: ""
+            text: "",
+            text_size: text_size,
+            text_bold: text_bold
         };
     }
 
@@ -170,6 +210,20 @@ export default class Component {
         }
     }
 
+    public updateTextSize(text_size: number) {
+        if(this.style.text_size !== text_size) {
+            this.style.text_size = text_size;
+            this.updateRequired = true;
+        }
+    }
+
+    public updateTextBold(text_bold: boolean) {
+        if(this.style.text_bold !== text_bold) {
+            this.style.text_bold = text_bold;
+            this.updateRequired = true;
+        }
+    }
+
     public addChild(component: Component) {
         component.node.parent = this;
         this.node.children.push(component);
@@ -287,5 +341,7 @@ type ComponentStyle = {
     padding_left: number,
     background: string,
     border: boolean,
-    text: string
+    text: string,
+    text_size: number,
+    text_bold: boolean
 }

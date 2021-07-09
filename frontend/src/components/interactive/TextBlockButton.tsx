@@ -1,9 +1,9 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
-import {ReactComponent as RoundedContainerIcon} from '../../svg/RoundedContainerIcon.svg';
+import {ReactComponent as TextIcon} from '../../svg/TextIcon.svg';
 
-export const RoundedContainerButton = (props: RoundedContainerButtonProps) => {
+export const TextBlockButton = (props: TextButtonProps) => {
     
     const [showTooltip, setShowTooltip] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
@@ -26,14 +26,14 @@ export const RoundedContainerButton = (props: RoundedContainerButtonProps) => {
             <Button
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
-                onClick={() => props.newComponent("container_rectangle_rounded")}
+                onClick={() => props.newComponent("text_block")}
             >
-                <RoundedContainerIcon/>
+                <TextIcon/>
             </Button>
             {
                 showTooltip
                 ? <DropdownTooltip>
-                    Container Component
+                    Text Block Component
                   </DropdownTooltip>
                 : null
             }
@@ -71,6 +71,6 @@ const Container = styled.span`
     margin-right: 10px;
 `;
 
-interface RoundedContainerButtonProps {
+interface TextButtonProps {
     newComponent: (type: string) => void
 };

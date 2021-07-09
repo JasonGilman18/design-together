@@ -29,7 +29,9 @@ defmodule Api.Design do
       recorded.background != incomingData.background ||
       recorded.border != incomingData.border ||
       recorded.type != incomingData.type ||
-      recorded.text != incomingData.text
+      recorded.text != incomingData.text ||
+      recorded.text_size != incomingData.text_size ||
+      recorded.text_bold != incomingData.text_bold
     do
       :different
     else

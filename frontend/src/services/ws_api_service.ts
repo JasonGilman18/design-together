@@ -26,9 +26,7 @@ export function newComponentFromChannel(channel: Channel | undefined,
     channel?.on("new_component", (responseComponent: any) => {
         setComponentTree(prevTree => {
             const newComponent = new Component(responseComponent.id, responseComponent.document_id, 
-                prevTree.find(responseComponent.parent_id), responseComponent.position_x, 
-                responseComponent.position_y, responseComponent.height, responseComponent.width,
-                responseComponent.type);
+                prevTree.find(responseComponent.parent_id), responseComponent.type);
             prevTree.insert(newComponent);
             return prevTree.copy();
         });
@@ -36,10 +34,9 @@ export function newComponentFromChannel(channel: Channel | undefined,
 }
 
 export function newComponentToChannel(channel: Channel | undefined, documentId: number, parentId: number | null, 
-    height: number, width: number, position_x: number, position_y: number, type: string
+    type: string
 ) {
-    channel?.push("new_component", {document_id: documentId, parent_id: parentId, height: height, 
-        width: width, position_x: position_x, position_y: position_y, type: type}, 10000);
+    channel?.push("new_component", {document_id: documentId, parent_id: parentId, type: type}, 10000);
 }
 
 export function updateComponentFromChannel(channel: Channel | undefined, 

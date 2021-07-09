@@ -56,12 +56,18 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
 
     useEffect(() => {
         if(canvas.current !== null && canvas.current !== undefined) {
-            canvas.current?.getContext('2d')?.clearRect(0,0, canvas.current.width, canvas.current.height);
-            canvas.current.width = canvasWidth;
-            canvas.current.height = canvasHeight;
-            if(showGridlines) drawGridlinesOnCanvas(canvas, canvasWidth, canvasHeight);
-            updateComponents(channel, componentTree.root, canvasWidth, canvasHeight, canvas);
-            displayComponentsOnCanvas(canvas, componentTree.root);
+            var ctx = canvas.current.getContext("2d");
+            if(ctx) {
+                ctx.clearRect(0,0, canvas.current.width, canvas.current.height);
+                canvas.current.width = window.devicePixelRatio * canvasWidth;
+                canvas.current.height = window.devicePixelRatio * canvasHeight;
+                canvas.current.style.width = canvasWidth + "px";
+                canvas.current.style.height = canvasHeight + "px";
+                ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                if(showGridlines) drawGridlinesOnCanvas(ctx, canvasWidth, canvasHeight);
+                updateComponents(channel, componentTree.root, canvasWidth, canvasHeight, ctx);
+                displayComponentsOnCanvas(ctx, componentTree.root);
+            }
         }
     }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
 
@@ -69,52 +75,19 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
-            newComponentToChannel(channel, props.location.state.doc_id, null, canvasHeight, canvasWidth, 0, 0, "container");
+            newComponentToChannel(channel, props.location.state.doc_id, null, "document");
         }
     }, [channel]);
 
     function newComponent(type: string) {
         const docId = props.location.state.doc_id;
-        var height: number;
-        var width: number;
-        var rounded: number;
-        var type: string;
-        var addComponent = true;
-        switch(type) {
-            case "rectangle":
-                height = 50;
-                width = 100;
-                rounded = 0;
-                type = "container";
-                break;
-            case "rectangle-rounded":
-                height = 50;
-                width = 100;
-                rounded = 15;
-                type = "container";
-                break;
-            case "text":
-                height = 50;
-                width = 100;
-                type= "text";
-                break;
-            default:
-                height = 0;
-                width = 0;
-                rounded = 0;
-                type = "";
-                addComponent = false;
-                break;
-        }
-        if(addComponent)
-            newComponentToChannel(channel, docId, selectedComponentId, height, width, 0, 0, type);
+        newComponentToChannel(channel, docId, selectedComponentId, type);
     }
 
     function keyDownOnCanvas(e: React.KeyboardEvent<HTMLCanvasElement>) {
-        if(mouseDown === "text") {
+        if(mouseDown.substring(0, mouseDown.indexOf("_")) === "text") {
             const selectedComponent = componentTree.find(selectedComponentId);
             if(selectedComponent) {
-                console.log(e.key);
                 if(e.key === "Backspace")
                     selectedComponent.updateText(selectedComponent.style.text.slice(0, -1));
                 else if(e.key === "Enter") {

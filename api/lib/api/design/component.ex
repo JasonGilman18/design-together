@@ -5,7 +5,8 @@ defmodule Api.Design.Component do
   @derive {Jason.Encoder, only: [:parent_id, :document_id, :height, :width, :position_x,
     :position_y, :rounded, :align_horizontal, :align_vertical, :margin_top,
     :margin_right, :margin_bottom, :margin_left, :padding_top, :padding_right,
-    :padding_bottom, :padding_left, :background, :border, :type, :text]}
+    :padding_bottom, :padding_left, :background, :border, :type, :text,
+    :text_size, :text_bold]}
 
   schema "components" do
     field :parent_id, :integer
@@ -28,6 +29,8 @@ defmodule Api.Design.Component do
     field :border, :boolean
     field :type, :string
     field :text, :string
+    field :text_size, :integer
+    field :text_bold, :boolean
     field :document_id, :id
 
     timestamps()
@@ -38,7 +41,8 @@ defmodule Api.Design.Component do
     component
     |> cast(attrs, [:parent_id, :height, :width, :position_x, :position_y, :rounded,
       :align_horizontal, :align_vertical, :margin_top, :margin_right, :margin_bottom, :margin_left,
-      :padding_top, :padding_right, :padding_bottom, :padding_left, :background, :border, :type, :text, :document_id])
-    |> validate_required([:height, :width, :position_x, :position_y, :type, :document_id])
+      :padding_top, :padding_right, :padding_bottom, :padding_left, :background, :border, :type, :text,
+      :text_size, :text_bold, :document_id])
+    |> validate_required([:type, :document_id])
   end
 end
