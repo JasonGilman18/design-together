@@ -37,11 +37,9 @@ export const DesignPage = (props: DesignPageProps) => (
                     setComponentTree={props.setComponentTree}
                 />
                 <CanvasContainer>
-                    <canvas 
-                        id="canvasElement"
+                    <CanvasElement
                         ref={props.canvas}
                         tabIndex={0}
-                        style={{backgroundColor: "#ffffff", boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}}
                         onMouseDown={(e) => {
                             mouseDownOnCanvas(e, props.canvas, props.setComponentTree, props.componentTree, props.setMouseDown, props.setSelectedComponentId);
                         }}
@@ -72,6 +70,14 @@ const CanvasContainer = styled.div`
     justify-content: center;
     align-items: center;
     overflow: auto;
+`;
+
+const CanvasElement = styled.canvas`
+    background-color: #ffffff;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    &:focus {
+        outline: none;
+    }
 `;
 
 interface DesignPageProps {
