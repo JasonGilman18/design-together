@@ -6,6 +6,7 @@ import {HeaderOneButton} from '../interactive/HeaderOneButton';
 import {HeaderTwoButton} from '../interactive/HeaderTwoButton';
 import {HeaderThreeButton} from '../interactive/HeaderThreeButton';
 import { TextBlockButton } from "../interactive/TextBlockButton";
+import { GridContainerButton } from "../interactive/GridContainerButton";
 
 export const NewComponentSection = (props: NewComponentSectionProps) => (
     <Section>
@@ -16,6 +17,7 @@ export const NewComponentSection = (props: NewComponentSectionProps) => (
         <HeaderTwoButton newComponent={props.newComponent}/>
         <HeaderThreeButton newComponent={props.newComponent}/>
         <TextBlockButton newComponent={props.newComponent}/>
+        <GridContainerButton newComponent={props.newComponent}/>
     </Section>
 );
 

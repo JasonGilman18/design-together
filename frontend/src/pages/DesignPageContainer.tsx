@@ -64,14 +64,17 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 canvas.current.style.width = canvasWidth + "px";
                 canvas.current.style.height = canvasHeight + "px";
                 ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-                if(componentTree.components.length === 1)
-                    selectDocument();
                 if(showGridlines) drawGridlinesOnCanvas(ctx, canvasWidth, canvasHeight);
                 updateComponents(channel, componentTree.root, canvasWidth, canvasHeight, ctx);
                 displayComponentsOnCanvas(ctx, componentTree.root);
             }
         }
     }, [loading, componentTree.components, componentTree.root, canvasHeight, canvasWidth, showGridlines]);
+
+    useEffect(() => {
+        if(componentTree.components.length === 1)
+            selectDocument();
+    }, [componentTree.root]);
 
     useEffect(() => {
         if(channel !== undefined) {

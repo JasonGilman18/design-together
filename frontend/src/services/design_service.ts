@@ -156,7 +156,7 @@ function alignHorizontalStart(parent: Component) {
             sumWidth += child.style.width + child.style.margin_left + child.style.margin_right;
         }
         else {
-            child.updatePositionX(parent.getComponentBounds().topLeft.x = parent.style.padding_left);
+            child.updatePositionX(parent.getComponentBounds().topLeft.x + parent.style.padding_left);
             sumWidth = child.style.width + child.style.margin_left + child.style.margin_right;
         }
     });
