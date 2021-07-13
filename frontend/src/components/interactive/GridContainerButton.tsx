@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
 import {ReactComponent as GridIcon} from '../../svg/GridIcon.svg';
 import { DropdownGrid } from "../dropdowns/DropdownGrid";
 import { DimensionSelect } from "./DimensionSelect";
+import ComponentTree from "../../classes/ComponentTree";
 
 export const GridContainerButton = (props: GridContainerButtonProps) => {
     
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const [showTooltip, setShowTooltip] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
+    const [gridViewWidth, setGridViewWidth] = useState<number>(0);
+    const [gridViewHeight, setGridViewHeight] = useState<number>(0);
+    const [scale, setScale] = useState<number>(0);
     const [rowsInput, setRowsInput] = useState<number>(0);
     const [colsInput, setColsInput] = useState<number>(0);
     const [numRows, setNumRows] = useState<number>(0);
@@ -17,17 +21,55 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
     const [gridViewItems, setGridViewItems] = useState<{height: number, width: number}[]>([]);
     const [selectedItem, setSelectedItem] = useState<number>(-1);
 
-    function updateGridViewItems() {
-        const numItems = rowsInput * colsInput;
-        const items: {height: number, width: number}[] = [];
-        for(var i=0;i<numItems;i++) {
-           var newItem = {height: 5, width: 5};
-           items.push(newItem);
+    useEffect(() => {
+        const selectedComponent = props.componentTree.find(props.selectedComponentId);
+        if(selectedComponent) {
+            var scaledHeight = selectedComponent.style.height;
+            var scaledWidth = selectedComponent.style.width;
+            var scaleCount = 0;
+            while(scaledHeight > 104 || scaledWidth > 102.5) {
+                scaledHeight -= scaledHeight * .01;
+                scaledWidth -= scaledWidth * .01;
+                scaleCount++;
+            }
+            setGridViewWidth(scaledWidth);
+            setGridViewHeight(scaledHeight);
+            setScale(scaleCount);
+            setRowsInput(0);
+            setColsInput(0);
+            setNumRows(0);
+            setNumCols(0);
+            setGridViewItems([]);
+            setSelectedItem(-1);
         }
-        setNumRows(rowsInput);
-        setNumCols(colsInput);
-        setGridViewItems(items);
-        setSelectedItem(numItems > 0 ? 0 : -1);
+    }, [props.selectedComponentId]);
+
+    useEffect(() => {
+        const selectedComponent = props.componentTree.find(props.selectedComponentId);
+        if(selectedComponent) {
+
+            //need to check if it already has children then do update
+
+            gridViewItems.map((item) => {
+                props.newComponent("grid_" + item.width + "_" + item.height);
+            });
+        }
+    }, [gridViewItems]);
+
+    function updateGridViewItems() {
+        const selectedComponent = props.componentTree.find(props.selectedComponentId);
+        if(selectedComponent) {
+            const numItems = rowsInput * colsInput;
+            const items: {height: number, width: number}[] = [];
+            for(var i=0;i<numItems;i++) {
+                var newItem = {height: (selectedComponent.style.height/rowsInput), width: (selectedComponent.style.width/colsInput)};
+                items.push(newItem);
+            }
+            setNumRows(rowsInput);
+            setNumCols(colsInput);
+            setGridViewItems(items);
+            setSelectedItem(numItems > 0 ? 0 : -1);
+        }
     }
 
     function updateItemWidth(val: string) {
@@ -46,6 +88,22 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
                 return [...prev];
             });
         }
+    }
+
+    function getItemWidth(index: number) {
+        var width = gridViewItems[index].width;
+        for(var i=0;i<scale;i++) {
+            width -= width * .01;
+        }
+        return width;
+    }
+
+    function getItemHeight(index: number) {
+        var height = gridViewItems[index].height;
+        for(var i=0;i<scale;i++) {
+            height -= height * .01;
+        }
+        return height;
     }
     
     function showMenu() {
@@ -102,18 +160,25 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
                             onKeyPress={(e) => {if(e.key==="Enter") updateGridViewItems()}}
                         />
                     </RowColInputContainer>
-                    <GridViewContainer numRows={numRows} numCols={numCols}>
-                        {
-                            gridViewItems.map((item, index) => (
-                                <GridViewItem 
-                                    key={index} 
-                                    height={item.height} 
-                                    width={item.width}
-                                    onClick={() => setSelectedItem(index)}
-                                    selected={selectedItem===index}
-                                />
-                            ))
-                        }
+                    <GridViewContainer>
+                        <GridViewParent 
+                            numRows={numRows} 
+                            numCols={numCols}
+                            gridViewWidth={gridViewWidth}
+                            gridViewHeight={gridViewHeight}
+                        >
+                            {
+                                gridViewItems.map((item, index) => (
+                                    <GridViewItem 
+                                        key={index} 
+                                        height={getItemHeight(index)}
+                                        width={getItemWidth(index)}
+                                        onClick={() => setSelectedItem(index)}
+                                        selected={selectedItem===index}
+                                    />
+                                ))
+                            }
+                        </GridViewParent>
                     </GridViewContainer>
                     <GridItemInputContainer>
                         <ItemInputLabel>Width:</ItemInputLabel>
@@ -196,23 +261,38 @@ const RowColInput = styled.input`
     }
 `;
 
-const GridViewContainer = styled.span<{numRows: number, numCols: number}>`
+const GridViewContainer = styled.span`
     width: 100%;
     height: 100%;
     padding: 10px;
+    display: grid;
+    justify-items: center;
+    align-items: center;
     box-sizing: border-box;
+    border-bottom: solid 1px white;
+    overflow: hidden;
+`;
+
+const GridViewParent = styled.div<{numRows: number, numCols: number,
+    gridViewWidth: number, gridViewHeight: number
+}>`
+    height: ${props => props.gridViewHeight + "px"};
+    width: ${props => props.gridViewWidth + "px"};
+    border: solid 1px white;
+    border-radius: 3px;
     display: grid;
     grid-template-columns: repeat(${props => props.numCols}, auto);
     grid-template-rows: repeat(${props => props.numRows}, auto);
-    border-bottom: solid 1px white;
+    box-sizing: border-box;
 `;
 
 const GridViewItem = styled.div<{height: number, width: number, selected: boolean}>`
-    width: ${props => props.width + "%"};
-    height: ${props => props.height + "%"};
+    width: ${props => props.width + "px"};
+    height: ${props => props.height + "px"};
     background-color: ${props => props.selected?"white":"transparent"};
     border: solid 1px white;
     border-radius: 3px;
+    box-sizing: border-box;
 `;
 
 const GridItemInputContainer = styled.span`
@@ -249,5 +329,7 @@ const ItemInput = styled.input`
 `;
 
 interface GridContainerButtonProps {
-    newComponent: (type: string) => void
+    newComponent: (type: string) => void,
+    componentTree: ComponentTree,
+    selectedComponentId: number | null
 };

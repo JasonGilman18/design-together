@@ -15,40 +15,44 @@ export default class Component {
         var rounded = 0;
         var text_size = 0;
         var text_bold = false;
-        switch(type) {
-            case "container_rectangle":
-                height = 50;
-                width = 100;
-                break;
-            case "container_rectangle_rounded":
-                height = 50;
-                width = 100;
-                rounded = 15;
-                break;
-            case "text_header_one":
-                height = 100;
-                width = 100;
-                text_size = 75;
-                text_bold = true;
-                break;
-            case "text_header_two":
-                height = 75;
-                width = 100;
-                text_size = 50;
-                text_bold = true;
-                break;
-            case "text_header_three":
-                height = 50;
-                width = 100;
-                text_size = 30;
-                text_bold = false;
-                break;
-            case "text_block":
-                height = 50;
-                width = 50;
-                text_size = 20;
-                text_bold = false;
-                break;
+        if(type === "container_rectangle") {
+            height = 50;
+            width = 100;
+        }
+        else if(type === "container_rectangle_rounded") {
+            height = 50;
+            width = 100;
+            rounded = 15;
+        }
+        else if(type === "text_header_one") {
+            height = 100;
+            width = 100;
+            text_size = 75;
+            text_bold = true;
+        }
+        else if(type === "text_header_two") {
+            height = 75;
+            width = 100;
+            text_size = 50;
+            text_bold = true;
+        }
+        else if(type === "text_header_three") {
+            height = 50;
+            width = 100;
+            text_size = 30;
+            text_bold = false;
+        }
+        else if(type === "text_block") {
+            height = 50;
+            width = 50;
+            text_size = 20;
+            text_bold = false;
+        }
+        else if(type.substring(0, type.indexOf("_")) === "grid") {
+            var pos = type.indexOf("_");
+            width = parseFloat(type.substring(pos+1, type.indexOf("_", pos+1)));
+            pos  = type.indexOf("_", pos+1);
+            height = parseFloat(type.substring(pos+1));
         }
         this.id = componentId;
         this.document_id = documentId;

@@ -7,6 +7,7 @@ import {HeaderTwoButton} from '../interactive/HeaderTwoButton';
 import {HeaderThreeButton} from '../interactive/HeaderThreeButton';
 import { TextBlockButton } from "../interactive/TextBlockButton";
 import { GridContainerButton } from "../interactive/GridContainerButton";
+import ComponentTree from "../../classes/ComponentTree";
 
 export const NewComponentSection = (props: NewComponentSectionProps) => (
     <Section>
@@ -17,7 +18,11 @@ export const NewComponentSection = (props: NewComponentSectionProps) => (
         <HeaderTwoButton newComponent={props.newComponent}/>
         <HeaderThreeButton newComponent={props.newComponent}/>
         <TextBlockButton newComponent={props.newComponent}/>
-        <GridContainerButton newComponent={props.newComponent}/>
+        <GridContainerButton 
+            newComponent={props.newComponent}
+            componentTree={props.componentTree}
+            selectedComponentId={props.selectedComponentId}
+        />
     </Section>
 );
 
@@ -32,5 +37,7 @@ const Section = styled.div`
 `;
 
 interface NewComponentSectionProps {
-    newComponent: (type: string) => void
+    newComponent: (type: string) => void,
+    componentTree: ComponentTree,
+    selectedComponentId: number | null
 };

@@ -31,7 +31,11 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
                 canvasHeight={props.canvasHeight}
                 showGridlines={props.showGridlines}
             />
-            <NewComponentSection newComponent={props.newComponent}/>
+            <NewComponentSection 
+                newComponent={props.newComponent}
+                componentTree={props.componentTree}
+                selectedComponentId={props.selectedComponentId}
+            />
         </BottomSection>
     </ToolbarContainer>
 );
