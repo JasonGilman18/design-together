@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
 import {ReactComponent as GridIcon} from '../../svg/GridIcon.svg';
 import { DropdownGrid } from "../dropdowns/DropdownGrid";
 import { DimensionSelect } from "./DimensionSelect";
 import ComponentTree from "../../classes/ComponentTree";
+
+//need to figure out how to select measure object and deselect item object
+
+//when clicking on an item, remove item is an option.
+//when clicking select that one as your selectedComponentId
+
+//display the grid items with a dashed line, and make the grid button active.
+//above should happen automatically after creating
+
+//have a template grid options section below
+//things like typical layouts
 
 export const GridContainerButton = (props: GridContainerButtonProps) => {
     
@@ -20,6 +31,7 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
     const [numCols, setNumCols] = useState<number>(0);
     const [gridViewItems, setGridViewItems] = useState<{height: number, width: number}[]>([]);
     const [selectedItem, setSelectedItem] = useState<number>(-1);
+    const [selectedMeasure, setSelectedMeasure] = useState<string>("");
 
     useEffect(() => {
         const selectedComponent = props.componentTree.find(props.selectedComponentId);
@@ -105,6 +117,51 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
         }
         return height;
     }
+
+    function topMeasurement(index: number) {
+        return index < numCols;
+    }
+
+    function sideMeasurement(index: number) {
+        if(index === 0)
+            return true;
+        else if(Number.isInteger(index / numCols)) {
+            return true;
+        }
+        else
+            return false;
+    }
+
+    function mouseEnterOnItem(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        e.currentTarget.style.borderColor = "white";
+    }
+
+    function mouseLeaveOnItem(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        e.currentTarget.style.borderColor = "grey";
+    }
+
+    function mouseEnterOnMeasure(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        e.currentTarget.style.borderColor = "white";
+        if(e.currentTarget.parentElement)
+            e.currentTarget.parentElement.style.borderColor = "grey";
+        var child = e.currentTarget.children[0] as HTMLDivElement;
+        child.style.backgroundColor = "white";
+    }
+
+    function mouseLeaveOnMeasure(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        e.currentTarget.style.borderColor = "grey";
+        if(e.currentTarget.parentElement)
+            e.currentTarget.parentElement.style.borderColor = "grey";
+        var child = e.currentTarget.children[0] as HTMLDivElement;
+        child.style.backgroundColor = "grey";
+    }
+
+    function clickMeasure(e: React.MouseEvent<HTMLDivElement, MouseEvent>, measureClicked: string) {
+        e.stopPropagation();
+        e.preventDefault();
+        setSelectedMeasure(measureClicked);
+        setSelectedItem(-1);
+    }
     
     function showMenu() {
         if(timer) clearTimeout(timer);
@@ -173,9 +230,40 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
                                         key={index} 
                                         height={getItemHeight(index)}
                                         width={getItemWidth(index)}
-                                        onClick={() => setSelectedItem(index)}
+                                        onClick={() => {setSelectedItem(index);setSelectedMeasure("");}}
                                         selected={selectedItem===index}
-                                    />
+                                        onMouseEnter={(e) => mouseEnterOnItem(e)}
+                                        onMouseLeave={(e) => mouseLeaveOnItem(e)}
+                                    >
+                                        {
+                                            topMeasurement(index)
+                                            ? <TopMeasurement
+                                                height={getItemHeight(index)}
+                                                width={getItemWidth(index)}
+                                                onClick={(e) => clickMeasure(e, index + "_t")}
+                                                selected={selectedMeasure===(""+index+"_t") && selectedItem===-1}
+                                                onMouseEnter={(e) => mouseEnterOnMeasure(e)}
+                                                onMouseLeave={(e) => mouseLeaveOnMeasure(e)}
+                                              >
+                                                <TopCross/>
+                                              </TopMeasurement>
+                                            : null
+                                        }
+                                        {
+                                            sideMeasurement(index)
+                                            ? <SideMeasurement
+                                                height={getItemHeight(index)}
+                                                width={getItemWidth(index)}
+                                                onClick={(e) => clickMeasure(e, index + "_s")}
+                                                selected={selectedMeasure===(index+"_s") && selectedItem===-1}
+                                                onMouseEnter={(e) => mouseEnterOnMeasure(e)}
+                                                onMouseLeave={(e) => mouseLeaveOnMeasure(e)}
+                                              >
+                                                <SideCross/>
+                                              </SideMeasurement>
+                                            : null
+                                        }
+                                    </GridViewItem>                                    
                                 ))
                             }
                         </GridViewParent>
@@ -264,7 +352,6 @@ const RowColInput = styled.input`
 const GridViewContainer = styled.span`
     width: 100%;
     height: 100%;
-    padding: 10px;
     display: grid;
     justify-items: center;
     align-items: center;
@@ -278,7 +365,7 @@ const GridViewParent = styled.div<{numRows: number, numCols: number,
 }>`
     height: ${props => props.gridViewHeight + "px"};
     width: ${props => props.gridViewWidth + "px"};
-    border: solid 1px white;
+    border: solid 1px grey;
     border-radius: 3px;
     display: grid;
     grid-template-columns: repeat(${props => props.numCols}, auto);
@@ -286,13 +373,64 @@ const GridViewParent = styled.div<{numRows: number, numCols: number,
     box-sizing: border-box;
 `;
 
+const TopMeasurement = styled.div<{height: number, width: number, selected: boolean}>`
+    position: absolute;
+    top: -20px;
+    border-left: solid 1px ${props => props.selected?"white":"grey"} !important;
+    border-right: solid 1px ${props => props.selected?"white":"grey"} !important;
+    height: 15px;
+    box-sizing: border-box;
+    width: ${props => (props.width - 2) + "px"};
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    border-radius: 3px;
+    margin-bottom: 1px;
+    & > * {
+        background-color: ${props => props.selected?"white" : "grey"} !important;
+    }
+    &:hover {
+        border-color: white !important;
+        & > * {
+            background-color: white !important;
+        }
+    }
+`;
+
+const SideMeasurement = styled.div<{height: number, width: number, selected: boolean}>`
+    position: absolute;
+    left: -20px;
+    border-top: solid 1px ${props => props.selected?"white":"grey"} !important;
+    border-bottom: solid 1px ${props => props.selected?"white":"grey"} !important;
+    width: 15px;
+    box-sizing: border-box;
+    height: ${props => (props.height - 2) + "px"};
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    border-radius: 3px;
+    & > * {
+        background-color: ${props => props.selected?"white" : "grey"} !important;
+    }
+    &:hover {
+        border-color: white !important;
+        & > * {
+            background-color: white !important;
+        }
+    }
+`;
+
 const GridViewItem = styled.div<{height: number, width: number, selected: boolean}>`
     width: ${props => props.width + "px"};
     height: ${props => props.height + "px"};
     background-color: ${props => props.selected?"white":"transparent"};
-    border: solid 1px white;
+    border: solid 1px grey;
     border-radius: 3px;
     box-sizing: border-box;
+    position: relative;
+    &:hover {
+        border-color: white;
+    }
 `;
 
 const GridItemInputContainer = styled.span`
@@ -326,6 +464,16 @@ const ItemInput = styled.input`
     &:focus {
         outline: none;
     }
+`;
+
+const TopCross = styled.div`
+    height: 1px;
+    width: 100%;
+`;
+
+const SideCross = styled.div`
+    width: 1px;
+    height: 100%;
 `;
 
 interface GridContainerButtonProps {

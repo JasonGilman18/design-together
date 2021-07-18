@@ -52,7 +52,7 @@ const Content = styled.span`
     bottom: 0px;
     padding: 40px 30px 20px 25px;
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 40% 60%;
     grid-template-rows: 125px 115px;
     justify-items: start;
     align-items: start;
