@@ -50,9 +50,14 @@ export default class Component {
         }
         else if(type.substring(0, type.indexOf("_")) === "grid") {
             var pos = type.indexOf("_");
+            var rows = parseFloat(type.substring(pos+1, type.indexOf("_", pos+1))); 
+            pos  = type.indexOf("_", pos+1);
+            var cols = parseFloat(type.substring(pos+1, type.indexOf("_", pos+1)));
+            pos  = type.indexOf("_", pos+1);
             width = parseFloat(type.substring(pos+1, type.indexOf("_", pos+1)));
             pos  = type.indexOf("_", pos+1);
             height = parseFloat(type.substring(pos+1));
+            type = "grid_" + rows + "_" + cols;
         }
         this.id = componentId;
         this.document_id = documentId;

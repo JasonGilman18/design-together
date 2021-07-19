@@ -7,10 +7,6 @@ import { DimensionSelect } from "./DimensionSelect";
 import ComponentTree from "../../classes/ComponentTree";
 
 
-//issue updating when updating an item. It only changes the item and not the row/col
-
-
-
 //the grid dimensions should only be editable in the dropdown window.
 //on the component toolbar if the type if "grid_" then dont allow width/height editing
 
@@ -69,7 +65,7 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
             if(gridViewItems.length === selectedComponent.node.children.length) {
                 if(selectedComponent.node.children.length === 0) {
                     gridViewItems.map((item) => {
-                        props.newComponent("grid_" + item.width + "_" + item.height);
+                        props.newComponent("grid_" + numRows + "_" + numCols + "_" + item.width + "_" + item.height);
                     });
                 }
                 else {
@@ -83,7 +79,7 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
             }
             else {
                 gridViewItems.map((item) => {
-                    props.newComponent("grid_" + item.width + "_" + item.height);
+                    props.newComponent("grid_" + numRows + "_" + numCols + "_" + item.width + "_" + item.height);
                 });
             }
         }
@@ -101,9 +97,9 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
                             var rowMeasure = "" + (r*numCols) + "_s";
                             var colDim = parseFloat(getMeasureDimension(colMeasure));
                             var rowDim = parseFloat(getMeasureDimension(rowMeasure));
-                            if(selectedComponent.node.children[index].style.width !== colDim)
+                            if(prev[index].width !== colDim)
                                 prev[index].width = colDim;
-                            if(selectedComponent.node.children[index].style.height !== rowDim)
+                            if(prev[index].height !== rowDim)
                                 prev[index].height = rowDim;
                             index++;
                         }
@@ -161,8 +157,11 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
 
     function updateItemWidth(val: string) {
         if(selectedItem !== -1) {
-            setGridViewItems(prev => {
-                prev[selectedItem].width = parseFloat(val);
+            setGridViewMeasures(prev => {
+                var whichCol = selectedItem;
+                while(whichCol > numCols)
+                    whichCol -= numCols;
+                updateMeasureDimension(""+selectedItem+"_t", val);
                 return [...prev];
             });
         }
@@ -170,17 +169,20 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
 
     function updateItemHeight(val: string) {
         if(selectedItem !== -1) {
-            setGridViewItems(prev => {
-                prev[selectedItem].height = parseFloat(val); 
+            setGridViewMeasures(prev => {
+                var whichRow = 1;
+                while(selectedItem >= whichRow*numCols)
+                    whichRow++;
+                updateMeasureDimension(""+((whichRow-1)*numCols)+"_s", val);
                 return [...prev];
             });
         }   
     }
 
-    function updateMeasureDimension(val: string) {
+    function updateMeasureDimension(measure: string, val: string) {
         setGridViewMeasures(prev => {
             prev.forEach((m) => {
-                if(m.measure == selectedMeasure) {
+                if(m.measure == measure) {
                     m.dimension = parseFloat(val);
                 }    
             });
@@ -372,7 +374,7 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
                                     <ItemInputLabel>{selectedMeasure.slice(-1)==="t"?"Col Width:":"Row Height:"}</ItemInputLabel>
                                     <ItemInput
                                         value={getMeasureDimension(selectedMeasure)}
-                                        onChange={(e) => updateMeasureDimension(e.currentTarget.value)}
+                                        onChange={(e) => updateMeasureDimension(selectedMeasure, e.currentTarget.value)}
                                     />
                                     <DimensionSelect/>
                                 </GridItemInputContainer>
@@ -469,8 +471,8 @@ const GridViewParent = styled.div<{numRows: number, numCols: number,
     border: solid 1px grey;
     border-radius: 3px;
     display: grid;
-    grid-template-columns: repeat(${props => props.numCols}, auto);
-    grid-template-rows: repeat(${props => props.numRows}, auto);
+    grid-template-columns: repeat(${props => props.numCols}, max-content);
+    grid-template-rows: repeat(${props => props.numRows}, max-content);
     box-sizing: border-box;
 `;
 
