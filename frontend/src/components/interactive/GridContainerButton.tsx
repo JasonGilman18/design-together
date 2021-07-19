@@ -6,16 +6,20 @@ import { DropdownGrid } from "../dropdowns/DropdownGrid";
 import { DimensionSelect } from "./DimensionSelect";
 import ComponentTree from "../../classes/ComponentTree";
 
-//need to figure out how to select measure object and deselect item object
 
-//when clicking on an item, remove item is an option.
-//when clicking select that one as your selectedComponentId
+//issue updating when updating an item. It only changes the item and not the row/col
+
+
+
+//the grid dimensions should only be editable in the dropdown window.
+//on the component toolbar if the type if "grid_" then dont allow width/height editing
+
+//after the grid is set, the user should be able to select multiple "grid" type components on the canvas
+//would need to figure out create one component or only place children in one of two active
 
 //display the grid items with a dashed line, and make the grid button active.
 //above should happen automatically after creating
 
-//have a template grid options section below
-//things like typical layouts
 
 export const GridContainerButton = (props: GridContainerButtonProps) => {
     
@@ -31,6 +35,7 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
     const [numCols, setNumCols] = useState<number>(0);
     const [gridViewItems, setGridViewItems] = useState<{height: number, width: number}[]>([]);
     const [selectedItem, setSelectedItem] = useState<number>(-1);
+    const [gridViewMeasures, setGridViewMeasures] = useState<{measure: string, dimension: number}[]>([]);
     const [selectedMeasure, setSelectedMeasure] = useState<string>("");
 
     useEffect(() => {
@@ -53,52 +58,88 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
             setNumCols(0);
             setGridViewItems([]);
             setSelectedItem(-1);
+            setGridViewMeasures([]);
+            setSelectedMeasure("");
         }
     }, [props.selectedComponentId]);
 
     useEffect(() => {
         const selectedComponent = props.componentTree.find(props.selectedComponentId);
         if(selectedComponent) {
-
-            //need to check if it already has children then do update
-
-            gridViewItems.map((item) => {
-                props.newComponent("grid_" + item.width + "_" + item.height);
-            });
+            if(gridViewItems.length === selectedComponent.node.children.length) {
+                if(selectedComponent.node.children.length === 0) {
+                    gridViewItems.map((item) => {
+                        props.newComponent("grid_" + item.width + "_" + item.height);
+                    });
+                }
+                else {
+                    selectedComponent.node.children.forEach((child, index) => {
+                        if(child.style.width !== gridViewItems[index].width)
+                            child.updateWidth(gridViewItems[index].width);
+                        if(child.style.height !== gridViewItems[index].height)
+                            child.updateHeight(gridViewItems[index].height);
+                    });
+                }
+            }
+            else {
+                gridViewItems.map((item) => {
+                    props.newComponent("grid_" + item.width + "_" + item.height);
+                });
+            }
         }
     }, [gridViewItems]);
+
+    useEffect(() => {
+        const selectedComponent = props.componentTree.find(props.selectedComponentId);
+        if(selectedComponent) {
+            if(selectedComponent.node.children.length > 0) {
+                setGridViewItems(prev => {
+                    var index = 0;
+                    for(var r=0;r<numRows;r++) {
+                        for(var c=0;c<numCols;c++) {
+                            var colMeasure = "" + c + "_t";
+                            var rowMeasure = "" + (r*numCols) + "_s";
+                            var colDim = parseFloat(getMeasureDimension(colMeasure));
+                            var rowDim = parseFloat(getMeasureDimension(rowMeasure));
+                            if(selectedComponent.node.children[index].style.width !== colDim)
+                                prev[index].width = colDim;
+                            if(selectedComponent.node.children[index].style.height !== rowDim)
+                                prev[index].height = rowDim;
+                            index++;
+                        }
+                    }
+                    return [...prev];
+                });
+            }
+        }
+    }, [gridViewMeasures]);
 
     function updateGridViewItems() {
         const selectedComponent = props.componentTree.find(props.selectedComponentId);
         if(selectedComponent) {
             const numItems = rowsInput * colsInput;
             const items: {height: number, width: number}[] = [];
+            const measures: {measure: string, dimension: number}[] = [];
             for(var i=0;i<numItems;i++) {
-                var newItem = {height: (selectedComponent.style.height/rowsInput), width: (selectedComponent.style.width/colsInput)};
+                var height = selectedComponent.style.height/rowsInput;
+                var width = selectedComponent.style.width/colsInput;
+                var newItem = {height: height, width: width};
                 items.push(newItem);
+                if(i === 0) {
+                    measures.push({dimension: height, measure: "0_s"});
+                    measures.push({dimension: width, measure: "0_t"});
+                }
+                else if(i < colsInput)
+                    measures.push({dimension: width, measure: i + "_t"});
+                else if(Number.isInteger(i / colsInput))
+                    measures.push({dimension: height, measure: i + "_s"});
             }
             setNumRows(rowsInput);
             setNumCols(colsInput);
             setGridViewItems(items);
             setSelectedItem(numItems > 0 ? 0 : -1);
-        }
-    }
-
-    function updateItemWidth(val: string) {
-        if(selectedItem > -1) {
-            setGridViewItems(prev => {
-                prev[selectedItem].width = parseInt(val);
-                return [...prev];
-            });
-        }
-    }
-
-    function updateItemHeight(val: string) {
-        if(selectedItem > -1) {
-            setGridViewItems(prev => {
-                prev[selectedItem].height = parseInt(val);
-                return [...prev];
-            });
+            setSelectedMeasure("");
+            setGridViewMeasures(measures);
         }
     }
 
@@ -116,6 +157,44 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
             height -= height * .01;
         }
         return height;
+    }
+
+    function updateItemWidth(val: string) {
+        if(selectedItem !== -1) {
+            setGridViewItems(prev => {
+                prev[selectedItem].width = parseFloat(val);
+                return [...prev];
+            });
+        }
+    }
+
+    function updateItemHeight(val: string) {
+        if(selectedItem !== -1) {
+            setGridViewItems(prev => {
+                prev[selectedItem].height = parseFloat(val); 
+                return [...prev];
+            });
+        }   
+    }
+
+    function updateMeasureDimension(val: string) {
+        setGridViewMeasures(prev => {
+            prev.forEach((m) => {
+                if(m.measure == selectedMeasure) {
+                    m.dimension = parseFloat(val);
+                }    
+            });
+            return [...prev];
+        });
+    }
+
+    function getMeasureDimension(measure: string): string {
+        var dim = "";
+        gridViewMeasures.forEach((m) => {
+            if(m.measure === measure)
+                dim = "" + m.dimension;
+        });
+        return dim;
     }
 
     function topMeasurement(index: number) {
@@ -268,20 +347,39 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
                             }
                         </GridViewParent>
                     </GridViewContainer>
-                    <GridItemInputContainer>
-                        <ItemInputLabel>Width:</ItemInputLabel>
-                        <ItemInput
-                            value={selectedItem===-1?"":gridViewItems[selectedItem].width}
-                            onChange={(e) => updateItemWidth(e.currentTarget.value)}
-                        />
-                        <DimensionSelect/>
-                        <ItemInputLabel>Height:</ItemInputLabel>
-                        <ItemInput
-                            value={selectedItem===-1?"":gridViewItems[selectedItem].height}
-                            onChange={(e) => updateItemHeight(e.currentTarget.value)}
-                        />
-                        <DimensionSelect/>
-                    </GridItemInputContainer>
+                        {
+                            selectedItem !== -1 && selectedMeasure === ""
+                            ? (
+                                <GridItemInputContainer>
+                                    <ItemInputLabel>Item Row Height:</ItemInputLabel>
+                                    <ItemInput
+                                        value={gridViewItems[selectedItem].height}
+                                        onChange={(e) => updateItemHeight(e.currentTarget.value)}
+                                    />
+                                    <DimensionSelect/>
+                                    <ItemInputLabel>Item Col Width:</ItemInputLabel>
+                                    <ItemInput
+                                        value={gridViewItems[selectedItem].width}
+                                        onChange={(e) => updateItemWidth(e.currentTarget.value)}
+                                    />
+                                    <DimensionSelect/>
+                                    <RemoveItemButton>Remove Item</RemoveItemButton>
+                                </GridItemInputContainer>
+                            )
+                            : selectedItem === -1 && selectedMeasure !== ""
+                            ? (
+                                <GridItemInputContainer>
+                                    <ItemInputLabel>{selectedMeasure.slice(-1)==="t"?"Col Width:":"Row Height:"}</ItemInputLabel>
+                                    <ItemInput
+                                        value={getMeasureDimension(selectedMeasure)}
+                                        onChange={(e) => updateMeasureDimension(e.currentTarget.value)}
+                                    />
+                                    <DimensionSelect/>
+                                </GridItemInputContainer>
+                            )
+                            : null
+                        }
+
                   </DropdownGrid>
                 : null
             }
@@ -321,8 +419,11 @@ const Container = styled.span`
 
 const RowColInputContainer = styled.span`
     width: 100%;
+    height: 100%;
+    box-sizing: border-box;
     display: grid;
-    grid-template-columns: 35% 65%;
+    grid-template-columns: 45% 55%;
+    grid-template-rows: 50% 50%;
     justify-items: start;
     align-items: start;
     border-bottom: solid 1px white;
@@ -439,7 +540,7 @@ const GridItemInputContainer = styled.span`
     width: 100%;
     overflow-y: scroll;
     display: grid;
-    grid-template-columns: 33% 33% 33%;
+    grid-template-columns: 40% 30% 30%;
     justify-items: start;
     align-items: center;
 `;
@@ -464,6 +565,15 @@ const ItemInput = styled.input`
     &:focus {
         outline: none;
     }
+`;
+
+const RemoveItemButton = styled(Button)`
+    grid-column: 1/4;
+    justify-self: center;
+    align-self: center;
+    background-color: white;
+    width: 100px;
+    height: 80%;
 `;
 
 const TopCross = styled.div`
