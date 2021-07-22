@@ -12,6 +12,7 @@ import ComponentTree from "../../classes/ComponentTree";
 
 //after the grid is set, the user should be able to select multiple "grid" type components on the canvas
 //would need to figure out create one component or only place children in one of two active
+//maybe something onHover over the grid items, it can display which it is or something 
 
 //display the grid items with a dashed line, and make the grid button active.
 //above should happen automatically after creating
@@ -96,12 +97,14 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
 
     useEffect(() => {
         const selectedComponent = props.componentTree.find(props.selectedComponentId);
-        if(selectedComponent) {
+        if(selectedComponent && gridViewItems.length !== 0) {
             if(gridViewItems.length === selectedComponent.node.children.length) {
                 if(selectedComponent.node.children.length === 0) {
                     gridViewItems.map((item) => {
                         props.newComponent("grid_" + numRows + "_" + numCols + "_" + item.width + "_" + item.height);
                     });
+                    selectedComponent.updateAlignHorizontal("grid");
+                    selectedComponent.updateAlignVertical("grid");
                 }
                 else {
                     selectedComponent.node.children.forEach((child, index) => {
@@ -116,9 +119,9 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
                 gridViewItems.map((item) => {
                     props.newComponent("grid_" + numRows + "_" + numCols + "_" + item.width + "_" + item.height);
                 });
+                selectedComponent.updateAlignHorizontal("grid");
+                selectedComponent.updateAlignVertical("grid");
             }
-            selectedComponent.updateAlignHorizontal("grid");
-            selectedComponent.updateAlignVertical("grid");
         }
     }, [gridViewItems]);
 
