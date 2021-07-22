@@ -7,13 +7,6 @@ import { DimensionSelect } from "./DimensionSelect";
 import ComponentTree from "../../classes/ComponentTree";
 
 
-//the grid dimensions should only be editable in the dropdown window.
-//on the component toolbar if the type if "grid_" then dont allow width/height editing
-
-//after the grid is set, the user should be able to select multiple "grid" type components on the canvas
-//would need to figure out create one component or only place children in one of two active
-//maybe something onHover over the grid items, it can display which it is or something 
-
 //display the grid items with a dashed line, and make the grid button active.
 //above should happen automatically after creating
 

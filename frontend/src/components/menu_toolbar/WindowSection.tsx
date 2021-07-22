@@ -25,7 +25,12 @@ export const WindowSection = (props: WindowSectionProps) => (
             componentToolbarWidth={props.componentToolbarWidth}
             menuToolbarHeight={props.menuToolbarHeight}
         />
-        <ShowGridButton setShowGridlines={props.setShowGridlines} showGridlines={props.showGridlines}/>
+        <ShowGridButton 
+            setShowGridlines={props.setShowGridlines}
+            setShowGridItems={props.setShowGridItems}
+            showGridlines={props.showGridlines}
+            showGridItems={props.showGridItems}
+        />
     </Section>
 );
 
@@ -91,7 +96,9 @@ interface WindowSectionProps {
     canvasWidth: number,
     canvasHeight: number,
     showGridlines: boolean,
+    showGridItems: boolean,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
-    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>
+    setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
+    setShowGridItems: React.Dispatch<React.SetStateAction<boolean>>
 };

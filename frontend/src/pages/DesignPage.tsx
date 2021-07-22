@@ -24,10 +24,12 @@ export const DesignPage = (props: DesignPageProps) => (
                     canvasHeight={props.canvasHeight}
                     canvasWidth={props.canvasWidth}
                     showGridlines={props.showGridlines}
+                    showGridItems={props.showGridItems}
                     setAuthenticated={props.setAuthenticated}
                     setCanvasWidth={props.setCanvasWidth}
                     setCanvasHeight={props.setCanvasHeight}
                     setShowGridlines={props.setShowGridlines}
+                    setShowGridItems={props.setShowGridItems}
                     newComponent={props.newComponent}
                 />
                 <ComponentToolbar 
@@ -93,6 +95,7 @@ interface DesignPageProps {
     componentToolbarWidth: number,
     menuToolbarHeight: number,
     showGridlines: boolean,
+    showGridItems: boolean,
     canvasHeight: number,
     canvasWidth: number,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,
@@ -106,5 +109,6 @@ interface DesignPageProps {
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
     newComponent: (type: string) => void,
     setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
-    keyDownOnCanvas: (e: React.KeyboardEvent<HTMLCanvasElement>) => void
+    keyDownOnCanvas: (e: React.KeyboardEvent<HTMLCanvasElement>) => void,
+    setShowGridItems: React.Dispatch<React.SetStateAction<boolean>>
 }

@@ -60,6 +60,14 @@ export const SizeSection = (props: SizeSectionProps) => {
         else
             setHeight("");
     }
+
+    function checkReadonly() {
+        const selectedComponent = props.componentTree.find(props.selectedComponentId);
+        var readonly = true;
+        if(selectedComponent)
+            readonly = selectedComponent.type.substring(0, selectedComponent.type.indexOf("_")) === "grid";
+        return readonly
+    }
     
     return (
         <Section>
@@ -70,9 +78,15 @@ export const SizeSection = (props: SizeSectionProps) => {
                     : width}
                     maxLength={4} size={4}
                     onChange={(e) => updateComponentWidth(e.target.value)}
+                    readOnly={checkReadonly()}
+                    style={{color: checkReadonly()?"grey":"#282c33"}}
                 />
                 <DimensionInput>
-                    <DimensionSelect/>
+                    {
+                        checkReadonly()
+                        ? null
+                        : <DimensionSelect/>
+                    }
                 </DimensionInput>
             </InputContainer>
             <InputContainer>
@@ -82,9 +96,15 @@ export const SizeSection = (props: SizeSectionProps) => {
                     : height}
                     maxLength={4} size={4}
                     onChange={(e) => updateComponentHeight(e.target.value)}
+                    readOnly={checkReadonly()}
+                    style={{color: checkReadonly()?"grey":"#282c33"}}
                 />
                 <DimensionInput>
-                    <DimensionSelect/>
+                    {
+                        checkReadonly()
+                        ? null
+                        : <DimensionSelect/>
+                    }
                 </DimensionInput>
             </InputContainer>
         </Section>
