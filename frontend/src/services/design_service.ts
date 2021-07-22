@@ -362,7 +362,7 @@ function alignGrid(parent: Component) {
                     i++;
                 }
             }
-            currentHeight = greatestHeight;
+            currentHeight += greatestHeight;
             greatestHeight = 0;
             currentWidth = 0;
         }

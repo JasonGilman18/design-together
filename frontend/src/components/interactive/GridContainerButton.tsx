@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { DropdownTooltip } from "../dropdowns/DropdownTooltip";
 import {ReactComponent as GridIcon} from '../../svg/GridIcon.svg';
 import { DropdownGrid } from "../dropdowns/DropdownGrid";
@@ -48,13 +48,48 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
             setGridViewWidth(scaledWidth);
             setGridViewHeight(scaledHeight);
             setScale(scaleCount);
-            setRowsInput(0);
-            setColsInput(0);
-            setNumRows(0);
-            setNumCols(0);
-            setGridViewItems([]);
-            setSelectedItem(-1);
-            setGridViewMeasures([]);
+            var rowsInput = 0;
+            var colsInput = 0;
+            var numRows = 0;
+            var numCols = 0;
+            var selectedItem = -1;
+            var items: {width: number, height: number}[] = [];
+            var measures: {dimension: number, measure: string}[] = [];
+            if(selectedComponent.node.children.length > 0) {
+                var startPos = 0;
+                var endPos = selectedComponent.node.children[0].type.indexOf("_");
+                if(selectedComponent.node.children[0].type.substring(startPos, endPos) === "grid") {
+                    startPos = endPos + 1;
+                    endPos = selectedComponent.node.children[0].type.indexOf("_", startPos);
+                    var rows = parseInt(selectedComponent.node.children[0].type.substring(startPos, endPos));
+                    startPos = endPos + 1;
+                    endPos = selectedComponent.node.children[0].type.indexOf("_", startPos);
+                    var cols = parseInt(selectedComponent.node.children[0].type.substring(startPos));
+                    rowsInput = rows;
+                    numRows = rows;
+                    colsInput = cols;
+                    numCols = cols;
+                    selectedComponent.node.children.forEach((child, i) => {
+                        items.push({width: child.style.width, height: child.style.height});
+                        if(i === 0) {
+                            measures.push({dimension: child.style.height, measure: "0_s"});
+                            measures.push({dimension: child.style.width, measure: "0_t"});
+                            selectedItem = 0;
+                        }
+                        else if(i < colsInput)
+                            measures.push({dimension: child.style.width, measure: i + "_t"});
+                        else if(Number.isInteger(i / colsInput))
+                            measures.push({dimension: child.style.height, measure: i + "_s"});
+                    });
+                }
+            }
+            setRowsInput(rowsInput);
+            setColsInput(colsInput);
+            setNumRows(numRows);
+            setNumCols(numCols);
+            setGridViewItems(items);
+            setSelectedItem(selectedItem);
+            setGridViewMeasures(measures);
             setSelectedMeasure("");
         }
     }, [props.selectedComponentId]);
