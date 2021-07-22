@@ -28,8 +28,17 @@ export function updateComponents(channel: Channel | undefined, component: Compon
                 component.updateHeight(canvasHeight);
             if(component.updateRequired)
                 updateComponentToChannel(channel, component);
+            if(component.node.children.length > 0) {
+                setChildPositions(component, canvasWidth);
+                component.node.children.forEach((child) => {
+                    if(child.updateRequired)
+                        updateComponentToChannel(channel, child);
+                    if(component.node.children.length > 0)
+                        updateComponents(channel, child, canvasWidth, canvasHeight, context);
+                });
+            }
         }
-        if(component.type.substring(0, component.type.indexOf("_")) === "text") {
+        else if(component.type.substring(0, component.type.indexOf("_")) === "text") {
             var bold = component.style.text_bold ? "bold " : "normal ";
             context.font = bold + component.style.text_size + "px Arial";
             var textWidth = 50;
@@ -121,27 +130,31 @@ export function drawGridlinesOnCanvas(context: CanvasRenderingContext2D,
 export function setChildPositions(parent: Component | null, canvasWidth: number
 ) {
     if(parent) {
-        switch(parent.style.align_horizontal) {
-            case "start":
-                alignHorizontalStart(parent);
-                break;
-            case "center":
-                alignHorizontalCenter(parent);
-                break;
-            case "end":
-                alignHorizontalEnd(parent);
-                break;
-        }
-        switch(parent.style.align_vertical) {
-            case "start":
-                alignVerticalStart(parent);
-                break;
-            case "center":
-                alignVerticalCenter(parent);
-                break;
-            case "end":
-                alignVerticalEnd(parent);
-                break;
+        if(parent.style.align_horizontal === "grid")
+            alignGrid(parent);
+        else {
+            switch(parent.style.align_horizontal) {
+                case "start":
+                    alignHorizontalStart(parent);
+                    break;
+                case "center":
+                    alignHorizontalCenter(parent);
+                    break;
+                case "end":
+                    alignHorizontalEnd(parent);
+                    break;
+            }
+            switch(parent.style.align_vertical) {
+                case "start":
+                    alignVerticalStart(parent);
+                    break;
+                case "center":
+                    alignVerticalCenter(parent);
+                    break;
+                case "end":
+                    alignVerticalEnd(parent);
+                    break;
+            }
         }
     }
 }
@@ -320,6 +333,42 @@ function alignVerticalEnd(parent: Component) {
     }
 }
 
+function alignGrid(parent: Component) {
+    if(parent.node.children.length > 0) {
+        var startPos = 0; 
+        var endPos = parent.node.children[0].type.indexOf("_", startPos);
+        startPos = endPos;
+        endPos = parent.node.children[0].type.indexOf("_", startPos + 1);
+        var rows = parseInt(parent.node.children[0].type.substring(startPos + 1, endPos));
+        startPos = endPos + 1;
+        var cols = parseInt(parent.node.children[0].type.substring(startPos));
+        var currentHeight = 0;
+        var currentWidth = 0;
+        var greatestHeight = 0;
+        var i = 0;
+        for(var r=0;r<rows;r++) {
+            for(var c=0;c<cols;c++) {
+                if(parent.node.children[i]) {
+                    parent.node.children[i].updatePositionX(parent.getComponentBounds().topLeft.x 
+                        + currentWidth + parent.style.padding_left
+                    );
+                    parent.node.children[i].updatePositionY(parent.getComponentBounds().topLeft.y
+                        + currentHeight + parent.style.padding_top
+                    );
+                    currentWidth += parent.node.children[i].style.width;
+                    greatestHeight = parent.node.children[i].style.height > greatestHeight
+                        ? parent.node.children[i].style.height
+                        : greatestHeight;
+                    i++;
+                }
+            }
+            currentHeight = greatestHeight;
+            greatestHeight = 0;
+            currentWidth = 0;
+        }
+    }
+}
+
 function getMouseCoordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     const canvasPos = e.currentTarget.getBoundingClientRect();
     const mouseXRelativeToCanvas = e.clientX - canvasPos.left;
@@ -377,6 +426,10 @@ function drawComponentOnCanvas(context: CanvasRenderingContext2D,
 
 function drawContainer(context: CanvasRenderingContext2D, component: Component) {
     const borderWidth = component.style.selected ? 1.5 : .5;
+    if(component.type.substring(0, component.type.indexOf("_")) === "grid")
+        context.setLineDash([5,3]);
+    else
+        context.setLineDash([]);
     if(component.style.rounded == 0) {
         const bounds = component.getComponentBounds();
         context.moveTo(bounds.topLeft.x + borderWidth, bounds.topLeft.y + borderWidth);

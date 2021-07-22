@@ -82,6 +82,8 @@ export const GridContainerButton = (props: GridContainerButtonProps) => {
                     props.newComponent("grid_" + numRows + "_" + numCols + "_" + item.width + "_" + item.height);
                 });
             }
+            selectedComponent.updateAlignHorizontal("grid");
+            selectedComponent.updateAlignVertical("grid");
         }
     }, [gridViewItems]);
 

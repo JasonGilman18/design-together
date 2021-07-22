@@ -15,6 +15,7 @@ export default class Component {
         var rounded = 0;
         var text_size = 0;
         var text_bold = false;
+        var newType = type;
         if(type === "container_rectangle") {
             height = 50;
             width = 100;
@@ -57,12 +58,12 @@ export default class Component {
             width = parseFloat(type.substring(pos+1, type.indexOf("_", pos+1)));
             pos  = type.indexOf("_", pos+1);
             height = parseFloat(type.substring(pos+1));
-            type = "grid_" + rows + "_" + cols;
+            newType = "grid_" + rows + "_" + cols;
         }
         this.id = componentId;
         this.document_id = documentId;
         this.updateRequired = true;
-        this.type = type;
+        this.type = newType;
         this.node = {
             parent: parent,
             children: []
