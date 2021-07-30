@@ -6,7 +6,7 @@ defmodule Api.Design.Component do
     :position_y, :rounded, :align_horizontal, :align_vertical, :margin_top,
     :margin_right, :margin_bottom, :margin_left, :padding_top, :padding_right,
     :padding_bottom, :padding_left, :background, :border, :type, :text,
-    :text_size, :text_bold]}
+    :text_size, :text_bold, :show_grid]}
 
   schema "components" do
     field :parent_id, :integer
@@ -31,6 +31,7 @@ defmodule Api.Design.Component do
     field :text, :string
     field :text_size, :integer
     field :text_bold, :boolean
+    field :show_grid, :boolean
     field :document_id, :id
 
     timestamps()
@@ -42,7 +43,7 @@ defmodule Api.Design.Component do
     |> cast(attrs, [:parent_id, :height, :width, :position_x, :position_y, :rounded,
       :align_horizontal, :align_vertical, :margin_top, :margin_right, :margin_bottom, :margin_left,
       :padding_top, :padding_right, :padding_bottom, :padding_left, :background, :border, :type, :text,
-      :text_size, :text_bold, :document_id])
+      :text_size, :text_bold, :show_grid, :document_id])
     |> validate_required([:type, :document_id])
   end
 end

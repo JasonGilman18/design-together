@@ -1,3 +1,5 @@
+import ComponentTree from "./ComponentTree";
+
 export default class Component {
     id: number;
     document_id: number;
@@ -89,8 +91,24 @@ export default class Component {
             border: true,
             text: "",
             text_size: text_size,
-            text_bold: text_bold
+            text_bold: text_bold,
+            show_grid: true
         };
+    }
+
+    public static loadDocument(componentTree: ComponentTree, setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>, 
+        components: ComponentData[]
+    ) {
+        const loadedComponents: Component[] = [];
+        components.forEach((component) => {
+            var parent = componentTree.find(component.parent_id);
+            loadedComponents.push(new Component(component.id, component.document_id, parent, component.type));
+        });
+        setComponentTree(prev => {
+            prev.components = loadedComponents;
+            prev.root = loadedComponents[0];
+            return prev.copy();
+        });
     }
 
     public getTotalWidth() {
@@ -235,6 +253,13 @@ export default class Component {
         }
     }
 
+    public updateShowGrid(show_grid: boolean) {
+        if(this.style.show_grid !== show_grid) {
+            this.style.show_grid = show_grid;
+            this.updateRequired = true;
+        }
+    }
+
     public addChild(component: Component) {
         component.node.parent = this;
         this.node.children.push(component);
@@ -354,5 +379,13 @@ type ComponentStyle = {
     border: boolean,
     text: string,
     text_size: number,
-    text_bold: boolean
+    text_bold: boolean,
+    show_grid: boolean
+}
+
+type ComponentData  = ComponentStyle & {
+    id: number,
+    parent_id: number,
+    document_id: number,
+    type: string
 }

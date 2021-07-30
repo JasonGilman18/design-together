@@ -24,12 +24,11 @@ export const DesignPage = (props: DesignPageProps) => (
                     canvasHeight={props.canvasHeight}
                     canvasWidth={props.canvasWidth}
                     showGridlines={props.showGridlines}
-                    showGridItems={props.showGridItems}
                     setAuthenticated={props.setAuthenticated}
                     setCanvasWidth={props.setCanvasWidth}
                     setCanvasHeight={props.setCanvasHeight}
                     setShowGridlines={props.setShowGridlines}
-                    setShowGridItems={props.setShowGridItems}
+                    setComponentTree={props.setComponentTree}
                     newComponent={props.newComponent}
                 />
                 <ComponentToolbar 

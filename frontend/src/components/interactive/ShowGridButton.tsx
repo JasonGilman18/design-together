@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
+import ComponentTree from "../../classes/ComponentTree";
 import {ReactComponent as GridShowIcon} from '../../svg/GridShowIcon.svg';
 import { DropdownMenu } from "../dropdowns/DropdownMenu";
 import {DropdownTooltip} from "../dropdowns/DropdownTooltip";
@@ -9,7 +10,18 @@ export const ShowGridButton = (props: ShowGridButtonProps) => {
 
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const [showTooltip, setShowTooltip] = useState<boolean>(false);
+    const [highlight, setHighlight] = useState<boolean>(false);
     const [timer, setTimer] = useState<NodeJS.Timeout>();
+
+    useEffect(() => {
+        if(props.showGridlines)
+            setHighlight(props.showGridlines);
+        else {
+            const selectedComponent = props.componentTree.find(props.selectedComponentId);
+            if(selectedComponent)
+                setHighlight(props.showGridlines || selectedComponent.style.show_grid);
+        }
+    }, [props.selectedComponentId, props.showGridlines]);
 
     function showMenu() {
         if(timer) clearTimeout(timer);
@@ -30,14 +42,33 @@ export const ShowGridButton = (props: ShowGridButtonProps) => {
         if(timer) clearTimeout(timer);
     }
 
+    function showGridItems() {
+        props.setComponentTree(prevTree => {
+            const selectedComponent = prevTree.find(props.selectedComponentId);
+            if(selectedComponent) {
+                selectedComponent.updateShowGrid(!selectedComponent.style.show_grid);
+                return prevTree.copy();
+            }
+            else
+                return prevTree;
+        });
+    }
+
+    function getGridItems() {
+        const selectedComponent = props.componentTree.find(props.selectedComponentId);
+        if(selectedComponent)
+            return selectedComponent.style.show_grid;
+        else
+            return false;
+    }
+
     return (
         <Container>
             <Button 
                 onMouseOver={() => hover()}
                 onMouseOut={() => leave()}
                 onClick={(e) => showMenu()}
-                //onClick={(e: any) => props.setShowGridlines(val => !val)}
-                highlight={props.showGridlines || props.showGridItems}
+                highlight={highlight}
             >
                 <GridShowIcon/>
             </Button>
@@ -54,7 +85,7 @@ export const ShowGridButton = (props: ShowGridButtonProps) => {
                     <SlideLabel style={{gridColumn: "1/3", gridRow: "1/2"}}>Show Document Gridlines</SlideLabel>
                     <SlideCheckbox checked={props.showGridlines} setFunction={props.setShowGridlines}/>
                     <SlideLabel style={{gridColumn: "1/3", gridRow: "2/3"}}>Show Grid Item Containers</SlideLabel>
-                    <SlideCheckbox checked={props.showGridItems} setFunction={props.setShowGridItems}/>
+                    <SlideCheckbox checked={getGridItems()} setFunction={showGridItems}/>
                   </DropdownMenu>
                 : null
             }
@@ -100,7 +131,8 @@ const Container = styled.span`
 
 interface ShowGridButtonProps {
     showGridlines: boolean,
-    showGridItems: boolean,
+    selectedComponentId: number | null,
+    componentTree: ComponentTree,
     setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
-    setShowGridItems: React.Dispatch<React.SetStateAction<boolean>>
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 };

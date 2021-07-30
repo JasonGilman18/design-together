@@ -25,13 +25,14 @@ export const MenuToolbar = (props: MenuToolbarProps) => (
                 setCanvasWidth={props.setCanvasWidth}
                 setCanvasHeight={props.setCanvasHeight}
                 setShowGridlines={props.setShowGridlines}
-                setShowGridItems={props.setShowGridItems}
+                setComponentTree={props.setComponentTree}
                 componentToolbarWidth={props.componentToolbarWidth}
                 menuToolbarHeight={props.menuToolbarHeight}
                 canvasWidth={props.canvasWidth}
                 canvasHeight={props.canvasHeight}
                 showGridlines={props.showGridlines}
-                showGridItems={props.showGridItems}
+                selectedComponentId={props.selectedComponentId}
+                componentTree={props.componentTree}
             />
             <NewComponentSection 
                 newComponent={props.newComponent}
@@ -110,11 +111,10 @@ interface MenuToolbarProps {
     canvasHeight: number,
     canvasWidth: number,
     showGridlines: boolean,
-    showGridItems: boolean,
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
     setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
-    setShowGridItems: React.Dispatch<React.SetStateAction<boolean>>,
     newComponent: (type: string) => void
 }

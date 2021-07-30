@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {WindowSizeButton} from '../interactive/WindowSizeButton';
 import {MaximizeButton} from '../interactive/MaximizeButton';
 import {ShowGridButton} from '../interactive/ShowGridButton';
+import ComponentTree from "../../classes/ComponentTree";
 
 export const WindowSection = (props: WindowSectionProps) => (
     
@@ -27,9 +28,10 @@ export const WindowSection = (props: WindowSectionProps) => (
         />
         <ShowGridButton 
             setShowGridlines={props.setShowGridlines}
-            setShowGridItems={props.setShowGridItems}
+            setComponentTree={props.setComponentTree}
             showGridlines={props.showGridlines}
-            showGridItems={props.showGridItems}
+            selectedComponentId={props.selectedComponentId}
+            componentTree={props.componentTree}
         />
     </Section>
 );
@@ -96,9 +98,10 @@ interface WindowSectionProps {
     canvasWidth: number,
     canvasHeight: number,
     showGridlines: boolean,
-    showGridItems: boolean,
+    selectedComponentId: number | null,
+    componentTree: ComponentTree,
     setCanvasWidth: React.Dispatch<React.SetStateAction<number>>,
     setCanvasHeight: React.Dispatch<React.SetStateAction<number>>,
     setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
-    setShowGridItems: React.Dispatch<React.SetStateAction<boolean>>
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 };

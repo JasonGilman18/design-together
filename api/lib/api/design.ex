@@ -31,7 +31,8 @@ defmodule Api.Design do
       recorded.type != incomingData.type ||
       recorded.text != incomingData.text ||
       recorded.text_size != incomingData.text_size ||
-      recorded.text_bold != incomingData.text_bold
+      recorded.text_bold != incomingData.text_bold ||
+      recorded.show_grid != incomingData.show_grid
     do
       :different
     else

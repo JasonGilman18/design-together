@@ -59,3 +59,11 @@ export function updateComponentToChannel(channel: Channel | undefined, component
     channel?.push("update_component", {id: component.id, document_id: component.document_id,
         style: component.style});
 }
+
+export function syncFromChannel(channel: Channel | undefined, componentTree: ComponentTree,
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
+) {
+    channel?.push("sync", {}).receive("ok", (components: any) => {
+        Component.loadDocument(componentTree, setComponentTree, components);
+    });
+}

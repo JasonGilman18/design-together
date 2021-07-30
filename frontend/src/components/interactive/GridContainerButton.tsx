@@ -10,6 +10,8 @@ import ComponentTree from "../../classes/ComponentTree";
 //display the grid items with a dashed line, and make the grid button active.
 //above should happen automatically after creating
 
+//need to setup the functionality to show the container dashed lines for grid items
+
 
 export const GridContainerButton = (props: GridContainerButtonProps) => {
     

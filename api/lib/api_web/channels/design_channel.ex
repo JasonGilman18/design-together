@@ -6,10 +6,15 @@ defmodule ApiWeb.DesignChannel do
   def join("document:" <> document_id, _message, socket) do
     current_member = socket.assigns.current_member
     if current_member.document_id === String.to_integer(document_id) do
-      {:ok, socket}
+      {:ok, socket, }
     else
       {:error, "Document not verified"}
     end
+  end
+
+  def handle_in("sync", _payload, socket) do
+    components = Design.list_components()
+    {:reply, {:ok, components}, socket}
   end
 
   def handle_in("new_component", component, socket) do

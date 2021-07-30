@@ -25,6 +25,7 @@ defmodule Api.Repo.Migrations.CreateComponents do
       add :text, :string
       add :text_size, :integer
       add :text_bold, :boolean
+      add :show_grid, :boolean
       add :document_id, references(:documents, on_delete: :nothing)
 
       timestamps()

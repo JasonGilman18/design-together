@@ -399,7 +399,12 @@ function drawComponentOnCanvas(context: CanvasRenderingContext2D,
             context.stroke();
         }
         else {
-            drawContainer(context, component);
+            if(component.type.substring(0, component.type.indexOf("_")) === "grid") {
+                if(component.style.show_grid)
+                    drawContainer(context, component);                
+            }
+            else
+                drawContainer(context, component);
             if(component.style.background !== "transparent") {
                 context.fillStyle = component.style.background;
                 context.fill();
