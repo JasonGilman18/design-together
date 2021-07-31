@@ -28,7 +28,6 @@ defmodule Api.Design do
       recorded.padding_left != incomingData.padding_left ||
       recorded.background != incomingData.background ||
       recorded.border != incomingData.border ||
-      recorded.type != incomingData.type ||
       recorded.text != incomingData.text ||
       recorded.text_size != incomingData.text_size ||
       recorded.text_bold != incomingData.text_bold ||
@@ -39,6 +38,45 @@ defmodule Api.Design do
       :same
     end
   end
+
+  def sync_with_document(document_id) do
+    (from c in Component, where: c.document_id == ^document_id, select: %{
+      id: c.id,
+      document_id: c.document_id,
+      parent_id: c.parent_id,
+      height: c.height,
+      width: c.width,
+      position_x: c.position_x,
+      position_y: c.position_y,
+      rounded: c.rounded,
+      align_horizontal: c.align_horizontal,
+      align_vertical: c.align_vertical,
+      margin_top: c.margin_top,
+      margin_right: c.margin_right,
+      margin_bottom: c.margin_bottom,
+      margin_left: c.margin_left,
+      padding_top: c.padding_top,
+      padding_right: c.padding_right,
+      padding_bottom: c.padding_bottom,
+      padding_left: c.padding_left,
+      background: c.background,
+      border: c.border,
+      text: c.text,
+      type: c.type,
+      text_size: c.text_size,
+      text_bold: c.text_bold,
+      show_grid: c.show_grid
+    })
+    |> Repo.all
+  end
+
+  def count_components(document_id) do
+    query = from c in Component, where: c.document_id == ^document_id, select: count("*")
+    Repo.one(query)
+  end
+
+
+
 
   @doc """
   Returns the list of components.

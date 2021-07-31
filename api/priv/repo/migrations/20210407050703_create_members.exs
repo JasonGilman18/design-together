@@ -5,6 +5,7 @@ defmodule Api.Repo.Migrations.CreateMembers do
     create table(:members) do
       add :owner, :boolean, default: false, null: false
       add :read_only, :boolean, default: false, null: false
+      add :connected, :boolean
       add :user_id, references(:users, on_delete: :nothing)
       add :document_id, references(:documents, on_delete: :nothing)
 

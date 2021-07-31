@@ -2,7 +2,7 @@ defmodule Api.Design.Component do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:parent_id, :document_id, :height, :width, :position_x,
+  @derive {Jason.Encoder, only: [:parent_id, :id, :document_id, :height, :width, :position_x,
     :position_y, :rounded, :align_horizontal, :align_vertical, :margin_top,
     :margin_right, :margin_bottom, :margin_left, :padding_top, :padding_right,
     :padding_bottom, :padding_left, :background, :border, :type, :text,

@@ -5,17 +5,25 @@ import ComponentTree from '../classes/ComponentTree';
 
 export function connectToDocumentChannel(authToken: string, doc_id: number, 
     setChannel: React.Dispatch<React.SetStateAction<Channel | undefined>>, 
-    setSocket: React.Dispatch<React.SetStateAction<Socket | undefined>>
+    setSocket: React.Dispatch<React.SetStateAction<Socket | undefined>>,
+    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
 ) {
     var socket = new Socket('ws://localhost:4000/socket', {params: {authToken: authToken}});
     socket.connect();
     var new_channel = socket.channel('document:'+doc_id, {authToken: authToken});
-    new_channel.join();
+    new_channel.join().receive("ok", (msg: any) => {
+        if(msg.root)
+            newComponentToChannel(new_channel, doc_id, null, "document");
+        else {
+            const newTree = ComponentTree.loadDocument(msg.components);
+            setComponentTree(newTree);
+        }
+    });
     setChannel(new_channel);
     setSocket(socket);
 }
 
-export function disconnectFromDocumentChannel(channel: Channel | undefined, socket: Socket | undefined) {
+export function disconnectFromDocumentChannel(channel: Channel | undefined, socket: Socket | undefined, doc_id: any) {
     channel?.leave();
     socket?.disconnect();
 }
@@ -58,12 +66,4 @@ export function updateComponentToChannel(channel: Channel | undefined, component
     component.updateRequired = false;
     channel?.push("update_component", {id: component.id, document_id: component.document_id,
         style: component.style});
-}
-
-export function syncFromChannel(channel: Channel | undefined, componentTree: ComponentTree,
-    setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>
-) {
-    channel?.push("sync", {}).receive("ok", (components: any) => {
-        Component.loadDocument(componentTree, setComponentTree, components);
-    });
 }

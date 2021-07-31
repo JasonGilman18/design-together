@@ -1,20 +1,21 @@
 defmodule ApiWeb.DesignChannel do
   use Phoenix.Channel
 
+  alias Api.Dashboard
   alias Api.Design
 
   def join("document:" <> document_id, _message, socket) do
     current_member = socket.assigns.current_member
     if current_member.document_id === String.to_integer(document_id) do
-      {:ok, socket, }
+      Dashboard.update_member(current_member, %{connected: true})
+      if Design.count_components(document_id) == 0 do
+        {:ok, %{root: true}, socket}
+      else
+        {:ok, %{root: false, components: Design.sync_with_document(document_id)}, socket}
+      end
     else
       {:error, "Document not verified"}
     end
-  end
-
-  def handle_in("sync", _payload, socket) do
-    components = Design.list_components()
-    {:reply, {:ok, components}, socket}
   end
 
   def handle_in("new_component", component, socket) do
@@ -53,7 +54,8 @@ defmodule ApiWeb.DesignChannel do
       border: component["style"]["border"],
       text: component["style"]["text"],
       text_size: component["style"]["text_size"],
-      text_bold: component["style"]["text_bold"]
+      text_bold: component["style"]["text_bold"],
+      show_grid: component["style"]["show_grid"]
     }
     case Design.compare_components(updateComponent, incomingData) do
       :different ->

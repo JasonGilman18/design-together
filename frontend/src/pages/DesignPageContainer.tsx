@@ -13,7 +13,6 @@ import {
     disconnectFromDocumentChannel,
     newComponentFromChannel,
     newComponentToChannel,
-    syncFromChannel,
     updateComponentFromChannel
 } from "../services/ws_api_service";
 
@@ -46,19 +45,18 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     useEffect(() => {
         if(authToken !== "" && channel === undefined) {
             setLoading(false);
-            connectToDocumentChannel(authToken, props.location.state.doc_id, setChannel, setSocket);
+            connectToDocumentChannel(authToken, props.location.state.doc_id, setChannel, setSocket, setComponentTree);
         }
         else {
             setLoading(true);
         }
         return function cleanupDocumentConnection() {
-            disconnectFromDocumentChannel(channel, socket);
+            disconnectFromDocumentChannel(channel, socket, props.location.state.doc_id);
         };
     }, [authToken]);
 
     useEffect(() => {
         if(canvas.current !== null && canvas.current !== undefined) {
-            console.log(componentTree.components);
             var ctx = canvas.current.getContext("2d");
             if(ctx) {
                 ctx.clearRect(0,0, canvas.current.width, canvas.current.height);
@@ -83,26 +81,6 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
-
-            //need a function to get components from the server
-            //it will need a ws_api service function
-            //will need to setComponentTree
-            syncFromChannel(channel, componentTree, setComponentTree);
-
-            
-            //need to figure out if the doc already has components created
-            //if it does, then just select root, if it doesnt create a document component
-            
-            if(componentTree.components.length > 0) {
-                setComponentTree(prevTree => {
-                    prevTree.root!.style.selected = true;
-                    setMouseDown(prevTree.root!.type);
-                    return prevTree.copy();
-                });
-            }
-            else
-                newComponentToChannel(channel, props.location.state.doc_id, null, "document");
-
         }
     }, [channel]);
 

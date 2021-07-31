@@ -11,7 +11,7 @@ export default class Component {
         children: Component[]
     };
 
-    public constructor(componentId: number, documentId: number, parent: Component | null, type: string) {
+    public constructor(componentId: number, documentId: number, parent: Component | null, type: string, componentData?: ComponentData) {
         var height = 0;
         var width = 0;
         var rounded = 0;
@@ -71,44 +71,29 @@ export default class Component {
             children: []
         };
         this.style = {
-            position_x: 0,
-            position_y: 0,
-            height: height,
-            width: width,
-            rounded: rounded,
+            position_x: componentData ? componentData.position_x : 0,
+            position_y: componentData ? componentData.position_y : 0,
+            height: componentData ? componentData.height : height,
+            width: componentData ? componentData.width : width,
+            rounded: componentData ? componentData.rounded : rounded,
             selected: type === "document",
-            align_horizontal: "start",
-            align_vertical: "start",
-            margin_top: 0,
-            margin_right: 0,
-            margin_bottom: 0,
-            margin_left: 0,
-            padding_top: 0,
-            padding_right: 0,
-            padding_bottom: 0,
-            padding_left: 0,
-            background: "transparent",
-            border: true,
-            text: "",
-            text_size: text_size,
-            text_bold: text_bold,
-            show_grid: true
+            align_horizontal: componentData ? componentData.align_horizontal : "start",
+            align_vertical: componentData ? componentData.align_vertical : "start",
+            margin_top: componentData ? componentData.margin_top : 0,
+            margin_right: componentData ? componentData.margin_right : 0,
+            margin_bottom: componentData ? componentData.margin_bottom : 0,
+            margin_left: componentData ? componentData.margin_left : 0,
+            padding_top: componentData ? componentData.padding_top : 0,
+            padding_right: componentData ? componentData.padding_right : 0,
+            padding_bottom: componentData ? componentData.padding_bottom : 0,
+            padding_left: componentData ? componentData.padding_left : 0,
+            background: componentData ? componentData.background : "transparent",
+            border: componentData ? componentData.border : true,
+            text: componentData ? componentData.text : "",
+            text_size: componentData ? componentData.text_size : text_size,
+            text_bold: componentData ? componentData.text_bold : text_bold,
+            show_grid: componentData ? componentData.show_grid : true
         };
-    }
-
-    public static loadDocument(componentTree: ComponentTree, setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>, 
-        components: ComponentData[]
-    ) {
-        const loadedComponents: Component[] = [];
-        components.forEach((component) => {
-            var parent = componentTree.find(component.parent_id);
-            loadedComponents.push(new Component(component.id, component.document_id, parent, component.type));
-        });
-        setComponentTree(prev => {
-            prev.components = loadedComponents;
-            prev.root = loadedComponents[0];
-            return prev.copy();
-        });
     }
 
     public getTotalWidth() {
@@ -383,7 +368,7 @@ type ComponentStyle = {
     show_grid: boolean
 }
 
-type ComponentData  = ComponentStyle & {
+export type ComponentData  = ComponentStyle & {
     id: number,
     parent_id: number,
     document_id: number,

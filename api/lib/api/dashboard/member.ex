@@ -7,6 +7,7 @@ defmodule Api.Dashboard.Member do
   schema "members" do
     field :owner, :boolean, default: false
     field :read_only, :boolean, default: false
+    field :connected, :boolean
     belongs_to :user, User
     belongs_to :document, Document
 
@@ -16,7 +17,7 @@ defmodule Api.Dashboard.Member do
   @doc false
   def changeset(member, attrs) do
     member
-    |> cast(attrs, [:owner, :read_only, :user_id, :document_id])
+    |> cast(attrs, [:owner, :read_only, :connected, :user_id, :document_id])
     |> validate_required([:owner, :read_only, :user_id, :document_id])
   end
 end
