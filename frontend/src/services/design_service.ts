@@ -63,12 +63,15 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
     setComponentTree: React.Dispatch<React.SetStateAction<ComponentTree>>,
     componentTree: ComponentTree,
     setMouseDown: React.Dispatch<React.SetStateAction<string>>,
-    setSelectedComponentId: React.Dispatch<React.SetStateAction<number>>
+    setSelectedComponentId: React.Dispatch<React.SetStateAction<number>>,
+    setShowRightClickMenu: React.Dispatch<React.SetStateAction<boolean>>,
+    setMouseDownPos: React.Dispatch<React.SetStateAction<{x: number, y: number}>>
 ) {
     const mousePos = getMouseCoordinates(e);
     const id = findSelectedComponentId(componentTree, mousePos);
     setSelectedComponentId(id);
     setComponentTree(prevTree => {
+        var showRightClickMenu = false;
         prevTree.components.forEach((component) => {
             component.style.selected = false;
         });
@@ -76,7 +79,11 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
         if(selected) {
             selected.style.selected = true;
             setMouseDown(selected.type);
+            showRightClickMenu = e.button === 2;
         }
+        setShowRightClickMenu(showRightClickMenu);
+        console.log(e.pageX, e.pageY);
+        setMouseDownPos({x: e.pageX, y: e.pageY});
         return prevTree.copy();
     });
 }

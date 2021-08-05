@@ -34,6 +34,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const [canvasHeight, setCanvasHeight] = useState<number>(window.innerHeight - menuToolbarHeight-100);
     const [showGridlines, setShowGridlines] = useState<boolean>(false);
     const [showGridItems, setShowGridItems] = useState<boolean>(false);
+    const [showRightClickMenu, setShowRightClickMenu] = useState<boolean>(false);
+    const [mouseDownPos, setMouseDownPos] = useState<{x: number, y: number}>({x: 0, y: 0});
 
     useEffect(() => {
         reqAuthToken(props.location.state.doc_id, setAuthToken);
@@ -149,6 +151,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             showGridItems={showGridItems}
             docId={props.location.state.doc_id}
             docName={props.location.state.doc_name}
+            showRightClickMenu={showRightClickMenu}
+            mouseDownPos={mouseDownPos}
             setSelectedComponentId={setSelectedComponentId}
             setAuthenticated={props.setAuthenticated}
             setMouseMoveX={setMouseMoveX}
@@ -161,6 +165,8 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             setShowGridlines={setShowGridlines}
             keyDownOnCanvas={keyDownOnCanvas}
             setShowGridItems={setShowGridItems}
+            setShowRightClickMenu={setShowRightClickMenu}
+            setMouseDownPos={setMouseDownPos}
         />
     );
 }

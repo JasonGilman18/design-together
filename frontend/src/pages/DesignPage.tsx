@@ -42,10 +42,34 @@ export const DesignPage = (props: DesignPageProps) => (
                         ref={props.canvas}
                         tabIndex={0}
                         onMouseDown={(e) => {
-                            mouseDownOnCanvas(e, props.canvas, props.setComponentTree, props.componentTree, props.setMouseDown, props.setSelectedComponentId);
+                            e.preventDefault();
+                            mouseDownOnCanvas(e, props.canvas, props.setComponentTree, 
+                                props.componentTree, props.setMouseDown, 
+                                props.setSelectedComponentId, props.setShowRightClickMenu,
+                                props.setMouseDownPos
+                            );
+                        }}
+                        onContextMenu={(e) => {
+                            e.preventDefault();
+                            mouseDownOnCanvas(e, props.canvas, props.setComponentTree, 
+                                props.componentTree, props.setMouseDown, 
+                                props.setSelectedComponentId, props.setShowRightClickMenu,
+                                props.setMouseDownPos
+                            );
                         }}
                         onKeyDown={(e) => props.keyDownOnCanvas(e)}
                     />
+                    {
+                        props.showRightClickMenu
+                        ? <RightClickMenu 
+                            x={props.mouseDownPos.x} 
+                            y={props.mouseDownPos.y}
+
+                          >
+
+                          </RightClickMenu>
+                        : null
+                    }
                 </CanvasContainer>
             </DesignPageContainer>
 );
@@ -81,6 +105,18 @@ const CanvasElement = styled.canvas`
     }
 `;
 
+const RightClickMenu = styled.div<{x: number, y: number}>`
+    position: absolute;
+    top: ${props => props.x}px;
+    left: ${props => props.y}px;
+    z-index: 99;
+    width: 20px;
+    height: 20px;
+    background-color: black;
+    display: grid;
+    grid-template-columns: 20px;
+`;
+
 interface DesignPageProps {
     channel: Channel | undefined,
     loading: boolean,
@@ -98,6 +134,8 @@ interface DesignPageProps {
     canvasHeight: number,
     canvasWidth: number,
     canvas: React.MutableRefObject<HTMLCanvasElement | null>,
+    showRightClickMenu: boolean,
+    mouseDownPos: {x: number, y: number},
     setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>,
     setMouseMoveX: React.Dispatch<React.SetStateAction<number>>,
     setMouseMoveY: React.Dispatch<React.SetStateAction<number>>,
@@ -109,5 +147,7 @@ interface DesignPageProps {
     newComponent: (type: string) => void,
     setShowGridlines: React.Dispatch<React.SetStateAction<boolean>>,
     keyDownOnCanvas: (e: React.KeyboardEvent<HTMLCanvasElement>) => void,
-    setShowGridItems: React.Dispatch<React.SetStateAction<boolean>>
+    setShowGridItems: React.Dispatch<React.SetStateAction<boolean>>,
+    setShowRightClickMenu: React.Dispatch<React.SetStateAction<boolean>>,
+    setMouseDownPos: React.Dispatch<React.SetStateAction<{x: number, y: number}>>
 }
