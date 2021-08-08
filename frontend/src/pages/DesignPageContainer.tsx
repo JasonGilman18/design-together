@@ -108,8 +108,20 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     }
 
     function deleteComponent(id: number) {
+        const selection = componentTree.find(id);
         setComponentTree(prevTree => {
-            prevTree.remove(id);
+            const selection = prevTree.find(id);
+            if(selection) {
+                if(selection.type.substring(0, selection.type.indexOf("_")) === "grid") {
+                    selection.node.parent?.node.children.forEach((child) => {
+                        if(child.type.substring(0, child.type.indexOf("_")) === "grid")
+                            prevTree.remove(child.id);
+                    });
+                }
+                else {
+                    prevTree.remove(id);
+                }
+            }
             return prevTree.copy();
         });
         deleteComponentToChannel(channel, id);

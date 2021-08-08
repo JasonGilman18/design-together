@@ -79,7 +79,8 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
         if(selected) {
             selected.style.selected = true;
             setMouseDown(selected.type);
-            showRightClickMenu = e.button === 2;
+            if(selected.type !== "document")
+                showRightClickMenu = e.button === 2;
         }
         setShowRightClickMenu(showRightClickMenu);
         setMouseDownPos({x: e.clientX, y: e.clientY});
