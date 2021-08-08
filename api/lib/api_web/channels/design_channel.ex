@@ -100,4 +100,16 @@ defmodule ApiWeb.DesignChannel do
     end
   end
 
+  def handle_in("delete_component", data, socket) do
+    delete_component = Design.get_component!(data["id"])
+    case Design.delete_component(delete_component) do
+      {:ok, _component} ->
+        broadcast_from!(socket, "delete_component", %{
+          id: data["id"]
+        })
+        {:noreply, socket}
+      {:error, _errors} -> {:noreply, socket}
+    end
+  end
+
 end

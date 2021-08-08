@@ -6,6 +6,7 @@ import {
     Route,
     Redirect
 } from 'react-router-dom';
+import { createGlobalStyle } from 'styled-components';
 //services ==================================================
 import {getAuthenticated} from './services/http_api_service';
 //components ================================================
@@ -17,37 +18,46 @@ export default function App() {
 
     const [authenticated, setAuthenticated] = useState<boolean>(false);
 
+    const BodyStyle = createGlobalStyle`
+        body {
+            margin: 0px;
+        }
+    `;
+
     useEffect(() => {
         getAuthenticated(setAuthenticated);
     }, []);
 
     return (
-        <Router>
-            <Switch>
-                <Route exact path="/" children={() => (
-                    authenticated
-                        ? <Redirect to="/dashboard"/>
-                        : <LoginPageContainer
-                            setAuthenticated={setAuthenticated}
-                        />
-                )}/>
-                <Route path="/dashboard" children={({location}) => (
-                    !authenticated
-                        ? <Redirect to="/"/>
-                        : <DashboardPageContainer
-                            setAuthenticated={setAuthenticated}
-                        />
-                )}/>
-                <Route path="/design" children={({location}) => (
-                    !authenticated
-                        ? <Redirect to="/"/>
-                        : <DesignPageContainer 
-                            location={location}
-                            setAuthenticated={setAuthenticated}
-                        />
-                )}/>
-                <Redirect from="*" to="/"/>
-            </Switch>
-        </Router>
+        <>
+        <BodyStyle/>
+            <Router>
+                <Switch>
+                    <Route exact path="/" children={() => (
+                        authenticated
+                            ? <Redirect to="/dashboard"/>
+                            : <LoginPageContainer
+                                setAuthenticated={setAuthenticated}
+                            />
+                    )}/>
+                    <Route path="/dashboard" children={({location}) => (
+                        !authenticated
+                            ? <Redirect to="/"/>
+                            : <DashboardPageContainer
+                                setAuthenticated={setAuthenticated}
+                            />
+                    )}/>
+                    <Route path="/design" children={({location}) => (
+                        !authenticated
+                            ? <Redirect to="/"/>
+                            : <DesignPageContainer 
+                                location={location}
+                                setAuthenticated={setAuthenticated}
+                            />
+                    )}/>
+                    <Redirect from="*" to="/"/>
+                </Switch>
+            </Router>
+        </>
     );
 }

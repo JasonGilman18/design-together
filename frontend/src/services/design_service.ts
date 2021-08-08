@@ -82,8 +82,7 @@ export function mouseDownOnCanvas(e: React.MouseEvent<HTMLCanvasElement, MouseEv
             showRightClickMenu = e.button === 2;
         }
         setShowRightClickMenu(showRightClickMenu);
-        console.log(e.pageX, e.pageY);
-        setMouseDownPos({x: e.pageX, y: e.pageY});
+        setMouseDownPos({x: e.clientX, y: e.clientY});
         return prevTree.copy();
     });
 }

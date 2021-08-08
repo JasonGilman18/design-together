@@ -67,3 +67,15 @@ export function updateComponentToChannel(channel: Channel | undefined, component
     channel?.push("update_component", {id: component.id, document_id: component.document_id,
         style: component.style});
 }
+
+export function deleteComponentFromChannel(channel: Channel | undefined,
+    deleteComponent: (id: number) => void
+) {
+    channel?.on("delete_component", (id: number) => {
+        deleteComponent(id);
+    });
+}
+
+export function deleteComponentToChannel(channel: Channel | undefined, id: number) {
+    channel?.push("delete_component", {id: id});
+}

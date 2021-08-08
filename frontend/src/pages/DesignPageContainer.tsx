@@ -1,5 +1,5 @@
 import {Socket, Channel} from "phoenix";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import ComponentTree from "../classes/ComponentTree";
 import {DesignPage} from "./DesignPage";
 import {
@@ -10,6 +10,8 @@ import {
 import {reqAuthToken} from "../services/http_api_service";
 import {
     connectToDocumentChannel,
+    deleteComponentFromChannel,
+    deleteComponentToChannel,
     disconnectFromDocumentChannel,
     newComponentFromChannel,
     newComponentToChannel,
@@ -38,6 +40,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     const [mouseDownPos, setMouseDownPos] = useState<{x: number, y: number}>({x: 0, y: 0});
 
     useEffect(() => {
+        document.addEventListener("contextmenu", (e) => e.preventDefault(), true);
         reqAuthToken(props.location.state.doc_id, setAuthToken);
         return function cleanupAuthToken() {
             setAuthToken("");
@@ -67,6 +70,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
                 canvas.current.style.width = canvasWidth + "px";
                 canvas.current.style.height = canvasHeight + "px";
                 ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                console.log(componentTree.components);
                 if(showGridlines) drawGridlinesOnCanvas(ctx, canvasWidth, canvasHeight);
                 updateComponents(channel, componentTree.root, canvasWidth, canvasHeight, ctx);
                 displayComponentsOnCanvas(ctx, componentTree.root);
@@ -83,6 +87,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
         if(channel !== undefined) {
             newComponentFromChannel(channel, setComponentTree);
             updateComponentFromChannel(channel, setComponentTree);
+            deleteComponentFromChannel(channel, deleteComponent);
         }
     }, [channel]);
 
@@ -100,6 +105,15 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
     function newComponent(type: string) {
         const docId = props.location.state.doc_id;
         newComponentToChannel(channel, docId, selectedComponentId, type);
+    }
+
+    function deleteComponent(id: number) {
+        setComponentTree(prevTree => {
+            prevTree.remove(id);
+            return prevTree.copy();
+        });
+        deleteComponentToChannel(channel, id);
+        setShowRightClickMenu(false);
     }
 
     function keyDownOnCanvas(e: React.KeyboardEvent<HTMLCanvasElement>) {
@@ -167,6 +181,7 @@ export default function DesignPageContainer(props: DesignPageContainerProps) {
             setShowGridItems={setShowGridItems}
             setShowRightClickMenu={setShowRightClickMenu}
             setMouseDownPos={setMouseDownPos}
+            deleteComponent={deleteComponent}
         />
     );
 }

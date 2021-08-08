@@ -5,6 +5,7 @@ import {ComponentToolbar} from '../components/component_toolbar/ComponentToolbar
 import {mouseDownOnCanvas} from '../services/design_service';
 import {MenuToolbar} from '../components/menu_toolbar/MenuToolbar';
 import ComponentTree from '../classes/ComponentTree';
+import {ReactComponent as DeleteIcon} from '../svg/DeleteIcon.svg';
 
 export const DesignPage = (props: DesignPageProps) => (
 
@@ -49,14 +50,6 @@ export const DesignPage = (props: DesignPageProps) => (
                                 props.setMouseDownPos
                             );
                         }}
-                        onContextMenu={(e) => {
-                            e.preventDefault();
-                            mouseDownOnCanvas(e, props.canvas, props.setComponentTree, 
-                                props.componentTree, props.setMouseDown, 
-                                props.setSelectedComponentId, props.setShowRightClickMenu,
-                                props.setMouseDownPos
-                            );
-                        }}
                         onKeyDown={(e) => props.keyDownOnCanvas(e)}
                     />
                     {
@@ -64,9 +57,12 @@ export const DesignPage = (props: DesignPageProps) => (
                         ? <RightClickMenu 
                             x={props.mouseDownPos.x} 
                             y={props.mouseDownPos.y}
-
                           >
-
+                            <DropdownButton
+                                onClick={(e) => props.deleteComponent(props.selectedComponentId)}
+                            >
+                                <DeleteIcon/>
+                            </DropdownButton>
                           </RightClickMenu>
                         : null
                     }
@@ -106,15 +102,43 @@ const CanvasElement = styled.canvas`
 `;
 
 const RightClickMenu = styled.div<{x: number, y: number}>`
-    position: absolute;
-    top: ${props => props.x}px;
-    left: ${props => props.y}px;
+    position: fixed;
+    top: ${props => props.y}px;
+    left: ${props => props.x}px;
     z-index: 99;
-    width: 20px;
-    height: 20px;
-    background-color: black;
+    width: 40px;
+    height: 40px;
+    background-color: #282c33;
+    border-radius: 3px;
     display: grid;
-    grid-template-columns: 20px;
+    grid-template-columns: 40px;
+    justify-items: center;
+    align-items: center;
+`;
+
+const DropdownButton = styled.button`
+    background-color: transparent;
+    box-shadow: 0px 0px 0px transparent;
+    border-radius: 3px;
+    &:hover {
+        background-color: #434a56;
+    }
+    &:focus {
+        outline: none;
+    }
+    border: none;
+    height: 25px;
+    width: 25px;
+    padding: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    & > svg {
+        height: 15px;
+        width: 15px;
+        fill: white;
+    }
 `;
 
 interface DesignPageProps {
@@ -149,5 +173,6 @@ interface DesignPageProps {
     keyDownOnCanvas: (e: React.KeyboardEvent<HTMLCanvasElement>) => void,
     setShowGridItems: React.Dispatch<React.SetStateAction<boolean>>,
     setShowRightClickMenu: React.Dispatch<React.SetStateAction<boolean>>,
-    setMouseDownPos: React.Dispatch<React.SetStateAction<{x: number, y: number}>>
+    setMouseDownPos: React.Dispatch<React.SetStateAction<{x: number, y: number}>>,
+    deleteComponent(id: number): void
 }
